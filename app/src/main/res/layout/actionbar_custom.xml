@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical" android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/color_shape">
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <RelativeLayout
+            android:layout_marginLeft="5dp"
+            android:id="@+id/bar_back_btn"
+            android:layout_width="30dp"
+            android:layout_height="match_parent"
+            android:gravity="center">
+
+            <ImageView
+                android:layout_width="10dp"
+                android:layout_height="19dp"
+                android:textSize="16sp"
+                app:srcCompat="@drawable/back" />
+        </RelativeLayout>
+        <RelativeLayout
+            android:layout_width="28dp"
+            android:layout_height="match_parent"
+            android:layout_marginLeft="120dp"
+            android:gravity="center|left">
+
+            <ImageView
+                android:id="@+id/title_logo_id"
+                android:layout_width="28dp"
+                android:layout_height="28dp" />
+        </RelativeLayout>
+
+
+        <TextView
+            android:id="@+id/action_bar_title"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_alignParentTop="true"
+            android:layout_toEndOf="@+id/bar_back_btn"
+            android:gravity="center"
+            android:textColor="@android:color/white"
+            android:textSize="20sp"
+            android:textStyle="bold" />
+    </RelativeLayout>
+
+
+
+</LinearLayout>

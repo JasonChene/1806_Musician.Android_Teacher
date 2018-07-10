@@ -1,0 +1,127 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:background="@android:color/white"
+    android:baselineAligned="false"
+    android:orientation="vertical"
+    tools:context=".MainActivity">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="40dp">
+
+        <Button
+            android:id="@+id/start_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="开启音频"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <Button
+            android:id="@+id/join_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="开启音频1"
+            android:layout_marginLeft="100dp" />
+
+        <Button
+            android:id="@+id/rejoin_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="开启视频"
+            android:layout_marginLeft="200dp" />
+
+    </RelativeLayout>
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="40dp">
+
+        <Button
+            android:id="@+id/leave_start_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="退出房间"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <Button
+            android:id="@+id/leave_join_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="退出房间1"
+            android:layout_marginLeft="100dp" />
+
+        <Button
+            android:id="@+id/leave_rejoin_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="开启视频1"
+            android:layout_marginLeft="200dp" />
+
+    </RelativeLayout>
+
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <View
+            android:layout_width="160dp"
+            android:layout_height="104dp"
+            android:background="@drawable/live_default_big">
+        </View>
+
+        <FrameLayout
+            android:id="@+id/local_video_view_container"
+            android:layout_width="160dp"
+            android:layout_height="104dp"
+            android:background="@android:color/darker_gray"
+            android:visibility="gone"
+            />
+
+        <View
+            android:layout_width="160dp"
+            android:layout_height="104dp"
+            android:layout_alignParentEnd="true"
+            android:background="@drawable/live_default_big">
+        </View>
+
+        <FrameLayout
+            android:id="@+id/remote_video_view_container"
+            android:layout_width="160dp"
+            android:layout_height="104dp"
+            android:layout_alignParentEnd="true"
+            android:visibility="gone"
+            android:background="@android:color/darker_gray" />
+
+
+        <View
+            android:layout_width="160dp"
+            android:layout_height="104dp"
+            android:layout_marginTop="120dp"
+            android:background="@drawable/live_default_big">
+        </View>
+
+        <FrameLayout
+            android:id="@+id/remote_video_view_container2"
+            android:layout_width="160dp"
+            android:layout_height="104dp"
+            android:layout_marginTop="120dp"
+            android:visibility="gone"
+            android:background="@android:color/darker_gray" />
+
+    </RelativeLayout>
+
+
+
+    <!--android:layout_marginLeft="@id/remote_video_view_container"-->
+    <!--android:layout_marginTop="@id/remote_video_view_container"-->
+</LinearLayout>
