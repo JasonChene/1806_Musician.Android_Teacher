@@ -35,28 +35,28 @@ public class LoginActivity extends AppCompatActivity {
         next_button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent = new Intent(LoginActivity.this, VerificationCodeActivity.class);
-                // 在Intent中传递数据
-                intent.putExtra("phoneNumber", phone_number.getText() + "");
-                // 启动Intent
-                startActivity(intent);
-//                AVOSCloud.requestSMSCodeInBackground(phone_number.getText() + "", new RequestMobileCodeCallback() {
-//                    @Override
-//                    public void done(AVException e) {
-//                        if (null == e) {
-//                            Log.e("e","请求成功");
-//                            Intent intent = new Intent(LoginActivity.this, VerificationCodeActivity.class);
-//                            // 在Intent中传递数据
-//                            intent.putExtra("phoneNumber", phone_number.getText() + "");
-//                            // 启动Intent
-//                            startActivity(intent);
-//                            /* 请求成功 */
-//                        } else {
-//                            /* 请求失败 */
-//                            Log.e("e","请求失败" + e.getMessage());
-//                        }
-//                    }
-//                });
+//                Intent intent = new Intent(LoginActivity.this, VerificationCodeActivity.class);
+//                // 在Intent中传递数据
+//                intent.putExtra("phoneNumber", phone_number.getText() + "");
+//                // 启动Intent
+//                startActivity(intent);
+                AVOSCloud.requestSMSCodeInBackground(phone_number.getText() + "", new RequestMobileCodeCallback() {
+                    @Override
+                    public void done(AVException e) {
+                        if (null == e) {
+                            Log.e("e","请求成功");
+                            Intent intent = new Intent(LoginActivity.this, VerificationCodeActivity.class);
+                            // 在Intent中传递数据
+                            intent.putExtra("phoneNumber", phone_number.getText() + "");
+                            // 启动Intent
+                            startActivity(intent);
+                            /* 请求成功 */
+                        } else {
+                            /* 请求失败 */
+                            Log.e("e","请求失败" + e.getMessage());
+                        }
+                    }
+                });
 
             }
         });
