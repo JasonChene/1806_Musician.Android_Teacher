@@ -40,7 +40,6 @@ public class VerificationCodeActivity  extends AppCompatActivity {
         countDownTimer = new CountDownTimer(60*1000,1000) {
             @Override
             public void onTick(long millisUntilFinished) {
-                Log.e("millisUntilFinished",millisUntilFinished+"======");
                 countDownTimerTextView.setText(formatTime(millisUntilFinished) + "s后重新获取");
             }
 
