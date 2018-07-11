@@ -1,13 +1,17 @@
 package com.example.macbookpro.musictrainerteacher;
 
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.avos.avoscloud.AVException;
@@ -31,7 +35,7 @@ public class VerificationCodeActivity  extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_verification_code);
         SysExitUtil.activityList.add(VerificationCodeActivity.this);
-
+        initActionBar();
         countDownTimerTextView = findViewById(R.id.count_down_timer);
         countDownTimer = new CountDownTimer(60*1000,1000) {
             @Override
@@ -47,6 +51,7 @@ public class VerificationCodeActivity  extends AppCompatActivity {
                 reverification_button.setVisibility(View.VISIBLE);
             }
         };
+
         countDownTimer.start();
 
         reverification_button = (Button)findViewById(R.id.reverification_button);
@@ -122,7 +127,24 @@ public class VerificationCodeActivity  extends AppCompatActivity {
             }
         });
     }
-
+    public  void  initActionBar(){
+        android.support.v7.app.ActionBar actionBar = getSupportActionBar();
+        if (actionBar != null) {
+            actionBar.setTitle("");
+            actionBar.setDisplayShowHomeEnabled(false);
+            actionBar.setDisplayShowCustomEnabled(true);
+            LayoutInflater inflator = (LayoutInflater) this
+                    .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+            View v = inflator.inflate(R.layout.actionbar_main,new LinearLayout(VerificationCodeActivity.this),false);
+            android.support.v7.app.ActionBar.LayoutParams layout = new android.support.v7.app.ActionBar.LayoutParams(
+                    android.support.v7.app.ActionBar.LayoutParams.MATCH_PARENT, android.support.v7.app.ActionBar.LayoutParams.MATCH_PARENT);
+            actionBar.setCustomView(v, layout);
+            Toolbar parent = (Toolbar) v.getParent();
+            parent.setContentInsetsAbsolute(0, 0);
+        }
+        TextView actionBarTitle = (TextView) findViewById(R.id.action_bar_title);
+        actionBarTitle.setText("手机验证");
+    }
     /**
      * 将毫秒转化为 分钟：秒 的格式
      *

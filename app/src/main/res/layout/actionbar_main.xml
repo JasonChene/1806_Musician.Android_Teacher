@@ -3,7 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical" android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@drawable/color_shape">
+    android:background="#F8F8F8">
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent">
@@ -15,7 +15,7 @@
             android:layout_alignParentTop="true"
             android:gravity="center"
             android:text="老师课程表"
-            android:textColor="@android:color/white"
+            android:textColor="#101010"
             android:textSize="20sp"
             android:textStyle="bold" />
     </RelativeLayout>
