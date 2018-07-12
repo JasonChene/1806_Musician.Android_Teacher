@@ -16,8 +16,8 @@
             android:gravity="center"
             android:text="老师课程表"
             android:textColor="#101010"
-            android:textSize="20sp"
-            android:textStyle="bold" />
+            android:textSize="17sp"
+            android:textStyle="normal" />
     </RelativeLayout>
 
 

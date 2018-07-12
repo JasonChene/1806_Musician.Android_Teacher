@@ -89,6 +89,8 @@ public class VerificationCodeActivity  extends AppCompatActivity {
         confirm_login_button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+
+
                 if (verification_code.length() == 6)
                 {
                     //请求登录接口

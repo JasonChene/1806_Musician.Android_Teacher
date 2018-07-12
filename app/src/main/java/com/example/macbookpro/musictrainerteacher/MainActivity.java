@@ -41,6 +41,13 @@ public class MainActivity extends AppCompatActivity {
                 startActivity(new Intent(MainActivity.this, LoginActivity.class));
             }
         });
+        Button room_button = (Button) findViewById(R.id.login_room);
+        room_button.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                startActivity(new Intent(MainActivity.this, AudioTeachActivity.class));
+            }
+        });
     }
 
     public  void  initActionBar(){

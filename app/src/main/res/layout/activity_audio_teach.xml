@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+<LinearLayout
+    android:layout_width="wrap_content"
+    android:layout_height="match_parent"
+    android:layout_marginTop="44dp"
+    android:layout_margin="0dp" >
+    <Button
+        android:id="@+id/start_button"
+        android:layout_width="93dp"
+        android:layout_height="45dp"
+        android:layout_weight="1"
+        android:gravity="center"
+        android:text="1"/>
+    <Button
+        android:layout_width="93dp"
+        android:layout_height="45dp"
+        android:layout_weight="1"
+        android:gravity="center"
+        android:layout_marginLeft="-8dp"
+        android:text="2"/>
+    <Button
+        android:layout_width="93dp"
+        android:layout_height="45dp"
+        android:layout_weight="1"
+        android:gravity="center"
+        android:layout_marginLeft="-8dp"
+        android:text="3"/>
+    <Button
+        android:layout_width="93dp"
+        android:layout_height="45dp"
+        android:layout_weight="1"
+        android:gravity="center"
+        android:layout_marginLeft="-8dp"
+        android:text="4"/>
+</LinearLayout>
+
+    <Button
+        android:id="@+id/next_button"
+        android:layout_width="100dp"
+        android:layout_height="30dp"
+        android:text="打开视频教学"
+        android:background="#F76262"
+        android:textColor="#FFFFFF "
+        android:layout_gravity="center"
+        android:layout_marginTop="303dp"
+        app:layout_constraintTop_toTopOf="parent"
+        android:orientation="horizontal"
+        />
+
+
+
+</android.support.constraint.ConstraintLayout>
