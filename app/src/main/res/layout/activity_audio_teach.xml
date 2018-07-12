@@ -1,58 +1,90 @@
 <?xml version="1.0" encoding="utf-8"?>
 <android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    xmlns:app="http://schemas.android.com/apk/res-auto">
-<LinearLayout
+    android:layout_height="match_parent">
+<RelativeLayout
     android:layout_width="wrap_content"
-    android:layout_height="match_parent"
-    android:layout_marginTop="44dp"
-    android:layout_margin="0dp" >
-    <Button
-        android:id="@+id/join_first_btn"
-        android:layout_width="93dp"
-        android:layout_height="45dp"
-        android:layout_weight="1"
-        android:gravity="center"
-        android:text="1"/>
-    <Button
-        android:id="@+id/join_second_btn"
-        android:layout_width="93dp"
-        android:layout_height="45dp"
-        android:layout_weight="1"
-        android:gravity="center"
-        android:layout_marginLeft="-8dp"
-        android:text="2"/>
-    <Button
-        android:layout_width="93dp"
-        android:layout_height="45dp"
-        android:layout_weight="1"
-        android:gravity="center"
-        android:layout_marginLeft="-8dp"
-        android:text="3"/>
-    <Button
-        android:layout_width="93dp"
-        android:layout_height="45dp"
-        android:layout_weight="1"
-        android:gravity="center"
-        android:layout_marginLeft="-8dp"
-        android:text="4"/>
-</LinearLayout>
+    android:layout_height="match_parent">
+    <LinearLayout
+        android:layout_width="fill_parent"
+        android:layout_height="match_parent"
+        android:layout_margin="0dp"
+        android:layout_marginTop="44dp"
+        android:layout_marginRight="-8dp">
 
-    <Button
-        android:id="@+id/open_video_button"
-        android:layout_width="100dp"
-        android:layout_height="30dp"
-        android:text="打开视频教学"
-        android:background="#F76262"
-        android:textColor="#FFFFFF "
-        android:layout_gravity="center"
-        android:layout_marginTop="303dp"
-        app:layout_constraintTop_toTopOf="parent"
-        android:orientation="horizontal"
-        />
+        <Button
+            android:id="@+id/join_first_btn"
+            android:layout_width="wrap_content"
+            android:layout_height="36dp"
+            android:layout_weight="1"
+            android:background="#48586A"
+            android:gravity="center"
+            android:text="张小花"
+            android:textColor="#FFFFFF"
+            android:textSize="14dp" />
 
+        <Button
+            android:id="@+id/join_second_btn"
+            android:layout_width="wrap_content"
+            android:layout_height="36dp"
+            android:layout_marginLeft="1dp"
+            android:layout_weight="1"
+            android:background="#48586A"
+            android:gravity="center"
+            android:text="李小花"
+            android:textColor="#FFFFFF"
+            android:textSize="14dp" />
+
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="36dp"
+            android:layout_marginLeft="1dp"
+            android:layout_weight="1"
+            android:background="#48586A"
+            android:gravity="center"
+            android:text="周小花"
+            android:textColor="#FFFFFF"
+            android:textSize="14dp" />
+
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="36dp"
+            android:layout_marginLeft="1dp"
+            android:layout_weight="1"
+            android:background="#48586A"
+            android:gravity="center"
+            android:text="未上线"
+            android:textColor="#FFFFFF"
+            android:textSize="14dp" />
+    </LinearLayout>
+</RelativeLayout>
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="23dp"
+            android:layout_marginTop="48dp"
+            android:text="正在跟张小花乐谱教学"
+            android:layout_marginLeft="5dp"
+            android:textColor="#101010"
+            android:textSize="14dp" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="23dp"
+            android:layout_marginTop="71dp"
+            android:layout_marginLeft="5dp"
+            android:textSize="14dp"
+            android:text="周小花正在举手"
+            android:textColor="#101010"/>
+
+
+    </RelativeLayout>
 
     <RelativeLayout
         android:layout_width="match_parent"
@@ -63,19 +95,50 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_alignParentEnd="true"
-            android:visibility="gone"
-            android:background="@android:color/darker_gray" />
+            android:background="@android:color/darker_gray"
+            android:visibility="gone" />
+
         <FrameLayout
             android:id="@+id/local_video_view_container"
             android:layout_width="85dp"
             android:layout_height="136dp"
-            android:background="@android:color/holo_red_dark"
-            android:visibility="gone"
             android:layout_alignParentEnd="true"
-            />
+            android:background="@android:color/holo_red_dark"
+            android:visibility="gone" />
+
 
     </RelativeLayout>
 
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:gravity="center">
+        <View
+            android:layout_width="260dp"
+            android:layout_height="260dp"
+            android:layout_marginTop="42dp"
+            android:background="@drawable/audio_teach_bg"
+            >
+        </View>
+    </RelativeLayout>
+    <LinearLayout
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:gravity="center">
 
+        <Button
+            android:id="@+id/open_video_button"
+            android:layout_width="100dp"
+            android:layout_height="30dp"
+            android:layout_gravity="bottom"
+            android:layout_marginBottom="7dp"
+            android:background="#F76262"
+            android:orientation="horizontal"
+            android:text="打开视频教学"
+            android:radius="4dp"
+            android:textColor="#FFFFFF "
+            app:layout_constraintTop_toTopOf="parent" />
+
+    </LinearLayout>
 
 </android.support.constraint.ConstraintLayout>

@@ -113,7 +113,7 @@ public class AudioTeachActivity extends AppCompatActivity {
             actionBar.setDisplayShowCustomEnabled(true);
             LayoutInflater inflator = (LayoutInflater) this
                     .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-            View v = inflator.inflate(R.layout.actionbar_main, new LinearLayout(AudioTeachActivity.this), false);
+            View v = inflator.inflate(R.layout.actionbar_audio_teach, new LinearLayout(AudioTeachActivity.this), false);
             android.support.v7.app.ActionBar.LayoutParams layout = new android.support.v7.app.ActionBar.LayoutParams(
                     android.support.v7.app.ActionBar.LayoutParams.MATCH_PARENT, android.support.v7.app.ActionBar.LayoutParams.MATCH_PARENT);
             actionBar.setCustomView(v, layout);
