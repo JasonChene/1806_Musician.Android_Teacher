@@ -63,30 +63,36 @@ public class AudioTeachActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_audio_teach);
         initActionBar();
+        if (checkSelfPermission(Manifest.permission.RECORD_AUDIO, PERMISSION_REQ_ID_RECORD_AUDIO)) {
+            initAgoraEngineAndJoinChannel();
+        }
 
-
-        final Button start_button = (Button) findViewById(R.id.start_button);
-        start_button.setOnClickListener(new View.OnClickListener() {
+        final Button join_first_btn = (Button) findViewById(R.id.join_first_btn);
+        join_first_btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-//                startActivity(new Intent(MainActivity.this,LoginActivity.class));
-                if (checkSelfPermission(Manifest.permission.RECORD_AUDIO, PERMISSION_REQ_ID_RECORD_AUDIO)) {
-                    initAgoraEngineAndJoinChannel();
-                    setupAudioAndJoinChannel(9998);
-                    Log.e(LOG_TAG,   "111");
-
-                }
-//                    setupAudioProfile();         // Tutorial Step 2
-//                    setupLocalVideo(9997);
-                }
+                mRtcEngine.disableVideo();
+                setupAudioAndJoinChannel(9998);
+            }
             });
-        }
+
+        final Button open_video_button = (Button) findViewById(R.id.open_video_button);
+        open_video_button.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (checkSelfPermission(Manifest.permission.CAMERA, PERMISSION_REQ_ID_CAMERA))
+                {
+                    setupLocalVideo(9998);
+                }
+
+            }
+        });
+    }
+
 
     //初始化进入房间
     private void initAgoraEngineAndJoinChannel() {
         initializeAgoraEngine();     // Tutorial Step 1
-//        joinChannel();               // Tutorial Step 2
-        Log.e(LOG_TAG,   "222");
     }
     //初始化声网
     private void initializeAgoraEngine() {
@@ -119,10 +125,7 @@ public class AudioTeachActivity extends AppCompatActivity {
     }
     //设置音频并加入频道
     private void setupAudioAndJoinChannel(int uid) {
-       // setupAudioProfile();         // Tutorial Step 2
         joinChannel(uid);               // Tutorial Step 4
-        Log.e(LOG_TAG,   "333");
-
     }
     //设置视频并加入频道
     private void setupVideoAndJoinChannel(int uid) {
@@ -132,13 +135,12 @@ public class AudioTeachActivity extends AppCompatActivity {
     // Tutorial Step 2
     //设置视频参数
     private void setupVideoProfile() {
-        mRtcEngine.disableVideo();//关闭视频
         mRtcEngine.setVideoProfile(Constants.VIDEO_PROFILE_360P, false);
     }
     // Tutorial Step 4
     //加入频道 (joinChannel)
     private void joinChannel(int uid) {
-        mRtcEngine.joinChannel(null, "demoChannel1", "Extra Optional Data", uid); // if you do not specify the uid, we will generate the uid for you
+        mRtcEngine.joinChannel(null, "demoChannel1", null, uid); // if you do not specify the uid, we will generate the uid for you
     }
     //离开房间
     private void leaveChannel() {
@@ -146,10 +148,10 @@ public class AudioTeachActivity extends AppCompatActivity {
     }
 
     //设置音质 (setAudioProfile)
-    private void setupAudioProfile() {
-        mRtcEngine.enableAudio();//打开音频
-        mRtcEngine.setAudioProfile(0,2);//通信模式下为 1，直播模式下为 2
-    }
+//    private void setupAudioProfile() {
+//        mRtcEngine.enableAudio();//打开音频
+//        mRtcEngine.setAudioProfile(0,2);//通信模式下为 1，直播模式下为 2
+//    }
     public boolean checkSelfPermission(String permission, int requestCode) {
         Log.i(LOG_TAG, "checkSelfPermission " + permission + " " + requestCode);
         if (ContextCompat.checkSelfPermission(this,
@@ -164,16 +166,21 @@ public class AudioTeachActivity extends AppCompatActivity {
         return true;
     }
     private void setupRemoteVideo(int uid) {
-        FrameLayout container = (FrameLayout) findViewById(R.id.local_video_view_container);
-        if (uid == 9998)
-        {
-            container = (FrameLayout) findViewById(R.id.remote_video_view_container);
-        }
+        FrameLayout container = (FrameLayout) findViewById(R.id.remote_video_view_container);
         container.setVisibility(View.VISIBLE);
         SurfaceView surfaceView = RtcEngine.CreateRendererView(getBaseContext());
         container.addView(surfaceView);
         mRtcEngine.setupRemoteVideo(new VideoCanvas(surfaceView, VideoCanvas.RENDER_MODE_ADAPTIVE, uid));
         surfaceView.setTag(uid); // for mark purpose
-
+    }
+    private void setupLocalVideo(int uid) {
+        mRtcEngine.enableVideo();
+        setupVideoProfile();
+        FrameLayout container = (FrameLayout) findViewById(R.id.local_video_view_container);
+        container.setVisibility(View.VISIBLE);
+        SurfaceView surfaceView = RtcEngine.CreateRendererView(getBaseContext());
+        container.addView(surfaceView);
+        mRtcEngine.setupLocalVideo(new VideoCanvas(surfaceView, VideoCanvas.RENDER_MODE_ADAPTIVE, uid));
+        surfaceView.setTag(uid); // for mark purpose
     }
 }

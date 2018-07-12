@@ -10,13 +10,14 @@
     android:layout_marginTop="44dp"
     android:layout_margin="0dp" >
     <Button
-        android:id="@+id/start_button"
+        android:id="@+id/join_first_btn"
         android:layout_width="93dp"
         android:layout_height="45dp"
         android:layout_weight="1"
         android:gravity="center"
         android:text="1"/>
     <Button
+        android:id="@+id/join_second_btn"
         android:layout_width="93dp"
         android:layout_height="45dp"
         android:layout_weight="1"
@@ -40,7 +41,7 @@
 </LinearLayout>
 
     <Button
-        android:id="@+id/next_button"
+        android:id="@+id/open_video_button"
         android:layout_width="100dp"
         android:layout_height="30dp"
         android:text="打开视频教学"
@@ -51,6 +52,29 @@
         app:layout_constraintTop_toTopOf="parent"
         android:orientation="horizontal"
         />
+
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <FrameLayout
+            android:id="@+id/remote_video_view_container"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_alignParentEnd="true"
+            android:visibility="gone"
+            android:background="@android:color/darker_gray" />
+        <FrameLayout
+            android:id="@+id/local_video_view_container"
+            android:layout_width="85dp"
+            android:layout_height="136dp"
+            android:background="@android:color/holo_red_dark"
+            android:visibility="gone"
+            android:layout_alignParentEnd="true"
+            />
+
+    </RelativeLayout>
 
 
 
