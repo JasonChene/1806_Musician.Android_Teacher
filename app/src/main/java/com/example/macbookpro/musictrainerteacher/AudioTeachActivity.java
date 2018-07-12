@@ -65,27 +65,28 @@ public class AudioTeachActivity extends AppCompatActivity {
         initActionBar();
 
 
-        Button start_button = (Button) findViewById(R.id.start_button);
+        final Button start_button = (Button) findViewById(R.id.start_button);
         start_button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
 //                startActivity(new Intent(MainActivity.this,LoginActivity.class));
                 if (checkSelfPermission(Manifest.permission.RECORD_AUDIO, PERMISSION_REQ_ID_RECORD_AUDIO)) {
-//                    initAgoraEngineAndJoinChannel();
+                    initAgoraEngineAndJoinChannel();
                     setupAudioAndJoinChannel(9998);
+                    Log.e(LOG_TAG,   "111");
 
                 }
-                 setupAudioProfile();         // Tutorial Step 2
+//                    setupAudioProfile();         // Tutorial Step 2
 //                    setupLocalVideo(9997);
                 }
             });
         }
 
-
     //初始化进入房间
     private void initAgoraEngineAndJoinChannel() {
         initializeAgoraEngine();     // Tutorial Step 1
-        joinChannel();               // Tutorial Step 2
+//        joinChannel();               // Tutorial Step 2
+        Log.e(LOG_TAG,   "222");
     }
     //初始化声网
     private void initializeAgoraEngine() {
@@ -118,8 +119,10 @@ public class AudioTeachActivity extends AppCompatActivity {
     }
     //设置音频并加入频道
     private void setupAudioAndJoinChannel(int uid) {
-        setupAudioProfile();         // Tutorial Step 2
-        joinChannel(9998);               // Tutorial Step 4
+       // setupAudioProfile();         // Tutorial Step 2
+        joinChannel(uid);               // Tutorial Step 4
+        Log.e(LOG_TAG,   "333");
+
     }
     //设置视频并加入频道
     private void setupVideoAndJoinChannel(int uid) {
