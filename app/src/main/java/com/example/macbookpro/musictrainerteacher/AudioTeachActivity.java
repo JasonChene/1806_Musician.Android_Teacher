@@ -2,6 +2,7 @@ package com.example.macbookpro.musictrainerteacher;
 
 import android.Manifest;
 import android.content.Context;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.support.v4.app.ActivityCompat;
@@ -67,6 +68,15 @@ public class AudioTeachActivity extends AppCompatActivity {
             initAgoraEngineAndJoinChannel();
         }
 
+        Button back_button = (Button) findViewById(R.id.back_button);
+        back_button.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                startActivity(new Intent(AudioTeachActivity.this, MainActivity.class));
+            }
+        });
+
+
         final Button join_first_btn = (Button) findViewById(R.id.join_first_btn);
         join_first_btn.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -75,7 +85,30 @@ public class AudioTeachActivity extends AppCompatActivity {
                 setupAudioAndJoinChannel(9998);
             }
             });
-
+        final Button join_second_btn = (Button) findViewById(R.id.join_second_btn);
+        join_second_btn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                mRtcEngine.disableVideo();
+                setupAudioAndJoinChannel(9997);
+            }
+        });
+        final Button join_third_btn = (Button) findViewById(R.id.join_third_btn);
+        join_third_btn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                mRtcEngine.disableVideo();
+                setupAudioAndJoinChannel(9996);
+            }
+        });
+        final Button join_fourth_btn = (Button) findViewById(R.id.join_fourth_btn);
+        join_fourth_btn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                mRtcEngine.disableVideo();
+                setupAudioAndJoinChannel(9995);
+            }
+        });
         final Button open_video_button = (Button) findViewById(R.id.open_video_button);
         open_video_button.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -83,6 +116,19 @@ public class AudioTeachActivity extends AppCompatActivity {
                 if (checkSelfPermission(Manifest.permission.CAMERA, PERMISSION_REQ_ID_CAMERA))
                 {
                     setupLocalVideo(9998);
+                }
+
+            }
+        });
+        //离开房间
+        final Button close_video_button = (Button) findViewById(R.id.close_video_button);
+        close_video_button.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (checkSelfPermission(Manifest.permission.CAMERA, PERMISSION_REQ_ID_CAMERA))
+                {
+//                    leaveChannel();
+                      close_Video();
                 }
 
             }
@@ -172,6 +218,16 @@ public class AudioTeachActivity extends AppCompatActivity {
         container.addView(surfaceView);
         mRtcEngine.setupRemoteVideo(new VideoCanvas(surfaceView, VideoCanvas.RENDER_MODE_ADAPTIVE, uid));
         surfaceView.setTag(uid); // for mark purpose
+    }
+
+    private  void close_Video(){
+        mRtcEngine.disableVideo();
+        FrameLayout container_local = (FrameLayout) findViewById(R.id.local_video_view_container);
+        container_local.setVisibility(View.GONE);
+        FrameLayout container_remote = (FrameLayout) findViewById(R.id.remote_video_view_container);
+        container_remote.setVisibility(View.GONE);
+
+
     }
     private void setupLocalVideo(int uid) {
         mRtcEngine.enableVideo();

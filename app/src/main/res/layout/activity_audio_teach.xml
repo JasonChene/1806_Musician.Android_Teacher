@@ -38,6 +38,7 @@
             android:textSize="14dp" />
 
         <Button
+            android:id="@+id/join_third_btn"
             android:layout_width="wrap_content"
             android:layout_height="36dp"
             android:layout_marginLeft="1dp"
@@ -49,6 +50,7 @@
             android:textSize="14dp" />
 
         <Button
+            android:id="@+id/join_fourth_btn"
             android:layout_width="wrap_content"
             android:layout_height="36dp"
             android:layout_marginLeft="1dp"
@@ -137,6 +139,20 @@
             android:text="打开视频教学"
             android:radius="4dp"
             android:textColor="#FFFFFF "
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <Button
+            android:id="@+id/close_video_button"
+            android:layout_width="100dp"
+            android:layout_height="30dp"
+            android:layout_gravity="bottom"
+            android:layout_marginBottom="7dp"
+            android:background="#F76262"
+            android:orientation="horizontal"
+            android:text="关闭视频教学"
+            android:radius="4dp"
+            android:layout_marginLeft="1dp"
+            android:textColor="#FFFFFF"
             app:layout_constraintTop_toTopOf="parent" />
 
     </LinearLayout>

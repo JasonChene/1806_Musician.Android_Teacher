@@ -9,12 +9,14 @@
         android:layout_height="match_parent"
         >
         <Button
+            android:id="@+id/back_button"
             android:layout_width="21dp"
             android:layout_height="21dp"
             android:background="@drawable/back"
             android:textColor="#101010"
-            android:gravity="center"
+            android:gravity="center_vertical"
             android:layout_marginLeft="6dp"
+            android:layout_centerVertical="true"
             />
         <TextView
             android:id="@+id/action_bar_title"
