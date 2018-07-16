@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
@@ -18,6 +19,7 @@ import android.widget.Button;
 import android.widget.FrameLayout;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.example.macbookpro.musictrainerteacher.storage.LocalStorage;
 
@@ -75,9 +77,8 @@ public class AudioTeachActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_audio_teach);
         initActionBar();
-        if (checkSelfPermission(Manifest.permission.RECORD_AUDIO, PERMISSION_REQ_ID_RECORD_AUDIO)) {
-            initAgoraEngineAndJoinChannel();
-        }
+        checkSelfPermission(Manifest.permission.RECORD_AUDIO, PERMISSION_REQ_ID_RECORD_AUDIO);
+        initAgoraEngineAndJoinChannel();
 
         Button back_button = (Button) findViewById(R.id.back_button);
         back_button.setOnClickListener(new View.OnClickListener() {
@@ -258,5 +259,35 @@ public class AudioTeachActivity extends AppCompatActivity {
     private  void showMusicPicture (){
         View  MusicPicture = (View) findViewById(R.id.music_picture);
         MusicPicture.setVisibility(View.VISIBLE);
+    }
+
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+
+        switch (requestCode) {//根据请求码判断是哪一次申请的权限
+            case PERMISSION_REQ_ID_RECORD_AUDIO:
+                if (grantResults.length > 0) {//grantResults 数组中存放的是授权结果
+                    if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {//同意授权
+                        //授权后做一些你想做的事情，即原来不需要动态授权时做的操作
+                        checkSelfPermission(Manifest.permission.CAMERA, PERMISSION_REQ_ID_CAMERA);
+                    }else {//用户拒绝授权
+                        //可以简单提示用户
+                        Toast.makeText(AudioTeachActivity.this, "没有授权继续操作", Toast.LENGTH_SHORT).show();
+                    }
+                }
+                break;
+            case PERMISSION_REQ_ID_CAMERA:
+                if (grantResults.length > 0) {//grantResults 数组中存放的是授权结果
+                    if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {//同意授权
+                        //授权后做一些你想做的事情，即原来不需要动态授权时做的操作
+                    }else {//用户拒绝授权
+                        //可以简单提示用户
+                        Toast.makeText(AudioTeachActivity.this, "没有授权继续操作", Toast.LENGTH_SHORT).show();
+                    }
+                }
+                break;
+            default: super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        }
     }
 }
