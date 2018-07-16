@@ -75,7 +75,8 @@ public class AudioTeachActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_audio_teach);
         initActionBar();
-        if (checkSelfPermission(Manifest.permission.RECORD_AUDIO, PERMISSION_REQ_ID_RECORD_AUDIO)) {
+
+        if (checkSelfPermission(Manifest.permission.RECORD_AUDIO, PERMISSION_REQ_ID_RECORD_AUDIO))  {
             initAgoraEngineAndJoinChannel();
         }
 
@@ -84,6 +85,7 @@ public class AudioTeachActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 leaveChannel();
+                startActivity(new Intent(AudioTeachActivity.this, MainActivity.class));
             }
         });
 
@@ -128,6 +130,7 @@ public class AudioTeachActivity extends AppCompatActivity {
                 if (checkSelfPermission(Manifest.permission.CAMERA, PERMISSION_REQ_ID_CAMERA))
                 {
                     setupLocalVideo(9998);
+//                    setupRemoteVideo(9998);
                     hideMusicPicture();
                 }
 
@@ -147,7 +150,6 @@ public class AudioTeachActivity extends AppCompatActivity {
             }
         });
     }
-
     //初始化进入房间
     private void initAgoraEngineAndJoinChannel() {
         initializeAgoraEngine();     // Tutorial Step 1
@@ -238,7 +240,6 @@ public class AudioTeachActivity extends AppCompatActivity {
         container_local.setVisibility(View.GONE);
         FrameLayout container_remote = (FrameLayout) findViewById(R.id.remote_video_view_container);
         container_remote.setVisibility(View.GONE);
-
 
     }
     private void setupLocalVideo(int uid) {
