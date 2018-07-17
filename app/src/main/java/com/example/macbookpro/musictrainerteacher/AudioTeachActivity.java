@@ -55,8 +55,17 @@ public class AudioTeachActivity extends AppCompatActivity {
                 }
             });
         }
-
-
+        @Override
+        public void onUserMuteVideo(int uid, boolean muted) {
+            Log.e("onUserEnableVideo",muted + ":"+uid);
+            if (muted) {
+                setupRemoteVideo(uid);
+            }
+            else {
+//                FrameLayout container_remote = (FrameLayout) findViewById(R.id.remote_video_view_container);
+//                container_remote.setVisibility(View.GONE);
+            }
+        }
     };
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {
@@ -77,10 +86,13 @@ public class AudioTeachActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_audio_teach);
         initActionBar();
-
-        if (checkSelfPermission(Manifest.permission.RECORD_AUDIO, PERMISSION_REQ_ID_RECORD_AUDIO))  {
-            initAgoraEngineAndJoinChannel();
+        if (checkSelfPermission(Manifest.permission.RECORD_AUDIO, PERMISSION_REQ_ID_RECORD_AUDIO)) {
+            initAgoraEngineAndJoinChannel(9990);
+            mRtcEngine.disableVideo();
+            FrameLayout container = (FrameLayout) findViewById(R.id.local_video_view_container);
+            container.setVisibility(View.GONE);
         }
+
 
         Button back_button = (Button) findViewById(R.id.back_button);
         back_button.setOnClickListener(new View.OnClickListener() {
@@ -88,6 +100,7 @@ public class AudioTeachActivity extends AppCompatActivity {
             public void onClick(View view) {
                 leaveChannel();
                 startActivity(new Intent(AudioTeachActivity.this, MainActivity.class));
+
             }
         });
 
@@ -95,8 +108,7 @@ public class AudioTeachActivity extends AppCompatActivity {
         join_first_btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                mRtcEngine.disableVideo();
-                setupAudioAndJoinChannel(9998);
+
             }
 
         });
@@ -131,9 +143,13 @@ public class AudioTeachActivity extends AppCompatActivity {
             public void onClick(View view) {
                 if (checkSelfPermission(Manifest.permission.CAMERA, PERMISSION_REQ_ID_CAMERA))
                 {
-                    setupLocalVideo(9998);
-//                    setupRemoteVideo(9998);
+//                    setupLocalVideo(9990);
                     hideMusicPicture();
+                    mRtcEngine.enableVideo();
+                    FrameLayout local_container = (FrameLayout) findViewById(R.id.local_video_view_container);
+                    local_container.setVisibility(View.VISIBLE);
+                    FrameLayout remote_container = (FrameLayout) findViewById(R.id.remote_video_view_container);
+                    remote_container.setVisibility(View.VISIBLE);
                 }
 
             }
@@ -152,11 +168,15 @@ public class AudioTeachActivity extends AppCompatActivity {
             }
         });
     }
+
     //初始化进入房间
-    private void initAgoraEngineAndJoinChannel() {
+    private void initAgoraEngineAndJoinChannel(int uid) {
         initializeAgoraEngine();     // Tutorial Step 1
+        setupVideoProfile();
+        setupLocalVideo(uid);
+        joinChannel(uid);
     }
-    //初始化声网
+
     private void initializeAgoraEngine() {
         try {
             mRtcEngine = RtcEngine.create(getBaseContext(), getString(R.string.agora_app_id), mRtcEventHandler);
@@ -166,6 +186,14 @@ public class AudioTeachActivity extends AppCompatActivity {
             throw new RuntimeException("NEED TO check rtc sdk init fatal error\n" + Log.getStackTraceString(e));
         }
     }
+
+    // Tutorial Step 2
+    private void setupVideoProfile() {
+        mRtcEngine.enableVideo();
+        mRtcEngine.setVideoProfile(Constants.VIDEO_PROFILE_360P, false);
+    }
+
+
     //设置导航栏
     public void initActionBar() {
         android.support.v7.app.ActionBar actionBar = getSupportActionBar();
@@ -185,20 +213,7 @@ public class AudioTeachActivity extends AppCompatActivity {
         TextView actionBarTitle = (TextView) findViewById(R.id.action_bar_title);
         actionBarTitle.setText("老师线上教室");
     }
-    //设置音频并加入频道
-    private void setupAudioAndJoinChannel(int uid) {
-        joinChannel(uid);               // Tutorial Step 4
-    }
-    //设置视频并加入频道
-    private void setupVideoAndJoinChannel(int uid) {
-        setupVideoProfile();         // Tutorial Step 2
-        joinChannel(uid);               // Tutorial Step 4
-    }
-    // Tutorial Step 2
-    //设置视频参数
-    private void setupVideoProfile() {
-        mRtcEngine.setVideoProfile(Constants.VIDEO_PROFILE_360P, false);
-    }
+
     // Tutorial Step 4
     //加入频道 (joinChannel)
     private void joinChannel(int uid) {
@@ -209,11 +224,7 @@ public class AudioTeachActivity extends AppCompatActivity {
         mRtcEngine.leaveChannel();
     }
 
-    //设置音质 (setAudioProfile)
-//    private void setupAudioProfile() {
-//        mRtcEngine.enableAudio();//打开音频
-//        mRtcEngine.setAudioProfile(0,2);//通信模式下为 1，直播模式下为 2
-//    }
+
     public boolean checkSelfPermission(String permission, int requestCode) {
         Log.i(LOG_TAG, "checkSelfPermission " + permission + " " + requestCode);
         if (ContextCompat.checkSelfPermission(this,
@@ -229,12 +240,30 @@ public class AudioTeachActivity extends AppCompatActivity {
     }
     private void setupRemoteVideo(int uid) {
         FrameLayout container = (FrameLayout) findViewById(R.id.remote_video_view_container);
+
+        if (container.getChildCount() >= 1) {
+            return;
+        }
         container.setVisibility(View.VISIBLE);
         SurfaceView surfaceView = RtcEngine.CreateRendererView(getBaseContext());
         container.addView(surfaceView);
         mRtcEngine.setupRemoteVideo(new VideoCanvas(surfaceView, VideoCanvas.RENDER_MODE_ADAPTIVE, uid));
+
         surfaceView.setTag(uid); // for mark purpose
+//        View tipMsg = findViewById(R.id.quick_tips_when_use_agora_sdk); // optional UI
+//        tipMsg.setVisibility(View.GONE);
     }
+//    private void setupRemoteVideo(int uid) {
+//        FrameLayout container = (FrameLayout) findViewById(R.id.remote_video_view_container);
+//        if (container.getChildCount() >= 1) {
+//            return;
+//        }
+//        container.setVisibility(View.VISIBLE);
+//        SurfaceView surfaceView = RtcEngine.CreateRendererView(getBaseContext());
+//        container.addView(surfaceView);
+//        mRtcEngine.setupRemoteVideo(new VideoCanvas(surfaceView, VideoCanvas.RENDER_MODE_ADAPTIVE, uid));
+//        surfaceView.setTag(uid); // for mark purpose
+//    }
 
     private  void close_Video(){
         mRtcEngine.disableVideo();
@@ -242,17 +271,16 @@ public class AudioTeachActivity extends AppCompatActivity {
         container_local.setVisibility(View.GONE);
         FrameLayout container_remote = (FrameLayout) findViewById(R.id.remote_video_view_container);
         container_remote.setVisibility(View.GONE);
-
     }
     private void setupLocalVideo(int uid) {
-        mRtcEngine.enableVideo();
-        setupVideoProfile();
         FrameLayout container = (FrameLayout) findViewById(R.id.local_video_view_container);
         container.setVisibility(View.VISIBLE);
         SurfaceView surfaceView = RtcEngine.CreateRendererView(getBaseContext());
+        surfaceView.setZOrderMediaOverlay(true);
         container.addView(surfaceView);
         mRtcEngine.setupLocalVideo(new VideoCanvas(surfaceView, VideoCanvas.RENDER_MODE_ADAPTIVE, uid));
         surfaceView.setTag(uid); // for mark purpose
+
     }
     private  void hideMusicPicture (){
         View  MusicPicture = (View) findViewById(R.id.music_picture);
@@ -283,6 +311,10 @@ public class AudioTeachActivity extends AppCompatActivity {
                 if (grantResults.length > 0) {//grantResults 数组中存放的是授权结果
                     if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {//同意授权
                         //授权后做一些你想做的事情，即原来不需要动态授权时做的操作
+                        initAgoraEngineAndJoinChannel(9990);
+                        mRtcEngine.disableVideo();
+                        FrameLayout container = (FrameLayout) findViewById(R.id.local_video_view_container);
+                        container.setVisibility(View.GONE);
                     }else {//用户拒绝授权
                         //可以简单提示用户
                         Toast.makeText(AudioTeachActivity.this, "没有授权继续操作", Toast.LENGTH_SHORT).show();

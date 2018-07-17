@@ -62,17 +62,17 @@ dependencies {
     testImplementation 'junit:junit:4.12'
     androidTestImplementation 'com.android.support.test:runner:1.0.2'
     androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.2'
-    compile fileTree(dir:'libs',includes: ['*.jar'])
-    compile 'com.google.code.gson:gson:2.6.2'
+    implementation fileTree(dir:'libs',includes: ['*.jar'])
+    implementation 'com.google.code.gson:gson:2.6.2'
 
 
     // 添加依赖。注意，版本号必须一致。
     // 基础功能 (必需)
-    compile 'com.netease.nimlib:basesdk:4.4.0'
+    implementation 'com.netease.nimlib:basesdk:4.4.0'
     // 互动白板服务需要
-    compile 'com.netease.nimlib:nrtc:4.4.0'
+    implementation 'com.netease.nimlib:nrtc:4.4.0'
     // 互动白板和文档转码服务模块(版本号必须和基础模块一样)
-    compile 'com.netease.nimlib:rts:4.4.0'
+    implementation 'com.netease.nimlib:rts:4.4.0'
 
     //验证码
     implementation 'com.jacktuotuo.customview:verificationcodeview:1.0.3'
