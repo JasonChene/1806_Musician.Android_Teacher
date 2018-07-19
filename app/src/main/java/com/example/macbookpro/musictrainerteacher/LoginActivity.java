@@ -35,6 +35,7 @@ public class LoginActivity extends AppCompatActivity {
         next_button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                //为了防止调试时总是获取验证码 可以使用下面注释的代码 调试完成 发布时删掉
 //                Intent intent = new Intent(LoginActivity.this, VerificationCodeActivity.class);
 //                // 在Intent中传递数据
 //                intent.putExtra("phoneNumber", phone_number.getText() + "");

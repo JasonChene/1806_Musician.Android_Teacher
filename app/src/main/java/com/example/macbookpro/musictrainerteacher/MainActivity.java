@@ -27,7 +27,7 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         SysExitUtil.activityList.add(MainActivity.this);
         initActionBar();
-       // User();
+        User();
         Button login_button = (Button) findViewById(R.id.login_button);
         login_button.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -81,7 +81,6 @@ public class MainActivity extends AppCompatActivity {
     public void  User(){
         AVUser currentUser = AVUser.getCurrentUser();
         if (currentUser != null) {
-            startActivity(new Intent(MainActivity.this, AudioTeachActivity.class));
             Log.e("e", "+++++=========+++++" +currentUser);
 
         } else {
