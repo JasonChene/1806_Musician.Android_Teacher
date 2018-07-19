@@ -2,8 +2,12 @@ package com.example.macbookpro.musictrainerteacher;
 
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
+import android.icu.text.IDNA;
 import android.os.Bundle;
 import android.os.CountDownTimer;
+import android.os.StrictMode;
+import android.provider.Settings;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
@@ -13,15 +17,34 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import com.alibaba.fastjson.JSON;
+import com.avos.avoscloud.AVCallback;
 import com.avos.avoscloud.AVException;
 import com.avos.avoscloud.AVMobilePhoneVerifyCallback;
 import com.avos.avoscloud.AVOSCloud;
+import com.avos.avoscloud.AVQuery;
+import com.avos.avoscloud.AVRelation;
+import com.avos.avoscloud.AVRole;
+import com.avos.avoscloud.AVUser;
+import com.avos.avoscloud.FindCallback;
+import com.avos.avoscloud.LogInCallback;
 import com.avos.avoscloud.RequestMobileCodeCallback;
 import com.example.macbookpro.musictrainerteacher.common.SysExitUtil;
 import com.tuo.customview.VerificationCodeView;
 
-public class VerificationCodeActivity  extends AppCompatActivity {
+import org.json.JSONObject;
+
+import java.lang.reflect.Array;
+import java.util.List;
+
+import javax.security.auth.callback.Callback;
+
+import static android.icu.util.HebrewCalendar.AV;
+import static com.example.macbookpro.musictrainerteacher.storage.LocalStorage.saveObject;
+
+public class VerificationCodeActivity extends AppCompatActivity {
     String phone_number;
     String verification_code;
     private VerificationCodeView icv;
@@ -31,13 +54,18 @@ public class VerificationCodeActivity  extends AppCompatActivity {
     Button reverification_button;
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    protected void onCreate(final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_verification_code);
         SysExitUtil.activityList.add(VerificationCodeActivity.this);
+
+        StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
+
+        StrictMode.setThreadPolicy(policy);
+
         initActionBar();
         countDownTimerTextView = findViewById(R.id.count_down_timer);
-        countDownTimer = new CountDownTimer(60*1000,1000) {
+        countDownTimer = new CountDownTimer(60 * 1000, 1000) {
             @Override
             public void onTick(long millisUntilFinished) {
                 countDownTimerTextView.setText(formatTime(millisUntilFinished) + "s后重新获取");
@@ -53,7 +81,7 @@ public class VerificationCodeActivity  extends AppCompatActivity {
 
         countDownTimer.start();
 
-        reverification_button = (Button)findViewById(R.id.reverification_button);
+        reverification_button = (Button) findViewById(R.id.reverification_button);
         reverification_button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -66,10 +94,10 @@ public class VerificationCodeActivity  extends AppCompatActivity {
                     @Override
                     public void done(AVException e) {
                         if (null == e) {
-                            Log.e("e","请求成功");
+                            Log.e("e", "请求成功");
                         } else {
                             /* 请求失败 */
-                            Log.e("e","请求失败" + e.getMessage());
+                            Log.e("e", "请求失败" + e.getMessage());
                         }
                     }
                 });
@@ -77,43 +105,69 @@ public class VerificationCodeActivity  extends AppCompatActivity {
         });
 
 
-
         Intent intent = getIntent();
         phone_number = intent.getStringExtra("phoneNumber");
 
         TextView show_phone_number = (TextView) findViewById(R.id.show_phone_number);
-        show_phone_number.setText("验证码已发送至"+phone_number);
+        show_phone_number.setText("验证码已发送至" + phone_number);
 
 
-        Button confirm_login_button = (Button)findViewById(R.id.confirm_login_button);
+        Button confirm_login_button = (Button) findViewById(R.id.confirm_login_button);
         confirm_login_button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
 
-
-                if (verification_code.length() == 6)
-                {
+                if (verification_code.length() == 6) {
                     //请求登录接口
-                    AVOSCloud.verifySMSCodeInBackground(verification_code, phone_number, new AVMobilePhoneVerifyCallback() {
+                    AVUser.signUpOrLoginByMobilePhoneInBackground(phone_number, verification_code, new LogInCallback<AVUser>() {
                         @Override
-                        public void done(AVException e) {
+                        public void done(AVUser avUser, AVException e) {
+                            Log.e("e", "" + avUser);
                             if (null == e) {
-                                Log.e("e","登录请求成功");
-                                Intent intent = new Intent(VerificationCodeActivity.this, MainActivity.class);
-                                // 在Intent中传递数据
+                                Log.e("e", "登录请求成功");
+                                //角色验证
+                                try {
+                                    List<AVRole> user_roles = avUser.getRoles();
+
+                                    boolean allRoes = false;
+                                    for (int i = 0; i < user_roles.size(); i++) {
+                                        AVRole role = user_roles.get(i);
+                                        Log.e("e", "++++++++++" + role.getName());
+                                        if (role.getName().equals("teacher")) {
+                                            allRoes = true;
+                                            break;
+                                        }
+                                    }
+                                    if (allRoes == true) {
+
+                                        startActivity(new Intent(VerificationCodeActivity.this, MainActivity.class));
+
+                                    } else {
+                                        startActivity(new Intent(VerificationCodeActivity.this, LoginActivity.class));
+                                        Toast.makeText(VerificationCodeActivity.this, "没有授权继续操作", Toast.LENGTH_SHORT).show();
+                                    }
+
+                                } catch (Exception error) {
+                                    Log.e("error", "===========" + error);
+
+                                }
+//                                Intent intent = new Intent(VerificationCodeActivity.this, MainActivity.class);
+//                                在Intent中传递数据
 //                                intent.putExtra("phoneNumber", phone_number.getText() + "");
                                 // 启动Intent
-                                startActivity(intent);
+//                                startActivity(intent);
                                 /* 请求成功 */
                             } else {
                                 /* 请求失败 */
-                                Log.e("e","登录请求失败" + e.getMessage());
+                                Log.e("e", "登录请求失败" + e.getMessage());
                             }
                         }
                     });
+
                 }
             }
         });
+
 
         icv = (VerificationCodeView) findViewById(R.id.icv);
         icv.setInputCompleteListener(new VerificationCodeView.InputCompleteListener() {
@@ -128,7 +182,9 @@ public class VerificationCodeActivity  extends AppCompatActivity {
             }
         });
     }
-    public  void  initActionBar(){
+
+
+    public void initActionBar() {
         android.support.v7.app.ActionBar actionBar = getSupportActionBar();
         if (actionBar != null) {
             actionBar.setTitle("");
@@ -136,7 +192,7 @@ public class VerificationCodeActivity  extends AppCompatActivity {
             actionBar.setDisplayShowCustomEnabled(true);
             LayoutInflater inflator = (LayoutInflater) this
                     .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-            View v = inflator.inflate(R.layout.actionbar_main,new LinearLayout(VerificationCodeActivity.this),false);
+            View v = inflator.inflate(R.layout.actionbar_main, new LinearLayout(VerificationCodeActivity.this), false);
             android.support.v7.app.ActionBar.LayoutParams layout = new android.support.v7.app.ActionBar.LayoutParams(
                     android.support.v7.app.ActionBar.LayoutParams.MATCH_PARENT, android.support.v7.app.ActionBar.LayoutParams.MATCH_PARENT);
             actionBar.setCustomView(v, layout);
@@ -146,6 +202,7 @@ public class VerificationCodeActivity  extends AppCompatActivity {
         TextView actionBarTitle = (TextView) findViewById(R.id.action_bar_title);
         actionBarTitle.setText("手机验证");
     }
+
     /**
      * 将毫秒转化为 分钟：秒 的格式
      *
@@ -156,7 +213,7 @@ public class VerificationCodeActivity  extends AppCompatActivity {
         int second;//秒数
         second = (int) ((millisecond / 1000) % 60);
         if (second < 10) {
-            return  "0" + second;
+            return "0" + second;
         } else {
             return "" + second;
         }

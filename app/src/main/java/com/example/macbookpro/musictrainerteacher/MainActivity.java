@@ -17,6 +17,7 @@ import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.avos.avoscloud.AVUser;
 import com.example.macbookpro.musictrainerteacher.common.SysExitUtil;
 
 public class MainActivity extends AppCompatActivity {
@@ -26,8 +27,7 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         SysExitUtil.activityList.add(MainActivity.this);
         initActionBar();
-
-
+       // User();
         Button login_button = (Button) findViewById(R.id.login_button);
         login_button.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -43,6 +43,8 @@ public class MainActivity extends AppCompatActivity {
             }
         });
     }
+
+
 
     public  void  initActionBar(){
         android.support.v7.app.ActionBar actionBar = getSupportActionBar();
@@ -62,6 +64,7 @@ public class MainActivity extends AppCompatActivity {
         TextView actionBarTitle = (TextView) findViewById(R.id.action_bar_title);
         actionBarTitle.setText("老师课程表");
     }
+
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent event)
     {
@@ -75,4 +78,18 @@ public class MainActivity extends AppCompatActivity {
         }
         return super.onKeyDown(keyCode, event);
     }
+    public void  User(){
+        AVUser currentUser = AVUser.getCurrentUser();
+        if (currentUser != null) {
+            startActivity(new Intent(MainActivity.this, AudioTeachActivity.class));
+            Log.e("e", "+++++=========+++++" +currentUser);
+
+        } else {
+            //缓存用户对象为空时，可打开用户注册界面…
+            Log.e("e", "+++++=========+++++" );
+            startActivity(new Intent(MainActivity.this, LoginActivity.class));
+        }
+    }
+
 }
+

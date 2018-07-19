@@ -87,7 +87,7 @@ public class AudioTeachActivity extends AppCompatActivity {
         setContentView(R.layout.activity_audio_teach);
         initActionBar();
         if (checkSelfPermission(Manifest.permission.RECORD_AUDIO, PERMISSION_REQ_ID_RECORD_AUDIO)) {
-            initAgoraEngineAndJoinChannel(9990);
+            initAgoraEngineAndJoinChannel(9998);
             mRtcEngine.disableVideo();
             FrameLayout container = (FrameLayout) findViewById(R.id.local_video_view_container);
             container.setVisibility(View.GONE);
@@ -311,7 +311,7 @@ public class AudioTeachActivity extends AppCompatActivity {
                 if (grantResults.length > 0) {//grantResults 数组中存放的是授权结果
                     if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {//同意授权
                         //授权后做一些你想做的事情，即原来不需要动态授权时做的操作
-                        initAgoraEngineAndJoinChannel(9990);
+                        initAgoraEngineAndJoinChannel(9998);
                         mRtcEngine.disableVideo();
                         FrameLayout container = (FrameLayout) findViewById(R.id.local_video_view_container);
                         container.setVisibility(View.GONE);
