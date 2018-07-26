@@ -19,6 +19,10 @@ import android.widget.TextView;
 
 import com.avos.avoscloud.AVUser;
 import com.example.macbookpro.musictrainerteacher.common.SysExitUtil;
+import com.netease.nimlib.sdk.NIMClient;
+import com.netease.nimlib.sdk.RequestCallback;
+import com.netease.nimlib.sdk.auth.AuthService;
+import com.netease.nimlib.sdk.auth.LoginInfo;
 
 public class MainActivity extends AppCompatActivity {
     @Override
@@ -42,6 +46,28 @@ public class MainActivity extends AppCompatActivity {
                 startActivity(new Intent(MainActivity.this, AudioTeachActivity.class));
             }
         });
+
+        LoginInfo info = new LoginInfo("122333444455555","3354045a397621cd92406f1f98cde292"); // config...
+        NIMClient.getService(AuthService.class).login(info)
+                .setCallback(new RequestCallback() {
+                    @Override
+                    public void onSuccess(Object param) {
+                        Log.e("TAG","=====login:onSuccess"+param.toString());
+                    }
+
+                    @Override
+                    public void onFailed(int code) {
+                        Log.e("TAG","=====login: onFailed");
+
+                    }
+
+                    @Override
+                    public void onException(Throwable exception) {
+                        Log.e("TAG","login: onException");
+
+                    }
+                });
+
     }
 
 

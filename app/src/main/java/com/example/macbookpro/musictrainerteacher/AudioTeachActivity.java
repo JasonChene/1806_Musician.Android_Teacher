@@ -86,6 +86,9 @@ public class AudioTeachActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_audio_teach);
         initActionBar();
+
+        WhiteBoardManager.registerRTSIncomingCallObserver(true,this);
+
         if (checkSelfPermission(Manifest.permission.RECORD_AUDIO, PERMISSION_REQ_ID_RECORD_AUDIO)) {
             initAgoraEngineAndJoinChannel(9998);
             mRtcEngine.disableVideo();
@@ -168,6 +171,15 @@ public class AudioTeachActivity extends AppCompatActivity {
             }
         });
     }
+
+//    private void registerRTSIncomingCallObserver(boolean register) {
+//        RTSManager.getInstance().observeIncomingSession(new Observer<RTSData>() {
+//            @Override
+//            public void onEvent(RTSData rtsData) {
+//                // 启动会话界面
+//            }
+//        },register);
+//    }
 
     //初始化进入房间
     private void initAgoraEngineAndJoinChannel(int uid) {
