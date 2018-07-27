@@ -20,6 +20,9 @@ import com.netease.nimlib.sdk.rts.model.RTSData;
 import com.netease.nimlib.sdk.rts.model.RTSTunData;
 
 import java.io.UnsupportedEncodingException;
+import java.lang.reflect.Array;
+import java.text.NumberFormat;
+import java.util.ArrayList;
 
 /**
  * 白板能力类
@@ -126,18 +129,37 @@ public class WhiteBoardManager {
             @Override
             public void onEvent(RTSTunData rtsTunData) {
                 String data = "[parse bytes error]";
+                long timeStampSec = System.currentTimeMillis()/1000;
+                String time = String.format("%010d", timeStampSec);
+
                 try {
                     data = new String(rtsTunData.getData(), 0, rtsTunData.getLength(), "UTF-8");
                     DataManager dataManager = new DataManager();
                     dataManager.dataDecode(data);
-                    draw.dataPaint(data);
-                    Log.d("收到数据", "================onEvent: "+data);
+                    String tag = data.substring(0,1) == "1" ? "m" : "l";
+                    String[] strPoint = data.split(";")[0].split(":")[1].split(",");
+                    double x = Double.valueOf(strPoint[0]) *draw.getWidth();
+                    double y = Double.valueOf(strPoint[1]) *draw.getHeight();
+                    String newData = time +"," + x +"," + y + tag;
+                    draw.dataPaint(newData);
+                    Log.d("收到数据", "================onEvent: "+newData);
                 } catch (UnsupportedEncodingException e) {
                     e.printStackTrace();
                 }
             }
         };
         RTSManager.getInstance().observeReceiveData(sessionId, receiveDataObserver, register);
+    }
+
+    /**
+     * 获取时间戳
+     * @return
+     */
+    private String getTime(){
+
+        long timeStampSec = System.currentTimeMillis()/1000;
+        String time = String.format("%010d", timeStampSec);
+        return time;
     }
 
     /**
@@ -195,13 +217,17 @@ public class WhiteBoardManager {
      * @param register      是否注册
      * @param context       上下文（当前所处的Activity）
      */
-    public static void registerRTSCloseObserver(String sessionID, Boolean register, final Activity context){
+    public static void registerRTSCloseObserver(final String sessionID, Boolean register, final Activity context){
         Observer<RTSCommonEvent> endSessionObserver = new Observer<RTSCommonEvent>() {
             @Override
             public void onEvent(RTSCommonEvent rtsCommonEvent) {
                 Toast.makeText(context, "收到来自"+rtsCommonEvent.getAccount()+"挂断请求", Toast.LENGTH_SHORT).show();
                 close(rtsCommonEvent.getLocalSessionId(),context);
-                context.finish(); //销毁白板通话Activity
+//                context.finish(); //销毁白板通话Activity
+                AudioTeachActivity activity = (AudioTeachActivity)context;
+//                activity.startKeepUpBoard(sessionID,account);
+                activity.terminateRTS(sessionID);
+
             }
         };
         RTSManager.getInstance().observeHangUpNotification(sessionID,endSessionObserver,register);

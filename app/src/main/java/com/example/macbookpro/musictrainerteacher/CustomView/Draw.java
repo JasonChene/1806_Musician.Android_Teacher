@@ -33,6 +33,7 @@ public class Draw extends SurfaceView implements SurfaceHolder.Callback,View.OnT
     private float x;
     private float y;
     private String dataProcessed;
+    int refPacketID;
 
 
     Paint paint = new Paint();
@@ -88,7 +89,8 @@ public class Draw extends SurfaceView implements SurfaceHolder.Callback,View.OnT
 
     @Override
     public boolean onTouch(View v, MotionEvent event) {
-
+        int height=getMeasuredHeight();
+        int width=getMeasuredWidth();
         switch (event.getAction()){
             case MotionEvent.ACTION_DOWN:
 
@@ -96,7 +98,7 @@ public class Draw extends SurfaceView implements SurfaceHolder.Callback,View.OnT
                 y = event.getY();       //获取触摸点Y轴坐标
                 path.moveTo(x,y);
                 timeStamp = getTime();  //获取时间戳
-                dataProcessed = timeStamp+","+x+","+y+"m";  //数据打包
+                dataProcessed = "1"+":"+x/width+","+y/height+";" + "5:" + (refPacketID++) + ",0";  //数据打包
                 draw();
                 WhiteBoardManager.sendToRemote(sessionID,toAccount,dataProcessed); //发送封装好的数据
                 break;
@@ -105,7 +107,7 @@ public class Draw extends SurfaceView implements SurfaceHolder.Callback,View.OnT
                 y = event.getY();       //获取触摸点Y轴坐标
                 path.lineTo(x,y);
                 timeStamp = getTime();  //获取时间戳
-                dataProcessed = timeStamp+","+x+","+y+"l";  //数据打包
+                dataProcessed = "3"+":"+x/width+","+y/height+";" + "5:" + (refPacketID++) + ",0";  //数据打包
                 draw();
                 WhiteBoardManager.sendToRemote(sessionID,toAccount,dataProcessed); //发送封装好的数据
                 break;

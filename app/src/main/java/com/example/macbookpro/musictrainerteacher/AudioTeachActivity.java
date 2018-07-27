@@ -99,6 +99,14 @@ public class AudioTeachActivity extends AppCompatActivity {
         WhiteBoardManager.registerIncomingData(sessionID,true, main_draw);
         WhiteBoardManager.registerRTSCloseObserver(sessionID,true,AudioTeachActivity.this);
     }
+    public void terminateRTS(String sessionID)
+    {
+        //注销收数据监听
+        WhiteBoardManager.registerIncomingData(sessionID,false, main_draw);
+        //注销挂断监听
+        WhiteBoardManager.registerRTSCloseObserver(sessionID,false,AudioTeachActivity.this);
+        main_draw.setVisibility(View.GONE);
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -164,7 +172,7 @@ public class AudioTeachActivity extends AppCompatActivity {
         open_video_button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
- /*               if (checkSelfPermission(Manifest.permission.CAMERA, PERMISSION_REQ_ID_CAMERA))
+                if (checkSelfPermission(Manifest.permission.CAMERA, PERMISSION_REQ_ID_CAMERA))
                 {
 //                    setupLocalVideo(9990);
                     hideMusicPicture();
@@ -173,31 +181,31 @@ public class AudioTeachActivity extends AppCompatActivity {
                     local_container.setVisibility(View.VISIBLE);
                     FrameLayout remote_container = (FrameLayout) findViewById(R.id.remote_video_view_container);
                     remote_container.setVisibility(View.VISIBLE);
-                }*/
-                List<RTSTunnelType> types = new ArrayList<>(1);
-                types.add(RTSTunnelType.DATA);
-                main_draw.setVisibility(View.VISIBLE);
-                String sessionId = RTSManager.getInstance().start("122333444455555", types, null, null, new RTSCallback<RTSData>() {
-                    @Override
-                    public void onSuccess(RTSData rtsData) {
-                        Toast.makeText(AudioTeachActivity.this, "发起白板会话成功", Toast.LENGTH_SHORT).show();
-                        //注册主叫方收到被叫相应的回调
-                        WhiteBoardManager.registerCalleeAckNotification(rtsData.getLocalSessionId(),true,"1234500000",AudioTeachActivity.this);
-                    }
-
-                    @Override
-                    public void onFailed(int code) {
-                        Toast.makeText(AudioTeachActivity.this, "发起白板会话失败，错误码"+ code, Toast.LENGTH_SHORT).show();
-                    }
-
-                    @Override
-                    public void onException(Throwable exception) {
-                        Toast.makeText(AudioTeachActivity.this, "发起白板会话异常", Toast.LENGTH_SHORT).show();
-                    }
-                });
-                if (sessionId == null) {
-                    Toast.makeText(AudioTeachActivity.this, "发起白板会话失败", Toast.LENGTH_SHORT).show();
                 }
+//                List<RTSTunnelType> types = new ArrayList<>(1);
+//                types.add(RTSTunnelType.DATA);
+//                main_draw.setVisibility(View.VISIBLE);
+//                String sessionId = RTSManager.getInstance().start("122333444455555", types, null, null, new RTSCallback<RTSData>() {
+//                    @Override
+//                    public void onSuccess(RTSData rtsData) {
+//                        Toast.makeText(AudioTeachActivity.this, "发起白板会话成功", Toast.LENGTH_SHORT).show();
+//                        //注册主叫方收到被叫相应的回调
+//                        WhiteBoardManager.registerCalleeAckNotification(rtsData.getLocalSessionId(),true,"1234500000",AudioTeachActivity.this);
+//                    }
+//
+//                    @Override
+//                    public void onFailed(int code) {
+//                        Toast.makeText(AudioTeachActivity.this, "发起白板会话失败，错误码"+ code, Toast.LENGTH_SHORT).show();
+//                    }
+//
+//                    @Override
+//                    public void onException(Throwable exception) {
+//                        Toast.makeText(AudioTeachActivity.this, "发起白板会话异常", Toast.LENGTH_SHORT).show();
+//                    }
+//                });
+//                if (sessionId == null) {
+//                    Toast.makeText(AudioTeachActivity.this, "发起白板会话失败", Toast.LENGTH_SHORT).show();
+//                }
 
             }
         });
