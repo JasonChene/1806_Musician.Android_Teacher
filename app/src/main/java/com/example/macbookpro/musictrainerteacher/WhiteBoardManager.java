@@ -136,7 +136,9 @@ public class WhiteBoardManager {
                     data = new String(rtsTunData.getData(), 0, rtsTunData.getLength(), "UTF-8");
                     DataManager dataManager = new DataManager();
                     dataManager.dataDecode(data);
-                    String tag = data.substring(0,1) == "1" ? "m" : "l";
+                    Log.d("biaozhi", "================onEvent: "+data.substring(0,1));
+                    String tag = Integer.valueOf(data.substring(0,1)) == 1 ? "m" : "l";
+
                     String[] strPoint = data.split(";")[0].split(":")[1].split(",");
                     double x = Double.valueOf(strPoint[0]) *draw.getWidth();
                     double y = Double.valueOf(strPoint[1]) *draw.getHeight();

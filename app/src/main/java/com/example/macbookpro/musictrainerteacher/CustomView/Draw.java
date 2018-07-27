@@ -54,7 +54,7 @@ public class Draw extends SurfaceView implements SurfaceHolder.Callback,View.OnT
         super(context,attrs);
         getHolder().addCallback(this);//回调
         paint.setColor(Color.RED);//笔的颜色
-        paint.setTextSize(20);//画笔大小
+        paint.setTextSize(30);//画笔大小
         paint.setAntiAlias(true);//去除锯齿
         paint.setStyle(Paint.Style.STROKE);//实心线
         setOnTouchListener(this);
