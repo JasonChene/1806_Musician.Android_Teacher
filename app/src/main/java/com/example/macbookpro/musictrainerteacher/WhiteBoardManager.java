@@ -27,9 +27,6 @@ import java.io.UnsupportedEncodingException;
 
 public class WhiteBoardManager {
 
-
-
-
     /**
      * 发起方收到被叫相应的回调
      * @param sessionId
@@ -49,10 +46,8 @@ public class WhiteBoardManager {
                     }
                     // 进入会话界面
                     Toast.makeText(context, "接听成功", Toast.LENGTH_SHORT).show();
-                    Intent intent = new Intent(context, RTSMainActivity.class);
-                    intent.putExtra("sessionId",sessionId);
-                    intent.putExtra("toAccount",toAccount);
-                    context.startActivity(intent);
+                    AudioTeachActivity activity = (AudioTeachActivity)context;
+                    activity.startKeepUpBoard(sessionId,toAccount);
 
                 } else if (rtsCalleeAckEvent.getEvent() == RTSEventType.CALLEE_ACK_REJECT) {
                     // 被拒绝，结束会话
@@ -100,6 +95,8 @@ public class WhiteBoardManager {
                 Intent intent = new Intent(context, RTSMainActivity.class);
                 intent.putExtra("sessionId",sessionID);
                 intent.putExtra("toAccount",account);
+                AudioTeachActivity activity = (AudioTeachActivity)context;
+                activity.startKeepUpBoard(sessionID,account);
 //                context.startActivity(intent);
 
             }
@@ -134,7 +131,7 @@ public class WhiteBoardManager {
                     DataManager dataManager = new DataManager();
                     dataManager.dataDecode(data);
                     draw.dataPaint(data);
-                    Log.d("收到数据", "onEvent: "+data);
+                    Log.d("收到数据", "================onEvent: "+data);
                 } catch (UnsupportedEncodingException e) {
                     e.printStackTrace();
                 }

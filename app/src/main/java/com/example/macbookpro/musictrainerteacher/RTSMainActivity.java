@@ -24,8 +24,6 @@ public class RTSMainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_rtsmain);
 
-
-
         initView();     //初始化视图
         Intent intent = getIntent();        //获取上一个activity传递的参数
         sessionId = intent.getStringExtra("sessionId");
@@ -35,9 +33,7 @@ public class RTSMainActivity extends AppCompatActivity {
 
         //注册收到数据的监听
         WhiteBoardManager.registerIncomingData(sessionId,true, drawView);
-
         WhiteBoardManager.registerRTSCloseObserver(sessionId,true,RTSMainActivity.this);
-
         //挂断按钮的点击事件
         sendData.setOnClickListener(new View.OnClickListener() {
             @Override

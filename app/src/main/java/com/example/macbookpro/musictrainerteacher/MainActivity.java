@@ -47,7 +47,7 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        LoginInfo info = new LoginInfo("122333444455555","3354045a397621cd92406f1f98cde292"); // config...
+        LoginInfo info = new LoginInfo("liguangsong123","e10adc3949ba59abbe56e057f20f883e"); // config...
         NIMClient.getService(AuthService.class).login(info)
                 .setCallback(new RequestCallback() {
                     @Override

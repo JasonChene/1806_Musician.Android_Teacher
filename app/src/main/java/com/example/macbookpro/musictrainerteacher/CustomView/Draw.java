@@ -7,6 +7,7 @@ import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Path;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.MotionEvent;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
@@ -51,7 +52,7 @@ public class Draw extends SurfaceView implements SurfaceHolder.Callback,View.OnT
     public Draw(Context context, AttributeSet attrs) {
         super(context,attrs);
         getHolder().addCallback(this);//回调
-        paint.setColor(Color.BLACK);//笔的颜色
+        paint.setColor(Color.RED);//笔的颜色
         paint.setTextSize(20);//画笔大小
         paint.setAntiAlias(true);//去除锯齿
         paint.setStyle(Paint.Style.STROKE);//实心线
@@ -65,6 +66,7 @@ public class Draw extends SurfaceView implements SurfaceHolder.Callback,View.OnT
         Canvas canvas = getHolder().lockCanvas();
         canvas.drawColor(Color.WHITE);//画布背景
         canvas.drawPath(path,paint);
+        canvas.drawARGB(1,255,0,0);
         getHolder().unlockCanvasAndPost(canvas);
     }
 
@@ -86,6 +88,7 @@ public class Draw extends SurfaceView implements SurfaceHolder.Callback,View.OnT
 
     @Override
     public boolean onTouch(View v, MotionEvent event) {
+
         switch (event.getAction()){
             case MotionEvent.ACTION_DOWN:
 
@@ -134,6 +137,7 @@ public class Draw extends SurfaceView implements SurfaceHolder.Callback,View.OnT
      */
     public void dataPaint(String data){
          dataItem = dataManager.dataDecode(data);
+        Log.i("dataPaint","============"+dataItem);
          if(dataItem!=null){
              whitboardPaint(dataItem);
          }
