@@ -105,6 +105,7 @@ public class AudioTeachActivity extends AppCompatActivity {
         WhiteBoardManager.registerIncomingData(sessionID,false, main_draw);
         //注销挂断监听
         WhiteBoardManager.registerRTSCloseObserver(sessionID,false,AudioTeachActivity.this);
+        main_draw.Clear();
         main_draw.setVisibility(View.GONE);
     }
 

@@ -229,7 +229,6 @@ public class WhiteBoardManager {
                 AudioTeachActivity activity = (AudioTeachActivity)context;
 //                activity.startKeepUpBoard(sessionID,account);
                 activity.terminateRTS(sessionID);
-
             }
         };
         RTSManager.getInstance().observeHangUpNotification(sessionID,endSessionObserver,register);
