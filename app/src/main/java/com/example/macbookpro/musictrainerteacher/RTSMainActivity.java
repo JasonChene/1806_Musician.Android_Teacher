@@ -32,7 +32,7 @@ public class RTSMainActivity extends AppCompatActivity {
         drawView.toAccount = toaccount;     //参数传递
 
         //注册收到数据的监听
-        WhiteBoardManager.registerIncomingData(sessionId,true, drawView);
+        WhiteBoardManager.registerIncomingData(sessionId,true, drawView,RTSMainActivity.this);
         WhiteBoardManager.registerRTSCloseObserver(sessionId,true,RTSMainActivity.this);
         //挂断按钮的点击事件
         sendData.setOnClickListener(new View.OnClickListener() {
@@ -59,7 +59,7 @@ public class RTSMainActivity extends AppCompatActivity {
     protected void onDestroy() {
         super.onDestroy();
         //注销收数据监听
-        WhiteBoardManager.registerIncomingData(sessionId,false, drawView);
+        WhiteBoardManager.registerIncomingData(sessionId,false, drawView,RTSMainActivity.this);
         //注销挂断监听
         WhiteBoardManager.registerRTSCloseObserver(sessionId,false,RTSMainActivity.this);
     }

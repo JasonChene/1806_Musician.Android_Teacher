@@ -162,11 +162,19 @@
 
     </LinearLayout>
 
+
+    <View
+        android:id="@+id/drawBackgroud"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/colorAccent"
+        android:visibility="gone"/>
     <com.example.macbookpro.musictrainerteacher.CustomView.Draw
         android:id="@+id/main_draw"
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
         android:layout_weight="1"
+        android:background="#00ffffff"
         android:visibility="gone"/>
 
 </android.support.constraint.ConstraintLayout>
