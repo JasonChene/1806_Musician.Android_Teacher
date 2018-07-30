@@ -5,6 +5,7 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.util.Log;
+import android.widget.Button;
 import android.widget.Toast;
 
 import com.example.macbookpro.musictrainerteacher.CustomView.Draw;
@@ -37,6 +38,7 @@ public class WhiteBoardManager {
      * @param toAccount
      * @param context
      */
+//    AudioTeachActivity　Button;
     public static void registerCalleeAckNotification(final String sessionId, Boolean register, final String toAccount, final Context context){
 
         Observer<RTSCalleeAckEvent> calleeAckEventObserver = new Observer<RTSCalleeAckEvent>() {
@@ -83,7 +85,6 @@ public class WhiteBoardManager {
             }
         },register);
     }
-
     /**
      * 白板接听
      * @param sessionID     本地白板会话ID
@@ -107,6 +108,8 @@ public class WhiteBoardManager {
             @Override
             public void onFailed(int i) {
                 Toast.makeText(context, "接听白板失败，错误码"+i, Toast.LENGTH_SHORT).show();
+                Log.e("e", "接听失败"+i);
+
             }
 
             @Override
@@ -211,8 +214,6 @@ public class WhiteBoardManager {
             }
         });
     }
-
-
     /**
      * 收到白板挂断的回调
      * @param sessionID     本地会话ID

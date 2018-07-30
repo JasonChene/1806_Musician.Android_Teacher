@@ -132,34 +132,40 @@ public class VerificationCodeActivity extends AppCompatActivity {
                                     boolean allRoes = false;
                                     for (int i = 0; i < user_roles.size(); i++) {
                                         AVRole role = user_roles.get(i);
-                                        Log.e("e", "++++++++++" + role.getName());
+//                                        Log.e("e", "++++++++++" + role.getName());
                                         if (role.getName().equals("teacher")) {
                                             allRoes = true;
                                             break;
+
                                         }
                                     }
+//                                    Intent intent = new Intent(VerificationCodeActivity.this, LoginActivity.class);
+////                                在Intent中传递数据
+//                                    intent.putExtra("allROES", allRoes+"");
+////                                 启动Intent
+//                                    startActivity(intent);
                                     if (allRoes == true) {
 
                                         startActivity(new Intent(VerificationCodeActivity.this, MainActivity.class));
 
                                     } else {
                                         startActivity(new Intent(VerificationCodeActivity.this, LoginActivity.class));
-                                        Toast.makeText(VerificationCodeActivity.this, "没有授权继续操作", Toast.LENGTH_SHORT).show();
+                                        Toast.makeText(VerificationCodeActivity.this, "没有登录的权限", Toast.LENGTH_SHORT).show();
                                     }
 
                                 } catch (Exception error) {
                                     Log.e("error", "===========" + error);
+                                    Toast.makeText(VerificationCodeActivity.this, "登录失败,请重新登陆", Toast.LENGTH_SHORT).show();
+
 
                                 }
-//                                Intent intent = new Intent(VerificationCodeActivity.this, MainActivity.class);
-//                                在Intent中传递数据
-//                                intent.putExtra("phoneNumber", phone_number.getText() + "");
-                                // 启动Intent
-//                                startActivity(intent);
+
                                 /* 请求成功 */
                             } else {
                                 /* 请求失败 */
                                 Log.e("e", "登录请求失败" + e.getMessage());
+                                Toast.makeText(VerificationCodeActivity.this, ""+e.getMessage(), Toast.LENGTH_SHORT).show();
+
                             }
                         }
                     });
@@ -171,6 +177,7 @@ public class VerificationCodeActivity extends AppCompatActivity {
 
         icv = (VerificationCodeView) findViewById(R.id.icv);
         icv.setInputCompleteListener(new VerificationCodeView.InputCompleteListener() {
+
             @Override
             public void inputComplete() {
                 verification_code = icv.getInputContent();
@@ -179,7 +186,7 @@ public class VerificationCodeActivity extends AppCompatActivity {
             @Override
             public void deleteContent() {
                 verification_code = icv.getInputContent();
-            }
+            }   
         });
     }
 

@@ -6,12 +6,15 @@ import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.FrameLayout;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.avos.avoscloud.AVException;
 import com.avos.avoscloud.AVOSCloud;
@@ -38,7 +41,7 @@ public class LoginActivity extends AppCompatActivity {
                 //为了防止调试时总是获取验证码 可以使用下面注释的代码 调试完成 发布时删掉
 //                Intent intent = new Intent(LoginActivity.this, VerificationCodeActivity.class);
 //                // 在Intent中传递数据
-//                intent.putExtra("phoneNumber", phone_number.getText() + "");
+//                intent.putExtra("phoneNumber", phone_number.getText() + "" );
 //                // 启动Intent
 //                startActivity(intent);
                 AVOSCloud.requestSMSCodeInBackground(phone_number.getText() + "", new RequestMobileCodeCallback() {
@@ -55,6 +58,8 @@ public class LoginActivity extends AppCompatActivity {
                         } else {
                             /* 请求失败 */
                             Log.e("e","请求失败" + e.getMessage());
+                            Toast.makeText(LoginActivity.this, ""+e.getMessage(), Toast.LENGTH_SHORT).show();
+
                         }
                     }
                 });
@@ -79,5 +84,23 @@ public class LoginActivity extends AppCompatActivity {
         }
         TextView actionBarTitle = (TextView) findViewById(R.id.action_bar_title);
         actionBarTitle.setText("手机验证码登录");
+    }
+    private long time = 0;
+    @Override
+    public boolean onKeyDown(int keyCode, KeyEvent event) {
+        if (keyCode == KeyEvent.KEYCODE_BACK) {
+            if ((System.currentTimeMillis() - time > 1000)) {
+                Toast.makeText(this, "请重新登陆,再按一次返回桌面", Toast.LENGTH_SHORT).show();
+                time = System.currentTimeMillis();
+            } else {
+                Intent intent = new Intent(Intent.ACTION_MAIN);
+                intent.addCategory(Intent.CATEGORY_HOME);
+                startActivity(intent);
+            }
+            return true;
+        } else {
+            return super.onKeyDown(keyCode, event);
+        }
+
     }
 }

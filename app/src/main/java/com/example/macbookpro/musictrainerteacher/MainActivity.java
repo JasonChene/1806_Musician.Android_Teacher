@@ -5,6 +5,7 @@ import android.app.ActivityManager;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.os.SystemClock;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -16,6 +17,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.avos.avoscloud.AVUser;
 import com.example.macbookpro.musictrainerteacher.common.SysExitUtil;
@@ -23,6 +25,9 @@ import com.netease.nimlib.sdk.NIMClient;
 import com.netease.nimlib.sdk.RequestCallback;
 import com.netease.nimlib.sdk.auth.AuthService;
 import com.netease.nimlib.sdk.auth.LoginInfo;
+
+import java.util.Timer;
+import java.util.TimerTask;
 
 public class MainActivity extends AppCompatActivity {
     @Override
@@ -67,12 +72,9 @@ public class MainActivity extends AppCompatActivity {
 
                     }
                 });
-
     }
 
-
-
-    public  void  initActionBar(){
+        public  void  initActionBar(){
         android.support.v7.app.ActionBar actionBar = getSupportActionBar();
         if (actionBar != null) {
             actionBar.setTitle("");
@@ -91,19 +93,26 @@ public class MainActivity extends AppCompatActivity {
         actionBarTitle.setText("老师课程表");
     }
 
+    //双击退回手机主页面
+    private long time = 0;
     @Override
-    public boolean onKeyDown(int keyCode, KeyEvent event)
-    {
-        if(keyCode == KeyEvent.KEYCODE_BACK){
-            int siz=SysExitUtil.activityList.size();
-            for(int i=0;i<siz;i++){
-                if(SysExitUtil.activityList.get(i)!=null){
-                    ((Activity) SysExitUtil.activityList.get(i)).finish();
-                }
+    public boolean onKeyDown(int keyCode, KeyEvent event) {
+        if (keyCode == KeyEvent.KEYCODE_BACK) {
+            if ((System.currentTimeMillis() - time > 1000)) {
+                Toast.makeText(this, "再按一次返回桌面", Toast.LENGTH_SHORT).show();
+                time = System.currentTimeMillis();
+            } else {
+                Intent intent = new Intent(Intent.ACTION_MAIN);
+                intent.addCategory(Intent.CATEGORY_HOME);
+                startActivity(intent);
             }
+            return true;
+        } else {
+            return super.onKeyDown(keyCode, event);
         }
-        return super.onKeyDown(keyCode, event);
+
     }
+
     public void  User(){
         AVUser currentUser = AVUser.getCurrentUser();
         if (currentUser != null) {

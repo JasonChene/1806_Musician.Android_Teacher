@@ -17,7 +17,8 @@
         android:id="@+id/clear"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:text="清  除"/>
+        android:text="清  除"
+        android:visibility="gone"/>
 
     <Button
         android:id="@+id/senddata"
