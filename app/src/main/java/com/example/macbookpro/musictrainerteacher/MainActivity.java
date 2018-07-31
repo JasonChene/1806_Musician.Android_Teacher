@@ -116,6 +116,7 @@ public class MainActivity extends AppCompatActivity {
             }
             return true;
         } else {
+            NIMClient.getService(AuthService.class).logout();
             return super.onKeyDown(keyCode, event);
         }
 

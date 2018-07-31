@@ -6,6 +6,8 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Color;
+import android.graphics.PixelFormat;
 import android.graphics.drawable.BitmapDrawable;
 import android.os.Bundle;
 import android.os.Handler;
@@ -18,6 +20,7 @@ import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.SurfaceView;
 import android.view.View;
 import android.widget.Button;
@@ -64,6 +67,7 @@ public class AudioTeachActivity extends AppCompatActivity {
 
     Draw main_draw;
     View drawBackgroud;
+    Draw peer_draw;
 
     private final IRtcEngineEventHandler mRtcEventHandler = new IRtcEngineEventHandler() {
         @Override
@@ -128,6 +132,9 @@ public class AudioTeachActivity extends AppCompatActivity {
         main_draw.sessionID = sessionID;     //参数传递
         main_draw.toAccount = toAccount;     //参数传递
         main_draw.setVisibility(View.VISIBLE);
+        peer_draw.sessionID = sessionID;
+        peer_draw.toAccount = toAccount;
+        peer_draw.setVisibility(View.VISIBLE);
 
         //显示清除按钮
         Button clear_button = (Button) findViewById(R.id.clear);
@@ -151,6 +158,8 @@ public class AudioTeachActivity extends AppCompatActivity {
         WhiteBoardManager.registerRTSCloseObserver(sessionID,false,AudioTeachActivity.this);
         main_draw.Clear();
         main_draw.setVisibility(View.GONE);
+        peer_draw.Clear();
+        peer_draw.setVisibility(View.GONE);
 
         Button clear_button = (Button) findViewById(R.id.clear);
         clear_button.setVisibility(View.GONE);
@@ -214,6 +223,15 @@ public class AudioTeachActivity extends AppCompatActivity {
 
         WhiteBoardManager.registerRTSIncomingCallObserver(true,this);
         main_draw = findViewById(R.id.main_draw);
+        peer_draw = findViewById(R.id.peer_draw);
+        peer_draw.setZOrderOnTop(true);
+        peer_draw.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View view, MotionEvent motionEvent) {
+                peer_draw.local_draw_line_tag(view,motionEvent);
+                return true;
+            }
+        });
 
         drawBackgroud = findViewById(R.id.drawBackgroud);
         if (mRtcEngine == null && checkSelfPermission(Manifest.permission.RECORD_AUDIO, PERMISSION_REQ_ID_RECORD_AUDIO)) {
@@ -252,6 +270,7 @@ public class AudioTeachActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 main_draw.Clear();
+                peer_draw.Clear();
                 String clear_remote = "clear";
                 WhiteBoardManager.sendToRemote(main_draw.sessionID,main_draw.toAccount,clear_remote);
             }
@@ -404,7 +423,7 @@ public class AudioTeachActivity extends AppCompatActivity {
     // Tutorial Step 4
     //加入频道 (joinChannel)
     private void joinChannel(int uid) {
-        mRtcEngine.joinChannel(null, "demoChannel1", null, uid); // if you do not specify the uid, we will generate the uid for you
+        mRtcEngine.joinChannel(null, "demoChannel2", null, uid); // if you do not specify the uid, we will generate the uid for you
     }
     //离开房间
     private void leaveChannel() {
