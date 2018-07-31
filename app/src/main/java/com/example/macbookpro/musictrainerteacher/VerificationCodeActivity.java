@@ -21,6 +21,7 @@ import android.widget.Toast;
 
 import com.alibaba.fastjson.JSON;
 import com.avos.avoscloud.AVCallback;
+import com.avos.avoscloud.AVCloud;
 import com.avos.avoscloud.AVException;
 import com.avos.avoscloud.AVMobilePhoneVerifyCallback;
 import com.avos.avoscloud.AVOSCloud;
@@ -29,18 +30,23 @@ import com.avos.avoscloud.AVRelation;
 import com.avos.avoscloud.AVRole;
 import com.avos.avoscloud.AVUser;
 import com.avos.avoscloud.FindCallback;
+import com.avos.avoscloud.FunctionCallback;
 import com.avos.avoscloud.LogInCallback;
 import com.avos.avoscloud.RequestMobileCodeCallback;
 import com.example.macbookpro.musictrainerteacher.common.SysExitUtil;
 import com.tuo.customview.VerificationCodeView;
 
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.lang.reflect.Array;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.security.auth.callback.Callback;
 
+import static android.icu.util.Calendar.YEAR;
 import static android.icu.util.HebrewCalendar.AV;
 import static com.example.macbookpro.musictrainerteacher.storage.LocalStorage.saveObject;
 
@@ -121,43 +127,66 @@ public class VerificationCodeActivity extends AppCompatActivity {
                     //请求登录接口
                     AVUser.signUpOrLoginByMobilePhoneInBackground(phone_number, verification_code, new LogInCallback<AVUser>() {
                         @Override
-                        public void done(AVUser avUser, AVException e) {
+                        public void done(final AVUser avUser, AVException e) {
                             Log.e("e", "" + avUser);
                             if (null == e) {
-                                Log.e("e", "登录请求成功");
-                                //角色验证
-                                try {
-                                    List<AVRole> user_roles = avUser.getRoles();
+                                if (!avUser.containsKey("netEaseUserInfo"))
+                                {
+                                    Log.e("TAG","=======netEaseUserInfo=======");
+                                    Map<String, String> dicParameters = new HashMap<String, String>();
+                                    dicParameters.put("role", "teacher");
+                                    //云函数设置角色
+                                    AVCloud.callFunctionInBackground("mobileSetRole", dicParameters, new FunctionCallback() {
+                                        public void done(Object object, AVException e) {
+                                            Log.e("hahah",object.toString());
+                                            try {
+                                                JSONObject netEaseUserInfo = new JSONObject(object.toString());
+                                                if (e == null && Integer.parseInt(netEaseUserInfo.get("status").toString())== 200) {
+                                                    try {
+                                                        avUser.put("netEaseUserInfo",netEaseUserInfo.get("data"));
+                                                        AVUser.changeCurrentUser(avUser,true);
+                                                        startActivity(new Intent(VerificationCodeActivity.this, MainActivity.class));
+                                                    }catch (JSONException error)
+                                                    {
 
-                                    boolean allRoes = false;
-                                    for (int i = 0; i < user_roles.size(); i++) {
-                                        AVRole role = user_roles.get(i);
-//                                        Log.e("e", "++++++++++" + role.getName());
-                                        if (role.getName().equals("teacher")) {
-                                            allRoes = true;
-                                            break;
+                                                    }
 
+                                                    // 处理返回结果
+                                                } else {
+                                                    // 处理报错
+                                                }
+                                            }catch (JSONException err)
+                                            {
+
+                                            }
                                         }
+                                    });
+                                }
+                                else
+                                {
+                                    //角色验证
+                                    try {
+                                        List<AVRole> user_roles = avUser.getRoles();
+                                        Log.e("e", ""+user_roles);
+                                        boolean allRoes = false;
+                                        for (int i = 0; i < user_roles.size(); i++) {
+                                            AVRole role = user_roles.get(i);
+                                            if (role.getName().equals("teacher")) {
+                                                allRoes = true;
+                                                break;
+                                            }
+                                        }
+                                        if (allRoes == true) {
+                                            startActivity(new Intent(VerificationCodeActivity.this, MainActivity.class));
+                                            Toast.makeText(VerificationCodeActivity.this, "登录成功", Toast.LENGTH_SHORT).show();
+
+                                        } else {
+                                            Toast.makeText(VerificationCodeActivity.this, "没有授权继续操作", Toast.LENGTH_SHORT).show();
+                                        }
+
+                                    } catch (Exception error) {
+                                        Log.e("error", "===========" + error);
                                     }
-//                                    Intent intent = new Intent(VerificationCodeActivity.this, LoginActivity.class);
-////                                在Intent中传递数据
-//                                    intent.putExtra("allROES", allRoes+"");
-////                                 启动Intent
-//                                    startActivity(intent);
-                                    if (allRoes == true) {
-
-                                        startActivity(new Intent(VerificationCodeActivity.this, MainActivity.class));
-
-                                    } else {
-                                        startActivity(new Intent(VerificationCodeActivity.this, LoginActivity.class));
-                                        Toast.makeText(VerificationCodeActivity.this, "没有登录的权限", Toast.LENGTH_SHORT).show();
-                                    }
-
-                                } catch (Exception error) {
-                                    Log.e("error", "===========" + error);
-                                    Toast.makeText(VerificationCodeActivity.this, "登录失败,请重新登陆", Toast.LENGTH_SHORT).show();
-
-
                                 }
 
                                 /* 请求成功 */

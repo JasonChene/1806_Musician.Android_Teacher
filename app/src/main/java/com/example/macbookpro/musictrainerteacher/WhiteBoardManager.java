@@ -4,6 +4,7 @@ package com.example.macbookpro.musictrainerteacher;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.icu.text.RelativeDateTimeFormatter;
 import android.util.Log;
 import android.widget.Button;
 import android.widget.Toast;
@@ -22,8 +23,10 @@ import com.netease.nimlib.sdk.rts.model.RTSTunData;
 
 import java.io.UnsupportedEncodingException;
 import java.lang.reflect.Array;
+import java.security.acl.LastOwnerException;
 import java.text.NumberFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 
 /**
  * 白板能力类
@@ -126,7 +129,7 @@ public class WhiteBoardManager {
      * @param register      是否注册
      * @param draw          绘制类对象
      */
-    public static void registerIncomingData(String sessionId, boolean register, final Draw draw){
+    public static void registerIncomingData(String sessionId, boolean register, final Draw draw , final Context context){
 
         Observer<RTSTunData> receiveDataObserver = new Observer<RTSTunData>() {
             @Override
@@ -137,17 +140,40 @@ public class WhiteBoardManager {
 
                 try {
                     data = new String(rtsTunData.getData(), 0, rtsTunData.getLength(), "UTF-8");
-                    DataManager dataManager = new DataManager();
-                    dataManager.dataDecode(data);
-                    Log.d("biaozhi", "================onEvent: "+data.substring(0,1));
-                    String tag = Integer.valueOf(data.substring(0,1)) == 1 ? "m" : "l";
 
-                    String[] strPoint = data.split(";")[0].split(":")[1].split(",");
-                    double x = Double.valueOf(strPoint[0]) *draw.getWidth();
-                    double y = Double.valueOf(strPoint[1]) *draw.getHeight();
-                    String newData = time +"," + x +"," + y + tag;
-                    draw.dataPaint(newData);
-                    Log.d("收到数据", "================onEvent: "+newData);
+//                    Log.d("biaozhi", "================onEvent: "+data.substring(0,1));
+//                    Log.d("biaozhi", "==========3=========onEvent: "+data);
+                    String tag = "";
+                    if (Integer.valueOf(data.substring(0,1)) == 1)
+                    {
+                        tag = "m";
+                    }else if (Integer.valueOf(data.substring(0,1)) == 2)
+                    {
+                        tag = "l";
+                    }
+                    else if (Integer.valueOf(data.substring(0,1)) == 0)
+                    {
+                        tag = "p";
+                    }
+                    if (tag.equals("p"))
+                    {
+                        String[] strMusicImageUrl = data.split(":");
+                        Log.e("tagstrMusicImageUrl","==============strMusicImageUrl:"+Arrays.toString(strMusicImageUrl));
+                        AudioTeachActivity audioTeachActivity = (AudioTeachActivity) context;
+                        audioTeachActivity.addMusicPic(strMusicImageUrl[1]+":"+strMusicImageUrl[2]);
+                    }
+                    else
+                    {
+                        DataManager dataManager = new DataManager();
+                        dataManager.dataDecode(data);
+
+                        String[] strPoint = data.split(";")[0].split(":")[1].split(",");
+                        double x = Double.valueOf(strPoint[0]) *draw.getWidth();
+                        double y = Double.valueOf(strPoint[1]) *draw.getHeight();
+                        String newData = time +"," + x +"," + y + tag;
+                        draw.dataPaint(newData);
+                        Log.d("收到数据", "================onEvent: "+newData);
+                    }
                 } catch (UnsupportedEncodingException e) {
                     e.printStackTrace();
                 }

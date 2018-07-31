@@ -26,8 +26,9 @@ import com.netease.nimlib.sdk.RequestCallback;
 import com.netease.nimlib.sdk.auth.AuthService;
 import com.netease.nimlib.sdk.auth.LoginInfo;
 
-import java.util.Timer;
-import java.util.TimerTask;
+
+import org.json.JSONException;
+import org.json.JSONObject;
 
 public class MainActivity extends AppCompatActivity {
     @Override
@@ -36,7 +37,7 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         SysExitUtil.activityList.add(MainActivity.this);
         initActionBar();
-        User();
+        AVUser currentUser = getCurrentUser();
         Button login_button = (Button) findViewById(R.id.login_button);
         login_button.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -51,27 +52,34 @@ public class MainActivity extends AppCompatActivity {
                 startActivity(new Intent(MainActivity.this, AudioTeachActivity.class));
             }
         });
+        if (currentUser != null)
+        {
+            try {
+                JSONObject netEaseUserInfo = new JSONObject(currentUser.get("netEaseUserInfo").toString());
+                LoginInfo info = new LoginInfo(netEaseUserInfo.getString("accid"),netEaseUserInfo.getString("token"));
+                NIMClient.getService(AuthService.class).login(info)
+                        .setCallback(new RequestCallback() {
+                            @Override
+                            public void onSuccess(Object param) {
+                                Log.e("TAG","=====login:onSuccess"+param.toString());
+                            }
 
-        LoginInfo info = new LoginInfo("122333444455555","3354045a397621cd92406f1f98cde292"); // config...
-        NIMClient.getService(AuthService.class).login(info)
-                .setCallback(new RequestCallback() {
-                    @Override
-                    public void onSuccess(Object param) {
-                        Log.e("TAG","=====login:onSuccess"+param.toString());
-                    }
+                            @Override
+                            public void onFailed(int code) {
+                                Log.e("TAG","=====login: onFailed");
 
-                    @Override
-                    public void onFailed(int code) {
-                        Log.e("TAG","=====login: onFailed");
+                            }
 
-                    }
+                            @Override
+                            public void onException(Throwable exception) {
+                                Log.e("TAG","login: onException");
 
-                    @Override
-                    public void onException(Throwable exception) {
-                        Log.e("TAG","login: onException");
-
-                    }
-                });
+                            }
+                        });
+            }catch (JSONException e)
+            {
+            }
+        }
     }
 
         public  void  initActionBar(){
@@ -113,16 +121,18 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
-    public void  User(){
+    public AVUser getCurrentUser(){
         AVUser currentUser = AVUser.getCurrentUser();
         if (currentUser != null) {
-            Log.e("e", "+++++=========+++++" +currentUser);
+            Log.e("e", "+++++=========+++++" +currentUser.get("netEaseUserInfo"));
 
         } else {
             //缓存用户对象为空时，可打开用户注册界面…
             Log.e("e", "+++++=========+++++" );
             startActivity(new Intent(MainActivity.this, LoginActivity.class));
         }
+        return currentUser;
+
     }
 
 }

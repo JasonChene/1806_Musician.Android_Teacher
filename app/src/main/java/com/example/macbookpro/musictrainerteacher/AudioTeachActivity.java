@@ -4,7 +4,12 @@ import android.Manifest;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.drawable.BitmapDrawable;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
@@ -22,6 +27,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.macbookpro.musictrainerteacher.CustomView.Draw;
+import com.example.macbookpro.musictrainerteacher.common.SysExitUtil;
 import com.example.macbookpro.musictrainerteacher.storage.LocalStorage;
 import com.netease.nimlib.sdk.rts.RTSCallback;
 import com.netease.nimlib.sdk.rts.RTSManager;
@@ -30,6 +36,10 @@ import com.netease.nimlib.sdk.rts.model.RTSData;
 
 import org.json.JSONObject;
 
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.HttpURLConnection;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -38,14 +48,22 @@ import io.agora.rtc.IRtcEngineEventHandler;
 import io.agora.rtc.RtcEngine;
 import io.agora.rtc.video.VideoCanvas;
 
+import static android.net.sip.SipErrorCode.SERVER_ERROR;
+
 public class AudioTeachActivity extends AppCompatActivity {
 
-    RtcEngine mRtcEngine;
+    RtcEngine mRtcEngine = null;
     private static final int PERMISSION_REQ_ID_RECORD_AUDIO = 22;
     private static final int PERMISSION_REQ_ID_CAMERA = PERMISSION_REQ_ID_RECORD_AUDIO + 1;
     private static final String LOG_TAG = "LOG_TAG";
-//    public Button Clear_Button;
+
+
+    public static final int GET_DATA_SUCCESS = 1;
+    public static final int NETWORK_ERROR = 2;
+    public static final int SERVER_ERROR = 3;
+
     Draw main_draw;
+    View drawBackgroud;
 
     private final IRtcEngineEventHandler mRtcEventHandler = new IRtcEngineEventHandler() {
         @Override
@@ -77,6 +95,29 @@ public class AudioTeachActivity extends AppCompatActivity {
             }
         }
     };
+
+    private Handler handler = new Handler() {
+        @Override
+        public void handleMessage(Message msg) {
+            switch (msg.what){
+                case GET_DATA_SUCCESS:
+                    Bitmap bitmap = (Bitmap) msg.obj;
+                    setImageBitmap(bitmap);
+                    break;
+                case NETWORK_ERROR:
+                    Toast.makeText(AudioTeachActivity.this,"网络连接失败",Toast.LENGTH_SHORT).show();
+                    break;
+                case SERVER_ERROR:
+                    Toast.makeText(AudioTeachActivity.this,"服务器发生错误",Toast.LENGTH_SHORT).show();
+                    break;
+            }
+        }
+    };
+    public void setImageBitmap(Bitmap bitmap)
+    {
+        drawBackgroud.setBackground(new BitmapDrawable(getResources(),bitmap));
+    }
+
     private boolean isLogin() {
         JSONObject User = LocalStorage.getObject(AudioTeachActivity.this, "UserInfo");
         return User.length() > 0;
@@ -87,11 +128,16 @@ public class AudioTeachActivity extends AppCompatActivity {
         main_draw.sessionID = sessionID;     //参数传递
         main_draw.toAccount = toAccount;     //参数传递
         main_draw.setVisibility(View.VISIBLE);
+
         //显示清除按钮
         Button clear_button = (Button) findViewById(R.id.clear);
         clear_button.setVisibility(View.VISIBLE);
+
+        drawBackgroud.setVisibility(View.VISIBLE);
+
+
         //注册收到数据的监听
-        WhiteBoardManager.registerIncomingData(sessionID,true, main_draw);
+        WhiteBoardManager.registerIncomingData(sessionID,true, main_draw, AudioTeachActivity.this);
         WhiteBoardManager.registerRTSCloseObserver(sessionID,true,AudioTeachActivity.this);
         //隐藏本地视频窗口
         FrameLayout local_container = (FrameLayout) findViewById(R.id.local_video_view_container);
@@ -100,26 +146,77 @@ public class AudioTeachActivity extends AppCompatActivity {
     public void terminateRTS(String sessionID)
     {
         //注销收数据监听
-        WhiteBoardManager.registerIncomingData(sessionID,false, main_draw);
+        WhiteBoardManager.registerIncomingData(sessionID,false, main_draw,AudioTeachActivity.this);
         //注销挂断监听
         WhiteBoardManager.registerRTSCloseObserver(sessionID,false,AudioTeachActivity.this);
         main_draw.Clear();
         main_draw.setVisibility(View.GONE);
+
         Button clear_button = (Button) findViewById(R.id.clear);
         clear_button.setVisibility(View.GONE);
+
+        drawBackgroud.setVisibility(View.GONE);
     }
+    public void addMusicPic(String strMusicImageUrl)
+    {
+        //设置本地图片
+        Log.i("MusicPicUrl:","---------------------:"+strMusicImageUrl);
+        setImageURL(strMusicImageUrl);
+    }
+
+    public void setImageURL(final String path) {
+        //开启一个线程用于联网
+        new Thread() {
+            @Override
+            public void run() {
+                try {
+                    //把传过来的路径转成URL
+                    URL url = new URL(path);
+                    //获取连接
+                    HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+                    //使用GET方法访问网络
+                    connection.setRequestMethod("GET");
+                    //超时时间为10秒
+                    connection.setConnectTimeout(10000);
+                    //获取返回码
+                    int code = connection.getResponseCode();
+                    if (code == 200) {
+                        InputStream inputStream = connection.getInputStream();
+                        //使用工厂把网络的输入流生产Bitmap
+                        Bitmap bitmap = BitmapFactory.decodeStream(inputStream);
+                        //利用Message把图片发给Handler
+                        Message msg = Message.obtain();
+                        msg.obj = bitmap;
+                        msg.what = GET_DATA_SUCCESS;
+                        handler.sendMessage(msg);
+                        inputStream.close();
+                    }else {
+                        //服务启发生错误
+                        handler.sendEmptyMessage(SERVER_ERROR);
+                    }
+                } catch (IOException e) {
+                    e.printStackTrace();
+                    //网络连接错误
+                    handler.sendEmptyMessage(NETWORK_ERROR);
+                }
+            }
+        }.start();
+    }
+
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_audio_teach);
+        SysExitUtil.activityList.add(AudioTeachActivity.this);
         initActionBar();
 
         WhiteBoardManager.registerRTSIncomingCallObserver(true,this);
         main_draw = findViewById(R.id.main_draw);
-        final FrameLayout vedio = findViewById(R.id.remote_video_view_container);
 
-        if (checkSelfPermission(Manifest.permission.RECORD_AUDIO, PERMISSION_REQ_ID_RECORD_AUDIO)) {
+        drawBackgroud = findViewById(R.id.drawBackgroud);
+        if (mRtcEngine == null && checkSelfPermission(Manifest.permission.RECORD_AUDIO, PERMISSION_REQ_ID_RECORD_AUDIO)) {
             initAgoraEngineAndJoinChannel(9998);
             mRtcEngine.disableVideo();
             FrameLayout container = (FrameLayout)findViewById(R.id.local_video_view_container);
@@ -132,13 +229,17 @@ public class AudioTeachActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 if (main_draw.getVisibility() == View.GONE){
-                    if (vedio.getVisibility() == View.GONE){
+                    final FrameLayout remote_video = findViewById(R.id.remote_video_view_container);
+                    if (remote_video.getVisibility() == View.GONE){
                         leaveChannel();
                         startActivity(new Intent(AudioTeachActivity.this, MainActivity.class));
                     }
                     else {
                         Toast.makeText(AudioTeachActivity.this, "现在正在与学生教学", Toast.LENGTH_SHORT).show();
                     }
+                }
+                else {
+                    Toast.makeText(AudioTeachActivity.this, "现在正在与学生教学", Toast.LENGTH_SHORT).show();
                 }
 
             }
@@ -407,17 +508,20 @@ public class AudioTeachActivity extends AppCompatActivity {
     }
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {
-        final FrameLayout vedio = findViewById(R.id.local_video_view_container);
+        final FrameLayout local_video = findViewById(R.id.local_video_view_container);
         /* 返回键 */
         if (keyCode == KeyEvent.KEYCODE_BACK) {
             if (main_draw.getVisibility() == View.GONE){
-                if (vedio.getVisibility() == View.GONE){
+                if (local_video.getVisibility() == View.GONE){
                     leaveChannel();
                     startActivity(new Intent(AudioTeachActivity.this, MainActivity.class));
                 }
                 else {
                     Toast.makeText(AudioTeachActivity.this, "现在正在与学生教学", Toast.LENGTH_SHORT).show();
                 }
+            }
+            else {
+                Toast.makeText(AudioTeachActivity.this, "现在正在与学生教学", Toast.LENGTH_SHORT).show();
             }
         }
         return false;

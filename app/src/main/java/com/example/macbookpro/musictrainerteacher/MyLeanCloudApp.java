@@ -15,7 +15,7 @@ public class MyLeanCloudApp extends Application {
         // 初始化参数依次为 this, AppId, AppKey
         AVOSCloud.initialize(this,"dqozOWhkl50Xh5HQyfeFkDxV-gzGzoHsz","S6kknLSdUpaztxebGuLUMDUT");
         SDKOptions options = new SDKOptions();
-        options.appKey = "1ee5a51b7d008254cd73b1d4369a9494";
+        options.appKey = "34b421cf05779d2ddcfe1a1ae66035d1";
         NIMClient.init(this, null, options);
     }
 }

@@ -2,10 +2,15 @@ package com.example.macbookpro.musictrainerteacher.CustomView;
 
 
 import android.content.Context;
+import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Path;
+import android.graphics.PixelFormat;
+import android.graphics.PorterDuff;
+import android.graphics.Rect;
+import android.graphics.drawable.BitmapDrawable;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.MotionEvent;
@@ -13,6 +18,7 @@ import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 import android.view.View;
 
+import com.example.macbookpro.musictrainerteacher.R;
 import com.example.macbookpro.musictrainerteacher.WhiteBoardManager;
 import com.example.macbookpro.musictrainerteacher.manager.DataItem;
 import com.example.macbookpro.musictrainerteacher.manager.DataManager;
@@ -34,6 +40,7 @@ public class Draw extends SurfaceView implements SurfaceHolder.Callback,View.OnT
     private float y;
     private String dataProcessed;
     int refPacketID;
+    Bitmap canvasBitmap = null;
 
 
     Paint paint = new Paint();
@@ -58,6 +65,9 @@ public class Draw extends SurfaceView implements SurfaceHolder.Callback,View.OnT
         paint.setAntiAlias(true);//去除锯齿
         paint.setStyle(Paint.Style.STROKE);//实心线
         setOnTouchListener(this);
+        setZOrderOnTop(true);//使surfaceview放到最顶层
+        getHolder().setFormat(PixelFormat.TRANSLUCENT);//使窗口支持透明度
+
     }
 
     /**
@@ -65,7 +75,7 @@ public class Draw extends SurfaceView implements SurfaceHolder.Callback,View.OnT
      */
     public void draw(){
         Canvas canvas = getHolder().lockCanvas();
-        canvas.drawColor(Color.WHITE);//画布背景
+        canvas.drawColor(Color.TRANSPARENT, PorterDuff.Mode.CLEAR);//绘制透明色
         canvas.drawPath(path,paint);
         canvas.drawARGB(1,255,0,0);
         getHolder().unlockCanvasAndPost(canvas);
