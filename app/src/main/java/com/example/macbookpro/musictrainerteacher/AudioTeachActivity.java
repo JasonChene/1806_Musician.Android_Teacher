@@ -252,6 +252,8 @@ public class AudioTeachActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 main_draw.Clear();
+                String clear_remote = "clear";
+                WhiteBoardManager.sendToRemote(main_draw.sessionID,main_draw.toAccount,clear_remote);
             }
         });
 
