@@ -27,7 +27,7 @@ import com.example.macbookpro.musictrainerteacher.manager.DataManager;
 //import com.netease.nical.rtsdemo.Manager.DataManager;
 //import com.netease.nical.rtsdemo.Manager.WhiteBoardManager;
 
-public class Draw extends SurfaceView implements SurfaceHolder.Callback {
+public class Draw extends SurfaceView implements SurfaceHolder.Callback,View.OnTouchListener {
 
     public String sessionID;
     public String toAccount;
@@ -64,8 +64,8 @@ public class Draw extends SurfaceView implements SurfaceHolder.Callback {
         paint.setTextSize(30);//画笔大小
         paint.setAntiAlias(true);//去除锯齿
         paint.setStyle(Paint.Style.STROKE);//实心线
-//        setOnTouchListener(this);
-//        setZOrderOnTop(true);//使surfaceview放到最顶层
+        setOnTouchListener(this);
+        setZOrderOnTop(true);//使surfaceview放到最顶层
         getHolder().setFormat(PixelFormat.TRANSLUCENT);//使窗口支持透明度
 
     }
@@ -97,33 +97,33 @@ public class Draw extends SurfaceView implements SurfaceHolder.Callback {
 
     }
 
-//    @Override
-//    public boolean onTouch(View v, MotionEvent event) {
-//        int height=getMeasuredHeight();
-//        int width=getMeasuredWidth();
-//        switch (event.getAction()){
-//            case MotionEvent.ACTION_DOWN:
-//
-//                x = event.getX();       //获取触摸点X轴坐标
-//                y = event.getY();       //获取触摸点Y轴坐标
-//                path.moveTo(x,y);
-//                timeStamp = getTime();  //获取时间戳
-//                dataProcessed = "1"+":"+x/width+","+y/height+";" + "5:" + (refPacketID++) + ",0";  //数据打包
-//                draw();
-//                WhiteBoardManager.sendToRemote(sessionID,toAccount,dataProcessed); //发送封装好的数据
-//                break;
-//            case MotionEvent.ACTION_MOVE:
-//                x = event.getX();       //获取触摸点X轴坐标
-//                y = event.getY();       //获取触摸点Y轴坐标
-//                path.lineTo(x,y);
-//                timeStamp = getTime();  //获取时间戳
-//                dataProcessed = "3"+":"+x/width+","+y/height+";" + "5:" + (refPacketID++) + ",0";  //数据打包
-//                draw();
-//                WhiteBoardManager.sendToRemote(sessionID,toAccount,dataProcessed); //发送封装好的数据
-//                break;
-//        }
-//        return true;
-//    }
+    @Override
+    public boolean onTouch(View v, MotionEvent event) {
+        int height=getMeasuredHeight();
+        int width=getMeasuredWidth();
+        switch (event.getAction()){
+            case MotionEvent.ACTION_DOWN:
+
+                x = event.getX();       //获取触摸点X轴坐标
+                y = event.getY();       //获取触摸点Y轴坐标
+                path.moveTo(x,y);
+                timeStamp = getTime();  //获取时间戳
+                dataProcessed = "1"+":"+x/width+","+y/height+";" + "5:" + (refPacketID++) + ",0";  //数据打包
+                draw();
+                WhiteBoardManager.sendToRemote(sessionID,toAccount,dataProcessed); //发送封装好的数据
+                break;
+            case MotionEvent.ACTION_MOVE:
+                x = event.getX();       //获取触摸点X轴坐标
+                y = event.getY();       //获取触摸点Y轴坐标
+                path.lineTo(x,y);
+                timeStamp = getTime();  //获取时间戳
+                dataProcessed = "3"+":"+x/width+","+y/height+";" + "5:" + (refPacketID++) + ",0";  //数据打包
+                draw();
+                WhiteBoardManager.sendToRemote(sessionID,toAccount,dataProcessed); //发送封装好的数据
+                break;
+        }
+        return true;
+    }
 
     public void local_draw_line_tag(View v, MotionEvent event)
     {

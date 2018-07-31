@@ -224,14 +224,6 @@ public class AudioTeachActivity extends AppCompatActivity {
         WhiteBoardManager.registerRTSIncomingCallObserver(true,this);
         main_draw = findViewById(R.id.main_draw);
         peer_draw = findViewById(R.id.peer_draw);
-        peer_draw.setZOrderOnTop(true);
-        peer_draw.setOnTouchListener(new View.OnTouchListener() {
-            @Override
-            public boolean onTouch(View view, MotionEvent motionEvent) {
-                peer_draw.local_draw_line_tag(view,motionEvent);
-                return true;
-            }
-        });
 
         drawBackgroud = findViewById(R.id.drawBackgroud);
         if (mRtcEngine == null && checkSelfPermission(Manifest.permission.RECORD_AUDIO, PERMISSION_REQ_ID_RECORD_AUDIO)) {
