@@ -27,6 +27,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.macbookpro.musictrainerteacher.CustomView.Draw;
+import com.example.macbookpro.musictrainerteacher.common.SysExitUtil;
 import com.example.macbookpro.musictrainerteacher.storage.LocalStorage;
 import com.netease.nimlib.sdk.rts.RTSCallback;
 import com.netease.nimlib.sdk.rts.RTSManager;
@@ -199,6 +200,7 @@ public class AudioTeachActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_audio_teach);
+        SysExitUtil.activityList.add(AudioTeachActivity.this);
         initActionBar();
 
         WhiteBoardManager.registerRTSIncomingCallObserver(true,this);

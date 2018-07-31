@@ -49,33 +49,35 @@ public class MainActivity extends AppCompatActivity {
                 startActivity(new Intent(MainActivity.this, AudioTeachActivity.class));
             }
         });
-        try {
-            JSONObject netEaseUserInfo = new JSONObject(currentUser.get("netEaseUserInfo").toString());
-            LoginInfo info = new LoginInfo(netEaseUserInfo.getString("accid"),netEaseUserInfo.getString("token"));
-            NIMClient.getService(AuthService.class).login(info)
-                    .setCallback(new RequestCallback() {
-                        @Override
-                        public void onSuccess(Object param) {
-                            Log.e("TAG","=====login:onSuccess"+param.toString());
-                        }
-
-                        @Override
-                        public void onFailed(int code) {
-                            Log.e("TAG","=====login: onFailed");
-
-                        }
-
-                        @Override
-                        public void onException(Throwable exception) {
-                            Log.e("TAG","login: onException");
-
-                        }
-                    });
-        }catch (JSONException e)
+        if (currentUser != null)
         {
+            try {
+                JSONObject netEaseUserInfo = new JSONObject(currentUser.get("netEaseUserInfo").toString());
+                LoginInfo info = new LoginInfo(netEaseUserInfo.getString("accid"),netEaseUserInfo.getString("token"));
+                NIMClient.getService(AuthService.class).login(info)
+                        .setCallback(new RequestCallback() {
+                            @Override
+                            public void onSuccess(Object param) {
+                                Log.e("TAG","=====login:onSuccess"+param.toString());
+                            }
 
+                            @Override
+                            public void onFailed(int code) {
+                                Log.e("TAG","=====login: onFailed");
+
+                            }
+
+                            @Override
+                            public void onException(Throwable exception) {
+                                Log.e("TAG","login: onException");
+
+                            }
+                        });
+            }catch (JSONException e)
+            {
+
+            }
         }
-
     }
 
 

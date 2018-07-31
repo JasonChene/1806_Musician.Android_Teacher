@@ -141,15 +141,13 @@ public class VerificationCodeActivity extends AppCompatActivity {
                                     AVCloud.callFunctionInBackground("mobileSetRole", dicParameters, new FunctionCallback() {
                                         public void done(Object object, AVException e) {
                                             Log.e("hahah",object.toString());
-
-//                                            Log.e("hahah",netEaseUserInfo.toString());
                                             try {
                                                 JSONObject netEaseUserInfo = new JSONObject(object.toString());
                                                 if (e == null && Integer.parseInt(netEaseUserInfo.get("status").toString())== 200) {
                                                     try {
                                                         avUser.put("netEaseUserInfo",netEaseUserInfo.get("data"));
                                                         AVUser.changeCurrentUser(avUser,true);
-                                                        Log.e("TAG","+++++++++++++++++" + avUser);
+                                                        startActivity(new Intent(VerificationCodeActivity.this, MainActivity.class));
                                                     }catch (JSONException error)
                                                     {
 
