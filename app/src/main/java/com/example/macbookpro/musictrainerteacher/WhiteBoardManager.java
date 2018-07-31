@@ -171,8 +171,14 @@ public class WhiteBoardManager {
                         double x = Double.valueOf(strPoint[0]) *draw.getWidth();
                         double y = Double.valueOf(strPoint[1]) *draw.getHeight();
                         String newData = time +"," + x +"," + y + tag;
-                        draw.dataPaint(newData);
-                        Log.d("收到数据", "================onEvent: "+newData);
+                        if (draw != null)
+                        {
+                            draw.dataPaint(newData);
+                            Log.d("收到数据", "================onEvent: "+newData);
+                        }
+                        else {
+                            Toast.makeText(context,"正在准备乐谱",Toast.LENGTH_SHORT);
+                        }
                     }
                 } catch (UnsupportedEncodingException e) {
                     e.printStackTrace();
