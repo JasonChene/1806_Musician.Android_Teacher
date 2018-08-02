@@ -23,6 +23,7 @@ import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.SurfaceView;
 import android.view.View;
+import android.view.ViewOutlineProvider;
 import android.widget.Button;
 import android.widget.FrameLayout;
 import android.widget.LinearLayout;
@@ -32,10 +33,15 @@ import android.widget.Toast;
 import com.example.macbookpro.musictrainerteacher.CustomView.Draw;
 import com.example.macbookpro.musictrainerteacher.common.SysExitUtil;
 import com.example.macbookpro.musictrainerteacher.storage.LocalStorage;
+import com.netease.nimlib.sdk.NIMClient;
+import com.netease.nimlib.sdk.Observer;
+import com.netease.nimlib.sdk.auth.AuthService;
 import com.netease.nimlib.sdk.rts.RTSCallback;
 import com.netease.nimlib.sdk.rts.RTSManager;
 import com.netease.nimlib.sdk.rts.constant.RTSTunnelType;
+import com.netease.nimlib.sdk.rts.model.RTSCommonEvent;
 import com.netease.nimlib.sdk.rts.model.RTSData;
+import com.netease.nimlib.sdk.rts.model.RTSTunData;
 
 import org.json.JSONObject;
 
@@ -52,6 +58,7 @@ import io.agora.rtc.RtcEngine;
 import io.agora.rtc.video.VideoCanvas;
 
 import static android.net.sip.SipErrorCode.SERVER_ERROR;
+import static com.netease.nimlib.sdk.StatusCode.LOGINED;
 
 public class AudioTeachActivity extends AppCompatActivity {
 
@@ -68,8 +75,9 @@ public class AudioTeachActivity extends AppCompatActivity {
     Draw main_draw;
     View drawBackgroud;
     Draw peer_draw;
+    MyLeanCloudApp myApp;
 
-    private final IRtcEngineEventHandler mRtcEventHandler = new IRtcEngineEventHandler() {
+    private IRtcEngineEventHandler mRtcEventHandler = new IRtcEngineEventHandler() {
         @Override
         public void onJoinChannelSuccess(String channel, int uid, int elapsed) {
             super.onJoinChannelSuccess(channel, uid, elapsed);
@@ -122,12 +130,7 @@ public class AudioTeachActivity extends AppCompatActivity {
         drawBackgroud.setBackground(new BitmapDrawable(getResources(),bitmap));
     }
 
-    private boolean isLogin() {
-        JSONObject User = LocalStorage.getObject(AudioTeachActivity.this, "UserInfo");
-        return User.length() > 0;
-    }
-
-    public void startKeepUpBoard(String sessionID,String toAccount)
+    public void startKeepUpBoard(String sessionID, String toAccount)
     {
         main_draw.sessionID = sessionID;     //参数传递
         main_draw.toAccount = toAccount;     //参数传递
@@ -135,13 +138,10 @@ public class AudioTeachActivity extends AppCompatActivity {
         peer_draw.sessionID = sessionID;
         peer_draw.toAccount = toAccount;
         peer_draw.setVisibility(View.VISIBLE);
-
         //显示清除按钮
         Button clear_button = (Button) findViewById(R.id.clear);
         clear_button.setVisibility(View.VISIBLE);
-
         drawBackgroud.setVisibility(View.VISIBLE);
-
 
         //注册收到数据的监听
         WhiteBoardManager.registerIncomingData(sessionID,true, main_draw, AudioTeachActivity.this);
@@ -152,10 +152,22 @@ public class AudioTeachActivity extends AppCompatActivity {
     }
     public void terminateRTS(String sessionID)
     {
+
         //注销收数据监听
-        WhiteBoardManager.registerIncomingData(sessionID,false, main_draw,AudioTeachActivity.this);
+        Boolean isDataSuccess = RTSManager.getInstance().observeReceiveData(sessionID, new Observer<RTSTunData>() {
+            @Override
+            public void onEvent(RTSTunData rtsTunData) {
+            }
+        }, false);
+        Log.e("TAG","注销收数据监听"+isDataSuccess);
         //注销挂断监听
-        WhiteBoardManager.registerRTSCloseObserver(sessionID,false,AudioTeachActivity.this);
+        Boolean isCloseSuccess = RTSManager.getInstance().observeHangUpNotification(sessionID, new Observer<RTSCommonEvent>() {
+            @Override
+            public void onEvent(RTSCommonEvent rtsCommonEvent) {
+            }
+        },false);
+        Log.e("TAG","注销挂断监听"+isCloseSuccess);
+
         main_draw.Clear();
         main_draw.setVisibility(View.GONE);
         peer_draw.Clear();
@@ -165,6 +177,10 @@ public class AudioTeachActivity extends AppCompatActivity {
         clear_button.setVisibility(View.GONE);
 
         drawBackgroud.setVisibility(View.GONE);
+    }
+    public void updateWhiteBoardChannelID(String channelID)
+    {
+        main_draw.channelID = channelID;
     }
     public void addMusicPic(String strMusicImageUrl)
     {
@@ -220,8 +236,9 @@ public class AudioTeachActivity extends AppCompatActivity {
         setContentView(R.layout.activity_audio_teach);
         SysExitUtil.activityList.add(AudioTeachActivity.this);
         initActionBar();
+        myApp=(MyLeanCloudApp) getApplication();
+        myApp.setAudioTeachActivity(AudioTeachActivity.this);
 
-        WhiteBoardManager.registerRTSIncomingCallObserver(true,this);
         main_draw = findViewById(R.id.main_draw);
         peer_draw = findViewById(R.id.peer_draw);
 
@@ -241,7 +258,7 @@ public class AudioTeachActivity extends AppCompatActivity {
                 if (main_draw.getVisibility() == View.GONE){
                     final FrameLayout remote_video = findViewById(R.id.remote_video_view_container);
                     if (remote_video.getVisibility() == View.GONE){
-                        leaveChannel();
+                        finish();
                         startActivity(new Intent(AudioTeachActivity.this, MainActivity.class));
                     }
                     else {
@@ -316,30 +333,6 @@ public class AudioTeachActivity extends AppCompatActivity {
                     FrameLayout remote_container = (FrameLayout) findViewById(R.id.remote_video_view_container);
                     remote_container.setVisibility(View.VISIBLE);
                 }
-//                List<RTSTunnelType> types = new ArrayList<>(1);
-//                types.add(RTSTunnelType.DATA);
-//                main_draw.setVisibility(View.VISIBLE);
-//                String sessionId = RTSManager.getInstance().start("122333444455555", types, null, null, new RTSCallback<RTSData>() {
-//                    @Override
-//                    public void onSuccess(RTSData rtsData) {
-//                        Toast.makeText(AudioTeachActivity.this, "发起白板会话成功", Toast.LENGTH_SHORT).show();
-//                        //注册主叫方收到被叫相应的回调
-//                        WhiteBoardManager.registerCalleeAckNotification(rtsData.getLocalSessionId(),true,"1234500000",AudioTeachActivity.this);
-//                    }
-//
-//                    @Override
-//                    public void onFailed(int code) {
-//                        Toast.makeText(AudioTeachActivity.this, "发起白板会话失败，错误码"+ code, Toast.LENGTH_SHORT).show();
-//                    }
-//
-//                    @Override
-//                    public void onException(Throwable exception) {
-//                        Toast.makeText(AudioTeachActivity.this, "发起白板会话异常", Toast.LENGTH_SHORT).show();
-//                    }
-//                });
-//                if (sessionId == null) {
-//                    Toast.makeText(AudioTeachActivity.this, "发起白板会话失败", Toast.LENGTH_SHORT).show();
-//                }
 
             }
         });
@@ -357,15 +350,6 @@ public class AudioTeachActivity extends AppCompatActivity {
             }
         });
     }
-
-//    private void registerRTSIncomingCallObserver(boolean register) {
-//        RTSManager.getInstance().observeIncomingSession(new Observer<RTSData>() {
-//            @Override
-//            public void onEvent(RTSData rtsData) {
-//                // 启动会话界面
-//            }
-//        },register);
-//    }
 
     //初始化进入房间
     private void initAgoraEngineAndJoinChannel(int uid) {
@@ -445,20 +429,8 @@ public class AudioTeachActivity extends AppCompatActivity {
         container.addView(surfaceView);
         mRtcEngine.setupRemoteVideo(new VideoCanvas(surfaceView, VideoCanvas.RENDER_MODE_HIDDEN, uid));
         surfaceView.setTag(uid); // for mark purpose
-//        View tipMsg = findViewById(R.id.quick_tips_when_use_agora_sdk); // optional UI
-//        tipMsg.setVisibility(View.GONE);
     }
-//    private void setupRemoteVideo(int uid) {
-//        FrameLayout container = (FrameLayout) findViewById(R.id.remote_video_view_container);
-//        if (container.getChildCount() >= 1) {
-//            return;
-//        }
-//        container.setVisibility(View.VISIBLE);
-//        SurfaceView surfaceView = RtcEngine.CreateRendererView(getBaseContext());
-//        container.addView(surfaceView);
-//        mRtcEngine.setupRemoteVideo(new VideoCanvas(surfaceView, VideoCanvas.RENDER_MODE_ADAPTIVE, uid));
-//        surfaceView.setTag(uid); // for mark purpose
-//    }
+
 
     private  void close_Video(){
         mRtcEngine.disableVideo();
@@ -526,8 +498,7 @@ public class AudioTeachActivity extends AppCompatActivity {
         if (keyCode == KeyEvent.KEYCODE_BACK) {
             if (main_draw.getVisibility() == View.GONE){
                 if (local_video.getVisibility() == View.GONE){
-                    leaveChannel();
-                    startActivity(new Intent(AudioTeachActivity.this, MainActivity.class));
+                    this.finish();
                 }
                 else {
                     Toast.makeText(AudioTeachActivity.this, "现在正在与学生教学", Toast.LENGTH_SHORT).show();
@@ -538,5 +509,13 @@ public class AudioTeachActivity extends AppCompatActivity {
             }
         }
         return false;
+    }
+
+    @Override
+    protected void onDestroy() {
+        Log.e("TAG","onDestroy=============+++++++++++");
+        leaveChannel();
+        mRtcEngine.destroy();
+        super.onDestroy();
     }
 }

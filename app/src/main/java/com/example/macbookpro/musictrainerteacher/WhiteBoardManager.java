@@ -53,9 +53,9 @@ public class WhiteBoardManager {
                         return;
                     }
                     // 进入会话界面
-                    Toast.makeText(context, "接听成功", Toast.LENGTH_SHORT).show();
-                    AudioTeachActivity activity = (AudioTeachActivity)context;
-                    activity.startKeepUpBoard(sessionId,toAccount);
+//                    Toast.makeText(context, "接听成功", Toast.LENGTH_SHORT).show();
+//                    AudioTeachActivity activity = (AudioTeachActivity)context;
+//                    activity.startKeepUpBoard(sessionId,toAccount);
 
                 } else if (rtsCalleeAckEvent.getEvent() == RTSEventType.CALLEE_ACK_REJECT) {
                     // 被拒绝，结束会话
@@ -75,15 +75,12 @@ public class WhiteBoardManager {
         RTSManager.getInstance().observeIncomingSession(new Observer<RTSData>() {
             @Override
             public void onEvent(final RTSData rtsData) {
-                Toast.makeText(context, "收到白板请求", Toast.LENGTH_SHORT).show();
-                //跳转到接听界面
-//                Intent intent = new Intent(context, RTSAnswerActivity.class);
-//                intent.putExtra("sessionID",rtsData.getLocalSessionId());
-//                intent.putExtra("fromAccount",rtsData.getAccount());
-//                context.startActivity(intent);
-                 String sessionID = rtsData.getLocalSessionId();
-                 String fromAccount = rtsData.getAccount();
-                 accept(sessionID,fromAccount,context);
+                String sessionID = rtsData.getLocalSessionId();
+                String fromAccount = rtsData.getAccount();
+                long channelID = rtsData.getChannelId();
+                MyLeanCloudApp app = (MyLeanCloudApp)context;
+                AudioTeachActivity audioTeachActivity = (AudioTeachActivity) app.currentContext;
+                accept(sessionID,fromAccount,channelID,audioTeachActivity);
 
             }
         },register);
@@ -94,14 +91,15 @@ public class WhiteBoardManager {
      * @param account       呼叫方账号
      * @param context       上下文（当前所处的Activity）
      */
-    public static void accept(final String sessionID, final String account, final Context context){
+    public static void accept(final String sessionID, final String account,final long channelID, final Context context){
+        Toast.makeText(context, "开始接受白板请求", Toast.LENGTH_SHORT).show();
+        //跳转到接听界面
+
+        Log.e("Tag","==============收到白板请求："+channelID);
         RTSManager.getInstance().accept(sessionID, null, new RTSCallback<Boolean>() {
             @Override
             public void onSuccess(Boolean aBoolean) {
                 Toast.makeText(context, "接听成功", Toast.LENGTH_SHORT).show();
-                Intent intent = new Intent(context, RTSMainActivity.class);
-                intent.putExtra("sessionId",sessionID);
-                intent.putExtra("toAccount",account);
                 AudioTeachActivity activity = (AudioTeachActivity)context;
                 activity.startKeepUpBoard(sessionID,account);
 //                context.startActivity(intent);
@@ -129,63 +127,64 @@ public class WhiteBoardManager {
      * @param register      是否注册
      * @param draw          绘制类对象
      */
-    public static void registerIncomingData(String sessionId, boolean register, final Draw draw , final Context context){
+    public static void registerIncomingData(String sessionId, final boolean register, final Draw draw , final Context context){
 
         Observer<RTSTunData> receiveDataObserver = new Observer<RTSTunData>() {
             @Override
             public void onEvent(RTSTunData rtsTunData) {
-                String data = "[parse bytes error]";
-                long timeStampSec = System.currentTimeMillis()/1000;
-                String time = String.format("%010d", timeStampSec);
+                if (register == true)
+                {
+                    String data = "[parse bytes error]";
+                    long timeStampSec = System.currentTimeMillis()/1000;
+                    String time = String.format("%010d", timeStampSec);
 
-                try {
-                    data = new String(rtsTunData.getData(), 0, rtsTunData.getLength(), "UTF-8");
-
-//                    Log.d("biaozhi", "================onEvent: "+data.substring(0,1));
-//                    Log.d("biaozhi", "==========3=========onEvent: "+data);
-                    String tag = "";
-                    if (Integer.valueOf(data.substring(0,1)) == 1)
-                    {
-                        tag = "m";
-                    }else if (Integer.valueOf(data.substring(0,1)) == 2)
-                    {
-                        tag = "l";
-                    }
-                    else if (Integer.valueOf(data.substring(0,1)) == 0)
-                    {
-                        tag = "p";
-                    }
-                    if (tag.equals("p"))
-                    {
-                        String[] strMusicImageUrl = data.split(":");
-                        Log.e("tagstrMusicImageUrl","==============strMusicImageUrl:"+Arrays.toString(strMusicImageUrl));
-                        AudioTeachActivity audioTeachActivity = (AudioTeachActivity) context;
-                        audioTeachActivity.addMusicPic(strMusicImageUrl[1]+":"+strMusicImageUrl[2]);
-                    }
-                    else
-                    {
-                        DataManager dataManager = new DataManager();
-                        dataManager.dataDecode(data);
-
-                        String[] strPoint = data.split(";")[0].split(":")[1].split(",");
-                        double x = Double.valueOf(strPoint[0]) *draw.getWidth();
-                        double y = Double.valueOf(strPoint[1]) *draw.getHeight();
-                        String newData = time +"," + x +"," + y + tag;
-                        if (draw != null)
+                    try {
+                        data = new String(rtsTunData.getData(), 0, rtsTunData.getLength(), "UTF-8");
+                        String tag = "";
+                        if (Integer.valueOf(data.substring(0,1)) == 1)
                         {
-                            draw.dataPaint(newData);
-                            Log.d("收到数据", "================onEvent: "+newData);
+                            tag = "m";
+                        }else if (Integer.valueOf(data.substring(0,1)) == 2)
+                        {
+                            tag = "l";
                         }
-                        else {
-                            Toast.makeText(context,"正在准备乐谱",Toast.LENGTH_SHORT);
+                        else if (Integer.valueOf(data.substring(0,1)) == 0)
+                        {
+                            tag = "p";
                         }
+                        if (tag.equals("p"))
+                        {
+                            String[] strMusicImageUrl = data.split(":");
+                            Log.e("tagstrMusicImageUrl","==============strMusicImageUrl:"+Arrays.toString(strMusicImageUrl));
+                            AudioTeachActivity audioTeachActivity = (AudioTeachActivity) context;
+                            audioTeachActivity.addMusicPic(strMusicImageUrl[1]+":"+strMusicImageUrl[2]);
+                        }
+                        else
+                        {
+                            DataManager dataManager = new DataManager();
+                            dataManager.dataDecode(data);
+
+                            String[] strPoint = data.split(";")[0].split(":")[1].split(",");
+                            double x = Double.valueOf(strPoint[0]) *draw.getWidth();
+                            double y = Double.valueOf(strPoint[1]) *draw.getHeight();
+                            String newData = time +"," + x +"," + y + tag;
+                            if (draw != null)
+                            {
+                                draw.dataPaint(newData);
+                                Log.d("收到数据", "================onEvent: "+newData);
+                            }
+                            else {
+                                Toast.makeText(context,"正在准备乐谱",Toast.LENGTH_SHORT);
+                            }
+                        }
+                    } catch (UnsupportedEncodingException e) {
+                        e.printStackTrace();
                     }
-                } catch (UnsupportedEncodingException e) {
-                    e.printStackTrace();
                 }
             }
         };
-        RTSManager.getInstance().observeReceiveData(sessionId, receiveDataObserver, register);
+        Boolean issuccess = RTSManager.getInstance().observeReceiveData(sessionId, receiveDataObserver, register);
+        Log.e("TAG","注册数据监听"+issuccess);
     }
 
     /**
@@ -229,10 +228,7 @@ public class WhiteBoardManager {
         RTSManager.getInstance().close(SessionID, new RTSCallback<Void>() {
             @Override
             public void onSuccess(Void aVoid) {
-//                Toast.makeText(context, "挂断成功", Toast.LENGTH_SHORT).show();
-//                Intent intent = new Intent(context, RTSCallActivity.class);
-//                context.startActivity(intent);  //跳转到呼叫界面
-//                context.finish();   //销毁白板通话Activity
+                Toast.makeText(context, "挂断成功", Toast.LENGTH_SHORT).show();
             }
 
             @Override
@@ -252,19 +248,24 @@ public class WhiteBoardManager {
      * @param register      是否注册
      * @param context       上下文（当前所处的Activity）
      */
-    public static void registerRTSCloseObserver(final String sessionID, Boolean register, final Activity context){
+    public static void registerRTSCloseObserver(final String sessionID, final Boolean register, final Activity context){
         Observer<RTSCommonEvent> endSessionObserver = new Observer<RTSCommonEvent>() {
             @Override
             public void onEvent(RTSCommonEvent rtsCommonEvent) {
-                Toast.makeText(context, "收到来自"+rtsCommonEvent.getAccount()+"挂断请求", Toast.LENGTH_SHORT).show();
-                close(rtsCommonEvent.getLocalSessionId(),context);
-//                context.finish(); //销毁白板通话Activity
-                AudioTeachActivity activity = (AudioTeachActivity)context;
-//                activity.startKeepUpBoard(sessionID,account);
-                activity.terminateRTS(sessionID);
+                if (register == true)
+                {
+//                    close(rtsCommonEvent.getLocalSessionId(),context);
+                    Toast.makeText(context, "收到来自"+rtsCommonEvent.getAccount()+"挂断请求", Toast.LENGTH_SHORT).show();
+                    AudioTeachActivity activity = (AudioTeachActivity)context;
+                    close(sessionID,context);
+                    activity.terminateRTS(sessionID);
+                }
+
+
             }
         };
-        RTSManager.getInstance().observeHangUpNotification(sessionID,endSessionObserver,register);
+        Boolean issuccess = RTSManager.getInstance().observeHangUpNotification(sessionID,endSessionObserver,register);
+        Log.e("TAG","注册数据监听"+issuccess);
     }
 
 }

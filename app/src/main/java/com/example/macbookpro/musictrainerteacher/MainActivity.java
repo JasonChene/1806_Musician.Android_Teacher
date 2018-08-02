@@ -5,6 +5,7 @@ import android.app.ActivityManager;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.graphics.LinearGradient;
 import android.os.SystemClock;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
@@ -30,14 +31,71 @@ import com.netease.nimlib.sdk.auth.LoginInfo;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import static com.netease.nimlib.sdk.StatusCode.LOGINED;
+
 public class MainActivity extends AppCompatActivity {
+
+    Boolean isLoginEaseSuccess = false;
+
+    @Override
+    protected void onResume() {
+        // TODO Auto-generated method stub
+        super.onResume();
+    }
+    public void startLoginEase()
+    {
+        if (NIMClient.getStatus() != LOGINED)
+        {
+            NIMClient.getService(AuthService.class).logout();
+            AVUser currentUser = getCurrentUser();
+            if (currentUser != null)
+            {
+                try {
+                    JSONObject netEaseUserInfo = new JSONObject(currentUser.get("netEaseUserInfo").toString());
+                    LoginInfo info = new LoginInfo(netEaseUserInfo.getString("accid"),netEaseUserInfo.getString("token"));
+                    NIMClient.getService(AuthService.class).login(info)
+                            .setCallback(new RequestCallback() {
+                                @Override
+                                public void onSuccess(Object param) {
+                                    Toast.makeText(MainActivity.this,"白板登录成功",Toast.LENGTH_SHORT);
+                                    Log.e("TAG","白板登录成功");
+                                    isLoginEaseSuccess = true;
+                                }
+
+                                @Override
+                                public void onFailed(int code) {
+                                    Toast.makeText(MainActivity.this,"白板登录失败"+code,Toast.LENGTH_SHORT);
+                                    Log.e("TAG","白板登录失败"+code);
+                                    isLoginEaseSuccess = false;
+                                }
+
+                                @Override
+                                public void onException(Throwable exception) {
+                                    Log.e("TAG","login: onException");
+                                    Toast.makeText(MainActivity.this,"白板登录异常失败",Toast.LENGTH_SHORT);
+                                    isLoginEaseSuccess = false;
+
+                                }
+                            });
+                }catch (JSONException e)
+                {
+                }
+            }
+        }
+    }
+
+    @Override
+    protected void onStop() {
+        // TODO Auto-generated method stub
+        super.onStop();
+    }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         SysExitUtil.activityList.add(MainActivity.this);
         initActionBar();
-        AVUser currentUser = getCurrentUser();
         Button login_button = (Button) findViewById(R.id.login_button);
         login_button.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -52,37 +110,10 @@ public class MainActivity extends AppCompatActivity {
                 startActivity(new Intent(MainActivity.this, AudioTeachActivity.class));
             }
         });
-        if (currentUser != null)
-        {
-            try {
-                JSONObject netEaseUserInfo = new JSONObject(currentUser.get("netEaseUserInfo").toString());
-                LoginInfo info = new LoginInfo(netEaseUserInfo.getString("accid"),netEaseUserInfo.getString("token"));
-                NIMClient.getService(AuthService.class).login(info)
-                        .setCallback(new RequestCallback() {
-                            @Override
-                            public void onSuccess(Object param) {
-                                Log.e("TAG","=====login:onSuccess"+param.toString());
-                            }
-
-                            @Override
-                            public void onFailed(int code) {
-                                Log.e("TAG","=====login: onFailed");
-
-                            }
-
-                            @Override
-                            public void onException(Throwable exception) {
-                                Log.e("TAG","login: onException");
-
-                            }
-                        });
-            }catch (JSONException e)
-            {
-            }
-        }
+        startLoginEase();
     }
 
-        public  void  initActionBar(){
+    public  void  initActionBar(){
         android.support.v7.app.ActionBar actionBar = getSupportActionBar();
         if (actionBar != null) {
             actionBar.setTitle("");
@@ -110,9 +141,9 @@ public class MainActivity extends AppCompatActivity {
                 Toast.makeText(this, "再按一次返回桌面", Toast.LENGTH_SHORT).show();
                 time = System.currentTimeMillis();
             } else {
-                Intent intent = new Intent(Intent.ACTION_MAIN);
-                intent.addCategory(Intent.CATEGORY_HOME);
-                startActivity(intent);
+//                Intent intent = new Intent(Intent.ACTION_MAIN);
+//                intent.addCategory(Intent.CATEGORY_HOME);
+//                startActivity(intent);
             }
             return true;
         } else {
