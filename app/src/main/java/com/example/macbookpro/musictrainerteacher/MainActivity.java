@@ -41,6 +41,8 @@ public class MainActivity extends AppCompatActivity {
     protected void onResume() {
         // TODO Auto-generated method stub
         super.onResume();
+        MyLeanCloudApp myApp=(MyLeanCloudApp) getApplication();
+        myApp.setAudioTeachActivity(MainActivity.this);
     }
     public void startLoginEase()
     {
@@ -94,8 +96,7 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        MyLeanCloudApp myApp=(MyLeanCloudApp) getApplication();
-        myApp.setAudioTeachActivity(MainActivity.this);
+
         SysExitUtil.activityList.add(MainActivity.this);
         initActionBar();
         Button login_button = (Button) findViewById(R.id.login_button);

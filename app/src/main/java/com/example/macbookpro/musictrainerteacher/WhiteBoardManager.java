@@ -82,10 +82,16 @@ public class WhiteBoardManager {
                 MyLeanCloudApp app = (MyLeanCloudApp)context;
 
                 Log.e("TAG",app.currentContext.getClass().toString());
-                if (app.currentContext.getClass().toString().equals("com.example.macbookpro.musictrainerteacher.AudioTeachActivity"))
+                if (app.currentContext.getClass().toString().equals("class com.example.macbookpro.musictrainerteacher.AudioTeachActivity"))
                 {
                     AudioTeachActivity audioTeachActivity = (AudioTeachActivity) app.currentContext;
                     accept(sessionID,fromAccount,channelID,audioTeachActivity);
+//                    return;
+                }
+                else
+                {
+                    close(sessionID,(Activity) app.currentContext);
+//                    return;
                 }
             }
         },register);
@@ -99,7 +105,6 @@ public class WhiteBoardManager {
     public static void accept(final String sessionID, final String account,final long channelID, final Context context){
         Toast.makeText(context, "开始接受白板请求", Toast.LENGTH_SHORT).show();
         //跳转到接听界面
-
         Log.e("Tag","==============收到白板请求："+channelID);
         RTSManager.getInstance().accept(sessionID, null, new RTSCallback<Boolean>() {
             @Override
@@ -107,8 +112,6 @@ public class WhiteBoardManager {
                 Toast.makeText(context, "接听成功", Toast.LENGTH_SHORT).show();
                 AudioTeachActivity activity = (AudioTeachActivity)context;
                 activity.startKeepUpBoard(sessionID,account);
-//                context.startActivity(intent);
-
             }
 
             @Override
@@ -233,17 +236,17 @@ public class WhiteBoardManager {
         RTSManager.getInstance().close(SessionID, new RTSCallback<Void>() {
             @Override
             public void onSuccess(Void aVoid) {
-                Toast.makeText(context, "挂断成功", Toast.LENGTH_SHORT).show();
+//                Toast.makeText(context, "挂断成功", Toast.LENGTH_SHORT).show();
             }
 
             @Override
             public void onFailed(int code) {
-                Toast.makeText(context, "白板挂断失败，错误码"+code, Toast.LENGTH_SHORT).show();
+//                Toast.makeText(context, "白板挂断失败，错误码"+code, Toast.LENGTH_SHORT).show();
             }
 
             @Override
             public void onException(Throwable exception) {
-                Toast.makeText(context, "白板挂断异常" +exception.toString(), Toast.LENGTH_SHORT).show();
+//                Toast.makeText(context, "白板挂断异常" +exception.toString(), Toast.LENGTH_SHORT).show();
             }
         });
     }
