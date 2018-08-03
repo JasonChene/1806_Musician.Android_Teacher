@@ -75,13 +75,18 @@ public class WhiteBoardManager {
         RTSManager.getInstance().observeIncomingSession(new Observer<RTSData>() {
             @Override
             public void onEvent(final RTSData rtsData) {
+
                 String sessionID = rtsData.getLocalSessionId();
                 String fromAccount = rtsData.getAccount();
                 long channelID = rtsData.getChannelId();
                 MyLeanCloudApp app = (MyLeanCloudApp)context;
-                AudioTeachActivity audioTeachActivity = (AudioTeachActivity) app.currentContext;
-                accept(sessionID,fromAccount,channelID,audioTeachActivity);
 
+                Log.e("TAG",app.currentContext.getClass().toString());
+                if (app.currentContext.getClass().toString().equals("com.example.macbookpro.musictrainerteacher.AudioTeachActivity"))
+                {
+                    AudioTeachActivity audioTeachActivity = (AudioTeachActivity) app.currentContext;
+                    accept(sessionID,fromAccount,channelID,audioTeachActivity);
+                }
             }
         },register);
     }

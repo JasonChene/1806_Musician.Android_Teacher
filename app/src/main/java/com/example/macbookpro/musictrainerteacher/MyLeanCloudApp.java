@@ -21,7 +21,6 @@ public class MyLeanCloudApp extends Application {
         SDKOptions options = new SDKOptions();
         options.appKey = "34b421cf05779d2ddcfe1a1ae66035d1";
         NIMClient.init(this, null, options);
-//        WhiteBoardManager.registerRTSIncomingCallObserver(true,this);
         WhiteBoardManager.registerRTSIncomingCallObserver(true,this);
     }
     public Boolean getIsRegisterRTSIncomingCallObserver() {
