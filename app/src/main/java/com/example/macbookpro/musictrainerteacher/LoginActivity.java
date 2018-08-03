@@ -44,6 +44,7 @@ public class LoginActivity extends AppCompatActivity {
 //                intent.putExtra("phoneNumber", phone_number.getText() + "" );
 //                // 启动Intent
 //                startActivity(intent);
+
                 AVOSCloud.requestSMSCodeInBackground(phone_number.getText() + "", new RequestMobileCodeCallback() {
                     @Override
                     public void done(AVException e) {

@@ -32,7 +32,9 @@ public class Draw extends SurfaceView implements SurfaceHolder.Callback,View.OnT
     public String sessionID;
     public String toAccount;
     public String dataReceived;
+    public String channelID = "";
     public DataItem dataItem;
+
 
     private Path path = new Path();
     private String timeStamp;
@@ -75,10 +77,14 @@ public class Draw extends SurfaceView implements SurfaceHolder.Callback,View.OnT
      */
     public void draw(){
         Canvas canvas = getHolder().lockCanvas();
-        canvas.drawColor(Color.TRANSPARENT, PorterDuff.Mode.CLEAR);//绘制透明色
-        canvas.drawPath(path,paint);
-        canvas.drawARGB(1,255,0,0);
-        getHolder().unlockCanvasAndPost(canvas);
+        if (canvas != null)
+        {
+            canvas.drawColor(Color.TRANSPARENT, PorterDuff.Mode.CLEAR);//绘制透明色
+            canvas.drawPath(path,paint);
+            canvas.drawARGB(1,255,0,0);
+            getHolder().unlockCanvasAndPost(canvas);
+        }
+
     }
 
 
