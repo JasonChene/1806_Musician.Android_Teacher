@@ -237,7 +237,7 @@ public class AudioTeachActivity extends AppCompatActivity {
         setContentView(R.layout.activity_audio_teach);
         SysExitUtil.activityList.add(AudioTeachActivity.this);
         initActionBar();
-        WhiteBoardManager.registerRTSIncomingCallObserver(true,this);
+//        WhiteBoardManager.registerRTSIncomingCallObserver(true,this);
 
         myApp=(MyLeanCloudApp) getApplication();
         myApp.setAudioTeachActivity(AudioTeachActivity.this);
@@ -294,15 +294,19 @@ public class AudioTeachActivity extends AppCompatActivity {
         join_first_btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                close_Video();
-                showMusicPicture();
-                leaveChannel();
-                Channel_name = "demoChannel1";
-                initAgoraEngineAndJoinChannel(9998);
-                joinChannel(9998);
-                mRtcEngine.disableVideo();
                 FrameLayout container = (FrameLayout)findViewById(R.id.local_video_view_container);
-                container.setVisibility(View.GONE);
+                if(container.getVisibility() == View.GONE){
+                    close_Video();
+                    showMusicPicture();
+                    leaveChannel();
+                    Channel_name = "demoChannel1";
+                    initAgoraEngineAndJoinChannel(9998);
+                    joinChannel(9998);
+                    mRtcEngine.disableVideo();
+                    container.setVisibility(View.GONE);
+                }else{
+                    Toast.makeText(AudioTeachActivity.this, "现在正在与学生教学,请先关闭视频", Toast.LENGTH_SHORT).show();
+                }
             }
 
         });
@@ -310,15 +314,19 @@ public class AudioTeachActivity extends AppCompatActivity {
         join_second_btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                close_Video();
-                showMusicPicture();
-                leaveChannel();
-                Channel_name = "demoChannel2";
-                initAgoraEngineAndJoinChannel(9998);
-                joinChannel(9998);
-                mRtcEngine.disableVideo();
                 FrameLayout container = (FrameLayout)findViewById(R.id.local_video_view_container);
-                container.setVisibility(View.GONE);
+                if(container.getVisibility() == View.GONE){
+                    close_Video();
+                    showMusicPicture();
+                    leaveChannel();
+                    Channel_name = "demoChannel2";
+                    initAgoraEngineAndJoinChannel(9998);
+                    joinChannel(9998);
+                    mRtcEngine.disableVideo();
+                    container.setVisibility(View.GONE);
+                }else{
+                    Toast.makeText(AudioTeachActivity.this, "现在正在与学生教学,请先关闭视频", Toast.LENGTH_SHORT).show();
+                }
             }
         });
 //        final Button join_third_btn = (Button) findViewById(R.id.join_third_btn);
