@@ -42,29 +42,29 @@ public class WhiteBoardManager {
      * @param context
      */
 //    AudioTeachActivity　Button;
-    public static void registerCalleeAckNotification(final String sessionId, Boolean register, final String toAccount, final Context context){
-
-        Observer<RTSCalleeAckEvent> calleeAckEventObserver = new Observer<RTSCalleeAckEvent>() {
-            @Override
-            public void onEvent(RTSCalleeAckEvent rtsCalleeAckEvent) {
-                if (rtsCalleeAckEvent.getEvent() == RTSEventType.CALLEE_ACK_AGREE) {
-                    // 判断SDK自动开启通道是否成功
-                    if (!rtsCalleeAckEvent.isTunReady()) {
-                        return;
-                    }
-                    // 进入会话界面
-                    Toast.makeText(context, "接听成功", Toast.LENGTH_SHORT).show();
-                    AudioTeachActivity activity = (AudioTeachActivity)context;
-                    activity.startKeepUpBoard(sessionId,toAccount);
-
-                } else if (rtsCalleeAckEvent.getEvent() == RTSEventType.CALLEE_ACK_REJECT) {
-                    // 被拒绝，结束会话
-                    Toast.makeText(context, "对方已经拒绝白板请求", Toast.LENGTH_SHORT).show();
-                }
-            }
-        };
-        RTSManager.getInstance().observeCalleeAckNotification(sessionId, calleeAckEventObserver, register);
-    }
+//    public static void registerCalleeAckNotification(final String sessionId, Boolean register, final String toAccount, final Context context){
+//
+//        Observer<RTSCalleeAckEvent> calleeAckEventObserver = new Observer<RTSCalleeAckEvent>() {
+//            @Override
+//            public void onEvent(RTSCalleeAckEvent rtsCalleeAckEvent) {
+//                if (rtsCalleeAckEvent.getEvent() == RTSEventType.CALLEE_ACK_AGREE) {
+//                    // 判断SDK自动开启通道是否成功
+//                    if (!rtsCalleeAckEvent.isTunReady()) {
+//                        return;
+//                    }
+//                    // 进入会话界面
+//                    Toast.makeText(context, "接听成功", Toast.LENGTH_SHORT).show();
+//                    AudioTeachActivity activity = (AudioTeachActivity)context;
+//                    activity.startKeepUpBoard(sessionId,toAccount);
+//
+//                } else if (rtsCalleeAckEvent.getEvent() == RTSEventType.CALLEE_ACK_REJECT) {
+//                    // 被拒绝，结束会话
+//                    Toast.makeText(context, "对方已经拒绝白板请求", Toast.LENGTH_SHORT).show();
+//                }
+//            }
+//        };
+//        RTSManager.getInstance().observeCalleeAckNotification(sessionId, calleeAckEventObserver, register);
+//    }
 
     /**
      * 收到白板请求的回调
@@ -229,7 +229,7 @@ public class WhiteBoardManager {
         RTSManager.getInstance().close(SessionID, new RTSCallback<Void>() {
             @Override
             public void onSuccess(Void aVoid) {
-//                Toast.makeText(context, "挂断成功", Toast.LENGTH_SHORT).show();
+                Toast.makeText(context, "挂断成功", Toast.LENGTH_SHORT).show();
 //                Intent intent = new Intent(context, RTSCallActivity.class);
 //                context.startActivity(intent);  //跳转到呼叫界面
 //                context.finish();   //销毁白板通话Activity

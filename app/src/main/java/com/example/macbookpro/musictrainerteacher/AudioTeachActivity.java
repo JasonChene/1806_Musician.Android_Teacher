@@ -32,6 +32,8 @@ import android.widget.Toast;
 import com.example.macbookpro.musictrainerteacher.CustomView.Draw;
 import com.example.macbookpro.musictrainerteacher.common.SysExitUtil;
 import com.example.macbookpro.musictrainerteacher.storage.LocalStorage;
+import com.netease.nimlib.sdk.NIMClient;
+import com.netease.nimlib.sdk.auth.AuthService;
 import com.netease.nimlib.sdk.rts.RTSCallback;
 import com.netease.nimlib.sdk.rts.RTSManager;
 import com.netease.nimlib.sdk.rts.constant.RTSTunnelType;
@@ -68,6 +70,7 @@ public class AudioTeachActivity extends AppCompatActivity {
     Draw main_draw;
     View drawBackgroud;
     Draw peer_draw;
+    String Channel_name = "demoChannel1";
 
     private final IRtcEngineEventHandler mRtcEventHandler = new IRtcEngineEventHandler() {
         @Override
@@ -83,7 +86,6 @@ public class AudioTeachActivity extends AppCompatActivity {
                 public void run() {
                     setupRemoteVideo(uid);
                     Log.e(LOG_TAG, uid + ":onFirstRemoteVideoDecoded====================");
-
                 }
             });
         }
@@ -139,7 +141,6 @@ public class AudioTeachActivity extends AppCompatActivity {
         //显示清除按钮
         Button clear_button = (Button) findViewById(R.id.clear);
         clear_button.setVisibility(View.VISIBLE);
-
         drawBackgroud.setVisibility(View.VISIBLE);
 
 
@@ -163,7 +164,8 @@ public class AudioTeachActivity extends AppCompatActivity {
 
         Button clear_button = (Button) findViewById(R.id.clear);
         clear_button.setVisibility(View.GONE);
-
+        //清楚原来的乐谱
+        drawBackgroud.setBackgroundResource(0);
         drawBackgroud.setVisibility(View.GONE);
     }
     public void addMusicPic(String strMusicImageUrl)
@@ -220,7 +222,6 @@ public class AudioTeachActivity extends AppCompatActivity {
         setContentView(R.layout.activity_audio_teach);
         SysExitUtil.activityList.add(AudioTeachActivity.this);
         initActionBar();
-
         WhiteBoardManager.registerRTSIncomingCallObserver(true,this);
         main_draw = findViewById(R.id.main_draw);
         peer_draw = findViewById(R.id.peer_draw);
@@ -228,6 +229,7 @@ public class AudioTeachActivity extends AppCompatActivity {
         drawBackgroud = findViewById(R.id.drawBackgroud);
         if (mRtcEngine == null && checkSelfPermission(Manifest.permission.RECORD_AUDIO, PERMISSION_REQ_ID_RECORD_AUDIO)) {
             initAgoraEngineAndJoinChannel(9998);
+            joinChannel(9998);
             mRtcEngine.disableVideo();
             FrameLayout container = (FrameLayout)findViewById(R.id.local_video_view_container);
             container.setVisibility(View.GONE);
@@ -273,32 +275,55 @@ public class AudioTeachActivity extends AppCompatActivity {
         join_first_btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-
+                close_Video();
+                showMusicPicture();
+                leaveChannel();
+                Channel_name = "demoChannel1";
+                initAgoraEngineAndJoinChannel(9998);
+                joinChannel(9998);
+                mRtcEngine.disableVideo();
+                FrameLayout container = (FrameLayout)findViewById(R.id.local_video_view_container);
+                container.setVisibility(View.GONE);
             }
 
         });
-//        final Button join_second_btn = (Button) findViewById(R.id.join_second_btn);
-//        join_second_btn.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View view) {
-//                mRtcEngine.disableVideo();
-//                setupAudioAndJoinChannel(9997);
-//            }
-//        });
+        final Button join_second_btn = (Button) findViewById(R.id.join_second_btn);
+        join_second_btn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                close_Video();
+                showMusicPicture();
+                leaveChannel();
+                Channel_name = "demoChannel2";
+                initAgoraEngineAndJoinChannel(9998);
+                joinChannel(9998);
+                mRtcEngine.disableVideo();
+                FrameLayout container = (FrameLayout)findViewById(R.id.local_video_view_container);
+                container.setVisibility(View.GONE);
+            }
+        });
 //        final Button join_third_btn = (Button) findViewById(R.id.join_third_btn);
 //        join_third_btn.setOnClickListener(new View.OnClickListener() {
 //            @Override
 //            public void onClick(View view) {
+//               leaveChannel();
+//                Channel_name = "demoChannel3";
+//                initAgoraEngineAndJoinChannel(9998);
 //                mRtcEngine.disableVideo();
-//                setupAudioAndJoinChannel(9996);
+//                FrameLayout container = (FrameLayout)findViewById(R.id.local_video_view_container);
+//                container.setVisibility(View.GONE);
 //            }
 //        });
 //        final Button join_fourth_btn = (Button) findViewById(R.id.join_fourth_btn);
 //        join_fourth_btn.setOnClickListener(new View.OnClickListener() {
 //            @Override
 //            public void onClick(View view) {
+//               leaveChannel();
+//                Channel_name = "demoChannel4";
+//                initAgoraEngineAndJoinChannel(9998);
 //                mRtcEngine.disableVideo();
-//                setupAudioAndJoinChannel(9995);
+//                FrameLayout container = (FrameLayout)findViewById(R.id.local_video_view_container);
+//                container.setVisibility(View.GONE);
 //            }
 //        });
 
@@ -372,7 +397,6 @@ public class AudioTeachActivity extends AppCompatActivity {
         initializeAgoraEngine();     // Tutorial Step 1
         setupVideoProfile();
         setupLocalVideo(uid);
-        joinChannel(uid);
     }
 
     private void initializeAgoraEngine() {
@@ -415,7 +439,7 @@ public class AudioTeachActivity extends AppCompatActivity {
     // Tutorial Step 4
     //加入频道 (joinChannel)
     private void joinChannel(int uid) {
-        mRtcEngine.joinChannel(null, "demoChannel2", null, uid); // if you do not specify the uid, we will generate the uid for you
+        mRtcEngine.joinChannel(null, "" + Channel_name, null, uid); // if you do not specify the uid, we will generate the uid for you
     }
     //离开房间
     private void leaveChannel() {
@@ -423,7 +447,7 @@ public class AudioTeachActivity extends AppCompatActivity {
     }
 
     public boolean checkSelfPermission(String permission, int requestCode) {
-        Log.i(LOG_TAG, "checkSelfPermission " + permission + " " + requestCode);
+        Log.e(LOG_TAG, "checkSelfPermission " + permission + " " + requestCode);
         if (ContextCompat.checkSelfPermission(this,
                 permission)
                 != PackageManager.PERMISSION_GRANTED) {
@@ -448,17 +472,7 @@ public class AudioTeachActivity extends AppCompatActivity {
 //        View tipMsg = findViewById(R.id.quick_tips_when_use_agora_sdk); // optional UI
 //        tipMsg.setVisibility(View.GONE);
     }
-//    private void setupRemoteVideo(int uid) {
-//        FrameLayout container = (FrameLayout) findViewById(R.id.remote_video_view_container);
-//        if (container.getChildCount() >= 1) {
-//            return;
-//        }
-//        container.setVisibility(View.VISIBLE);
-//        SurfaceView surfaceView = RtcEngine.CreateRendererView(getBaseContext());
-//        container.addView(surfaceView);
-//        mRtcEngine.setupRemoteVideo(new VideoCanvas(surfaceView, VideoCanvas.RENDER_MODE_ADAPTIVE, uid));
-//        surfaceView.setTag(uid); // for mark purpose
-//    }
+
 
     private  void close_Video(){
         mRtcEngine.disableVideo();
@@ -539,4 +553,24 @@ public class AudioTeachActivity extends AppCompatActivity {
         }
         return false;
     }
+//private long time = 0;
+//    @Override
+//    public boolean onKeyDown(int keyCode, KeyEvent event) {
+//        if (keyCode == KeyEvent.KEYCODE_BACK) {
+//            if ((System.currentTimeMillis() - time > 1000)) {
+//                Toast.makeText(this, "正在与学生教学，再点一次返回", Toast.LENGTH_SHORT).show();
+//                time = System.currentTimeMillis();
+//            } else {
+//                leaveChannel();
+//                startActivity(new Intent(AudioTeachActivity.this, MainActivity.class));
+//            }
+//            return true;
+//        } else {
+//            NIMClient.getService(AuthService.class).logout();
+//            return super.onKeyDown(keyCode, event);
+//        }
+//
+//    }
+//
+//
 }
