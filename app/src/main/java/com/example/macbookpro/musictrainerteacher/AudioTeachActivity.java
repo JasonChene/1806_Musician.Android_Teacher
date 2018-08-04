@@ -152,7 +152,6 @@ public class AudioTeachActivity extends AppCompatActivity {
     }
     public void terminateRTS(String sessionID)
     {
-
         //注销收数据监听
         Boolean isDataSuccess = RTSManager.getInstance().observeReceiveData(sessionID, new Observer<RTSTunData>() {
             @Override
@@ -358,29 +357,16 @@ public class AudioTeachActivity extends AppCompatActivity {
         open_video_button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if (checkSelfPermission(Manifest.permission.CAMERA, PERMISSION_REQ_ID_CAMERA))
-                {
-//                    setupLocalVideo(9990);
-                    hideMusicPicture();
-                    mRtcEngine.enableVideo();
-                    FrameLayout local_container = (FrameLayout) findViewById(R.id.local_video_view_container);
-                    local_container.setVisibility(View.VISIBLE);
-                    FrameLayout remote_container = (FrameLayout) findViewById(R.id.remote_video_view_container);
-                    remote_container.setVisibility(View.VISIBLE);
-                }
-
+                open_video();
             }
         });
+
         //离开房间
         final Button close_video_button = (Button) findViewById(R.id.close_video_button);
         close_video_button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if (checkSelfPermission(Manifest.permission.CAMERA, PERMISSION_REQ_ID_CAMERA))
-                {
-                    close_Video();
-                    showMusicPicture();
-                }
+               close_Video();
 
             }
         });
@@ -467,11 +453,15 @@ public class AudioTeachActivity extends AppCompatActivity {
 
 
     private  void close_Video(){
-        mRtcEngine.disableVideo();
-        FrameLayout container_local = (FrameLayout) findViewById(R.id.local_video_view_container);
-        container_local.setVisibility(View.GONE);
-        FrameLayout container_remote = (FrameLayout) findViewById(R.id.remote_video_view_container);
-        container_remote.setVisibility(View.GONE);
+        if (checkSelfPermission(Manifest.permission.CAMERA, PERMISSION_REQ_ID_CAMERA))
+        {
+            showMusicPicture();
+            mRtcEngine.disableVideo();
+            FrameLayout container_local = (FrameLayout) findViewById(R.id.local_video_view_container);
+            container_local.setVisibility(View.GONE);
+            FrameLayout container_remote = (FrameLayout) findViewById(R.id.remote_video_view_container);
+            container_remote.setVisibility(View.GONE);
+        }
     }
     private void setupLocalVideo(int uid) {
         FrameLayout container = (FrameLayout) findViewById(R.id.local_video_view_container);
@@ -571,5 +561,17 @@ public class AudioTeachActivity extends AppCompatActivity {
         leaveChannel();
         mRtcEngine.destroy();
         super.onDestroy();
+    }
+    public void open_video(){
+        if (checkSelfPermission(Manifest.permission.CAMERA, PERMISSION_REQ_ID_CAMERA))
+        {
+//                    setupLocalVideo(9990);
+            hideMusicPicture();
+            mRtcEngine.enableVideo();
+            FrameLayout local_container = (FrameLayout) findViewById(R.id.local_video_view_container);
+            local_container.setVisibility(View.VISIBLE);
+            FrameLayout remote_container = (FrameLayout) findViewById(R.id.remote_video_view_container);
+            remote_container.setVisibility(View.VISIBLE);
+        }
     }
 }
