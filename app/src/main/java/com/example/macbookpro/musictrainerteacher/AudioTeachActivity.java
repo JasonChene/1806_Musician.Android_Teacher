@@ -302,7 +302,7 @@ public class AudioTeachActivity extends AppCompatActivity {
                     showMusicPicture();
                     leaveChannel();
                     Channel_name = "demoChannel1";
-                    initAgoraEngineAndJoinChannel(9998);
+//                    initAgoraEngineAndJoinChannel(9998);
                     joinChannel(9998);
                     mRtcEngine.disableVideo();
                     container.setVisibility(View.GONE);
@@ -322,7 +322,7 @@ public class AudioTeachActivity extends AppCompatActivity {
                     showMusicPicture();
                     leaveChannel();
                     Channel_name = "demoChannel2";
-                    initAgoraEngineAndJoinChannel(9998);
+//                    initAgoraEngineAndJoinChannel(9998);
                     joinChannel(9998);
                     mRtcEngine.disableVideo();
                     container.setVisibility(View.GONE);
@@ -356,23 +356,51 @@ public class AudioTeachActivity extends AppCompatActivity {
 //            }
 //        });
 
-        final Button open_video_button = (Button) findViewById(R.id.open_video_button);
-        open_video_button.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                open_video();
-            }
-        });
+
 
         //离开房间
-        final Button close_video_button = (Button) findViewById(R.id.close_video_button);
+        final Button close_video_button = (Button) findViewById(R.id.open_video_button);
         close_video_button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-               close_Video();
-
+                Button openBtn = (Button)view;
+                if (openBtn.getText().equals("打开视频教学"))
+                {
+                    if (checkSelfPermission(Manifest.permission.CAMERA, PERMISSION_REQ_ID_CAMERA))
+                    {
+                        hideMusicPicture();
+                        mRtcEngine.enableVideo();
+                        FrameLayout local_container = (FrameLayout) findViewById(R.id.local_video_view_container);
+                        local_container.setVisibility(View.VISIBLE);
+                        FrameLayout remote_container = (FrameLayout) findViewById(R.id.remote_video_view_container);
+                        remote_container.setVisibility(View.VISIBLE);
+//                        openBtn.setText("关闭视频教学");
+                    }
+                }else if(openBtn.getText().equals("关闭视频教学"))
+                {
+                    if (checkSelfPermission(Manifest.permission.CAMERA, PERMISSION_REQ_ID_CAMERA))
+                    {
+                        close_Video();
+                        showMusicPicture();
+//                        openBtn.setText("打开视频教学");
+                    }
+                }
+                openBtn.setText(openBtn.getText().equals("打开视频教学")?"关闭视频教学":"打开视频教学");
             }
         });
+        //离开房间
+//        final Button close_video_button = (Button) findViewById(R.id.close_video_button);
+//        close_video_button.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View view) {
+//                if (checkSelfPermission(Manifest.permission.CAMERA, PERMISSION_REQ_ID_CAMERA))
+//                {
+//                    close_Video();
+//                    showMusicPicture();
+//                }
+//
+//            }
+//        });
     }
 
     //初始化进入房间
@@ -564,17 +592,5 @@ public class AudioTeachActivity extends AppCompatActivity {
         leaveChannel();
         mRtcEngine.destroy();
         super.onDestroy();
-    }
-    public void open_video(){
-        if (checkSelfPermission(Manifest.permission.CAMERA, PERMISSION_REQ_ID_CAMERA))
-        {
-//                    setupLocalVideo(9990);
-            hideMusicPicture();
-            mRtcEngine.enableVideo();
-            FrameLayout local_container = (FrameLayout) findViewById(R.id.local_video_view_container);
-            local_container.setVisibility(View.VISIBLE);
-            FrameLayout remote_container = (FrameLayout) findViewById(R.id.remote_video_view_container);
-            remote_container.setVisibility(View.VISIBLE);
-        }
     }
 }
