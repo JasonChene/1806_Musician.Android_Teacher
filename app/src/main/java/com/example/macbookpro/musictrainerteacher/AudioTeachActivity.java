@@ -82,7 +82,7 @@ public class AudioTeachActivity extends AppCompatActivity {
         @Override
         public void onJoinChannelSuccess(String channel, int uid, int elapsed) {
             super.onJoinChannelSuccess(channel, uid, elapsed);
-            Log.e(LOG_TAG, uid + ":onJoinChannelSuccess====================");
+            Log.e(LOG_TAG, uid + ":onJoinChannelSuccess===================="+ channel);
         }
 
         @Override
@@ -94,17 +94,6 @@ public class AudioTeachActivity extends AppCompatActivity {
                     Log.e(LOG_TAG, uid + ":onFirstRemoteVideoDecoded====================");
                 }
             });
-        }
-        @Override
-        public void onUserMuteVideo(int uid, boolean muted) {
-            Log.e("onUserEnableVideo",muted + ":////////////////////1"+uid);
-            if (muted) {
-                setupRemoteVideo(uid);
-            }
-            else {
-//                FrameLayout container_remote = (FrameLayout) findViewById(R.id.remote_video_view_container);
-//                container_remote.setVisibility(View.GONE);
-            }
         }
     };
 
@@ -471,9 +460,8 @@ public class AudioTeachActivity extends AppCompatActivity {
     }
     private void setupRemoteVideo(int uid) {
         FrameLayout container = (FrameLayout) findViewById(R.id.remote_video_view_container);
-
         if (container.getChildCount() >= 1) {
-            return;
+            container.removeAllViews();
         }
         container.setVisibility(View.VISIBLE);
         SurfaceView surfaceView = RtcEngine.CreateRendererView(getBaseContext());
