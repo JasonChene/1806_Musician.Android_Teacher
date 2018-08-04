@@ -128,6 +128,9 @@ public class AudioTeachActivity extends AppCompatActivity {
     public void setImageBitmap(Bitmap bitmap)
     {
         drawBackgroud.setBackground(new BitmapDrawable(getResources(),bitmap));
+        //显示清除按钮
+        Button clear_button = (Button) findViewById(R.id.clear);
+        clear_button.setVisibility(View.VISIBLE);
     }
 
     public void startKeepUpBoard(String sessionID, String toAccount)
@@ -138,9 +141,9 @@ public class AudioTeachActivity extends AppCompatActivity {
         peer_draw.sessionID = sessionID;
         peer_draw.toAccount = toAccount;
         peer_draw.setVisibility(View.VISIBLE);
-        //显示清除按钮
-        Button clear_button = (Button) findViewById(R.id.clear);
-        clear_button.setVisibility(View.VISIBLE);
+//        //显示清除按钮
+//        Button clear_button = (Button) findViewById(R.id.clear);
+//        clear_button.setVisibility(View.VISIBLE);
         drawBackgroud.setVisibility(View.VISIBLE);
 
         //注册收到数据的监听
