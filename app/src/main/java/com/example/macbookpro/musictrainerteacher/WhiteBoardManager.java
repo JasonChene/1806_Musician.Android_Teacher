@@ -183,6 +183,8 @@ public class WhiteBoardManager {
                         {
                             tag = "p";
                         }
+
+
                         if (tag.equals("p"))
                         {
                             String[] strMusicImageUrl = data.split(":");
