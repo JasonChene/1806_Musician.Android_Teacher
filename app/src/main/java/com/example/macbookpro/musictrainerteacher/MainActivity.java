@@ -24,7 +24,11 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.avos.avoscloud.AVException;
+import com.avos.avoscloud.AVObject;
+import com.avos.avoscloud.AVQuery;
 import com.avos.avoscloud.AVUser;
+import com.avos.avoscloud.FindCallback;
 import com.example.macbookpro.musictrainerteacher.common.SysExitUtil;
 import com.netease.nimlib.sdk.NIMClient;
 import com.netease.nimlib.sdk.RequestCallback;
@@ -35,11 +39,14 @@ import com.netease.nimlib.sdk.auth.LoginInfo;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.util.List;
+
 import static com.netease.nimlib.sdk.StatusCode.LOGINED;
 
 public class MainActivity extends AppCompatActivity {
 
     Boolean isLoginEaseSuccess = false;
+    String Accid;
 
     @Override
     protected void onResume() {
@@ -114,6 +121,7 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         SysExitUtil.activityList.add(MainActivity.this);
         initActionBar();
+        getStudentinfo();
 
         checkSelfPermission(Manifest.permission_group.STORAGE, 0);
 
@@ -186,6 +194,28 @@ public class MainActivity extends AppCompatActivity {
         }
         return currentUser;
 
+    }
+    public AVUser getStudentinfo(){
+        AVUser currentUser = AVUser.getCurrentUser();
+        Accid = currentUser.getObjectId();
+        AVQuery<AVObject> query = new AVQuery<>("Course");
+//        query.whereEqualTo("objectID", "5b5af3a82f301e00394c7c98");
+        query.whereEqualTo("teacher", AVObject.createWithoutData("_User", ""+Accid));
+        query.include("student");
+        query.findInBackground(new FindCallback<AVObject>() {
+            @Override
+            public void done(List<AVObject> list, AVException e) {
+                Object student_info;
+                String objectID;
+                for (int i = 0; i<list.size();i++){
+                    AVObject INFO = list.get(i);
+                    student_info = INFO.get("student");
+                    Log.e("TAG","／／／／／／／／／／／／／／／／／／"+student_info);
+                }
+
+            }
+        });
+        return currentUser;
     }
 
 }

@@ -49,7 +49,10 @@ import javax.security.auth.callback.Callback;
 import static android.icu.util.Calendar.YEAR;
 import static android.icu.util.HebrewCalendar.AV;
 import static com.example.macbookpro.musictrainerteacher.storage.LocalStorage.saveObject;
-
+//08-06 14:58:38.596 24555-24555/com.example.macbookpro.musictrainerteacher E/e: { "@type":"com.avos.avoscloud.AVUser","objectId":"5b5af3a82f301e00394c7c98","updatedAt":"2018-08-05T07:09:36.228Z",
+// "createdAt":"2018-07-27T10:27:52.102Z","className":"_User","serverData":{"@type":"java.util.concurrent.ConcurrentHashMap","emailVerified":false,"mobilePhoneNumber":"15630487355","netEaseUserInfo":{"@type":"java.util.HashMap","name":"5b5af3a82f301e00394c7c98","accid":"5b5af3a82f301e00394c7c98",
+// "token":"d417e26371df8993e22a3b1013de2efa"},"sessionToken":"zc9d9whcs9u376v6vpnh4axi8","mobilePhoneVerified":true,"username":"15630487355"},"operationQueue":{"@type":"java.util.concurrent.ConcurrentHashMap","mobilePhoneNumber":
+// {"@type":"com.avos.avoscloud.ops.SetOp","key":"mobilePhoneNumber","type":"Set","values":"15630487355"}}}
 public class VerificationCodeActivity extends AppCompatActivity {
     String phone_number;
     String verification_code;
@@ -129,6 +132,8 @@ public class VerificationCodeActivity extends AppCompatActivity {
                         @Override
                         public void done(final AVUser avUser, AVException e) {
                             Log.e("e", "" + avUser);
+                            Log.e("error", "===========" + avUser.getObjectId());
+                            /* 请求成功 */
                             if (null == e) {
                                 if (!avUser.containsKey("netEaseUserInfo"))
                                 {

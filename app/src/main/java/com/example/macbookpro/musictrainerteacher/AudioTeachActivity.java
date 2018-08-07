@@ -31,6 +31,11 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.avos.avoscloud.AVException;
+import com.avos.avoscloud.AVObject;
+import com.avos.avoscloud.AVQuery;
+import com.avos.avoscloud.AVUser;
+import com.avos.avoscloud.FindCallback;
 import com.example.macbookpro.musictrainerteacher.CustomView.Draw;
 import com.example.macbookpro.musictrainerteacher.common.SysExitUtil;
 import com.example.macbookpro.musictrainerteacher.storage.LocalStorage;
@@ -48,6 +53,7 @@ import org.json.JSONObject;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.lang.reflect.Array;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.ArrayList;
@@ -77,6 +83,7 @@ public class AudioTeachActivity extends AppCompatActivity {
     View drawBackgroud;
     Draw peer_draw;
     String Channel_name = "demoChannel1";
+    String Accid;
     MyLeanCloudApp myApp;
     private IRtcEngineEventHandler mRtcEventHandler = new IRtcEngineEventHandler() {
         @Override
@@ -390,7 +397,8 @@ public class AudioTeachActivity extends AppCompatActivity {
 //
 //            }
 //        });
-    }
+
+}
 
     //初始化进入房间
     private void initAgoraEngineAndJoinChannel(int uid) {
