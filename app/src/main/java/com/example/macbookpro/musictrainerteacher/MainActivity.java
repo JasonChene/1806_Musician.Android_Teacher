@@ -36,6 +36,7 @@ import com.netease.nimlib.sdk.auth.AuthService;
 import com.netease.nimlib.sdk.auth.LoginInfo;
 
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -125,13 +126,6 @@ public class MainActivity extends AppCompatActivity {
 
         checkSelfPermission(Manifest.permission_group.STORAGE, 0);
 
-        Button login_button = (Button) findViewById(R.id.login_button);
-        login_button.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                startActivity(new Intent(MainActivity.this, LoginActivity.class));
-            }
-        });
         Button room_button = (Button) findViewById(R.id.login_room);
         room_button.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -197,24 +191,44 @@ public class MainActivity extends AppCompatActivity {
     }
     public AVUser getStudentinfo(){
         AVUser currentUser = AVUser.getCurrentUser();
-        Accid = currentUser.getObjectId();
-        AVQuery<AVObject> query = new AVQuery<>("Course");
-//        query.whereEqualTo("objectID", "5b5af3a82f301e00394c7c98");
-        query.whereEqualTo("teacher", AVObject.createWithoutData("_User", ""+Accid));
-        query.include("student");
-        query.findInBackground(new FindCallback<AVObject>() {
-            @Override
-            public void done(List<AVObject> list, AVException e) {
-                Object student_info;
-                String objectID;
-                for (int i = 0; i<list.size();i++){
-                    AVObject INFO = list.get(i);
-                    student_info = INFO.get("student");
-                    Log.e("TAG","／／／／／／／／／／／／／／／／／／"+student_info);
-                }
+        if (currentUser != null)
+        {
+            Accid = currentUser.getObjectId();
+            AVQuery<AVObject> query = new AVQuery<>("Course");
+            query.whereEqualTo("teacher", AVObject.createWithoutData("_User", ""+Accid));
+            query.include("student");
+            query.findInBackground(new FindCallback<AVObject>() {
+                @Override
+                public void done(List<AVObject> list, AVException e) {
+                    JSONArray allStuInfo = new JSONArray();
+                    for (int i = 0; i<list.size();i++){
+                        AVObject objectInfo = list.get(i);
+                        try {
+                           JSONObject studentInfo = new JSONObject(objectInfo.get("student").toString());
+                           String studentID = studentInfo.getString("objectId");
+                           String userName = studentInfo.getJSONObject("serverData").getString("username");
+                           Log.e("studentInfo",studentInfo.toString());
+                           Log.e("studentID",studentID);
+                           Log.e("userName",userName);
+                           JSONObject stuInfo = new JSONObject();
+                           stuInfo.put("userName",userName);
+                           stuInfo.put("objectId",studentID);
+                           Log.e("stuInfo",stuInfo.toString());
+                           allStuInfo.put(stuInfo);
+                        }catch (JSONException error)
+                        {
 
-            }
-        });
+                        }
+                    }
+                    Log.e("allStuInfo",allStuInfo.toString());
+//                    Intent intent = new Intent(MainActivity.this,AudioTeachActivity.class);
+//                    intent.putExtra("allStudentInfo",allStuInfo.toString());
+//                    startActivity(intent);
+
+                }
+            });
+        }
+
         return currentUser;
     }
 
