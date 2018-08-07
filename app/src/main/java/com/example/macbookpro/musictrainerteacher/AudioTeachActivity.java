@@ -236,6 +236,7 @@ public class AudioTeachActivity extends AppCompatActivity {
         SysExitUtil.activityList.add(AudioTeachActivity.this);
         initActionBar();
 //        WhiteBoardManager.registerRTSIncomingCallObserver(true,this);
+        getCurrentUser();
 
         myApp=(MyLeanCloudApp) getApplication();
         myApp.setAudioTeachActivity(AudioTeachActivity.this);
@@ -589,4 +590,36 @@ public class AudioTeachActivity extends AppCompatActivity {
         mRtcEngine.destroy();
         super.onDestroy();
     }
+    public AVUser getCurrentUser(){
+        AVUser currentUser = AVUser.getCurrentUser();
+        Accid = currentUser.getObjectId();
+        AVQuery<AVObject> query = new AVQuery<>("Course");
+//        query.whereEqualTo("objectID", "5b5af3a82f301e00394c7c98");
+         query.whereEqualTo("teacher", AVObject.createWithoutData("_User", ""+Accid));
+         query.include("student");
+        query.findInBackground(new FindCallback<AVObject>() {
+                                   @Override
+                                   public void done(List<AVObject> list, AVException e) {
+                                       Object student_info;
+                                       String objectID;
+                                       for (int i = 0; i<list.size();i++){
+                                           AVObject INFO = list.get(i);
+                                            student_info = INFO.get("student");
+                                            student_info.toString());
+                                           Log.e("TAG","／／／／／／／／／／／／／／／／／／"+student_info);
+
+                                       }
+
+                                   }
+                               });
+        return currentUser;
+    }
+
 }
+
+
+
+
+
+
+

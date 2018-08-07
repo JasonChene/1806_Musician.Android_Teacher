@@ -197,24 +197,26 @@ public class MainActivity extends AppCompatActivity {
     }
     public AVUser getStudentinfo(){
         AVUser currentUser = AVUser.getCurrentUser();
-        Accid = currentUser.getObjectId();
-        AVQuery<AVObject> query = new AVQuery<>("Course");
+        if (currentUser != null) {
+            Accid = currentUser.getObjectId();
+            AVQuery<AVObject> query = new AVQuery<>("Course");
 //        query.whereEqualTo("objectID", "5b5af3a82f301e00394c7c98");
-        query.whereEqualTo("teacher", AVObject.createWithoutData("_User", ""+Accid));
-        query.include("student");
-        query.findInBackground(new FindCallback<AVObject>() {
-            @Override
-            public void done(List<AVObject> list, AVException e) {
-                Object student_info;
-                String objectID;
-                for (int i = 0; i<list.size();i++){
-                    AVObject INFO = list.get(i);
-                    student_info = INFO.get("student");
-                    Log.e("TAG","／／／／／／／／／／／／／／／／／／"+student_info);
-                }
+            query.whereEqualTo("teacher", AVObject.createWithoutData("_User", "" + Accid));
+            query.include("student");
+            query.findInBackground(new FindCallback<AVObject>() {
+                @Override
+                public void done(List<AVObject> list, AVException e) {
+                    Object student_info;
+                    String objectID;
+                    for (int i = 0; i < list.size(); i++) {
+                        AVObject INFO = list.get(i);
+                        student_info = INFO.get("student");
+                        Log.e("TAG", "／／／／／／／／／／／／／／／／／／" + student_info);
+                    }
 
-            }
-        });
+                }
+            });
+        }
         return currentUser;
     }
 
