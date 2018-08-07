@@ -59,8 +59,10 @@ public class LoginActivity extends AppCompatActivity {
                         } else {
                             /* 请求失败 */
                             Log.e("e","请求失败" + e.getMessage());
-                            Toast.makeText(LoginActivity.this, ""+e.getMessage(), Toast.LENGTH_SHORT).show();
-
+                            if (e.getMessage().equals("java.net.NoRouteToHostException: No route to host"))
+                            {
+                                Toast.makeText(LoginActivity.this, "网络链接异常，请检查本地网络", Toast.LENGTH_SHORT).show();
+                            }
                         }
                     }
                 });

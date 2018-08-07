@@ -36,6 +36,7 @@ import com.netease.nimlib.sdk.auth.AuthService;
 import com.netease.nimlib.sdk.auth.LoginInfo;
 
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -47,51 +48,49 @@ public class MainActivity extends AppCompatActivity {
 
     Boolean isLoginEaseSuccess = false;
     String Accid;
+    String student_info;
 
     @Override
     protected void onResume() {
         // TODO Auto-generated method stub
         super.onResume();
-        MyLeanCloudApp myApp=(MyLeanCloudApp) getApplication();
+        MyLeanCloudApp myApp = (MyLeanCloudApp) getApplication();
         myApp.setAudioTeachActivity(MainActivity.this);
     }
-    public void startLoginEase()
-    {
-        if (NIMClient.getStatus() != LOGINED)
-        {
+
+    public void startLoginEase() {
+        if (NIMClient.getStatus() != LOGINED) {
             NIMClient.getService(AuthService.class).logout();
             AVUser currentUser = getCurrentUser();
-            if (currentUser != null)
-            {
+            if (currentUser != null) {
                 try {
                     JSONObject netEaseUserInfo = new JSONObject(currentUser.get("netEaseUserInfo").toString());
-                    LoginInfo info = new LoginInfo(netEaseUserInfo.getString("accid"),netEaseUserInfo.getString("token"));
+                    LoginInfo info = new LoginInfo(netEaseUserInfo.getString("accid"), netEaseUserInfo.getString("token"));
                     NIMClient.getService(AuthService.class).login(info)
                             .setCallback(new RequestCallback() {
                                 @Override
                                 public void onSuccess(Object param) {
-                                    Toast.makeText(MainActivity.this,"白板登录成功",Toast.LENGTH_SHORT);
-                                    Log.e("TAG","白板登录成功");
+                                    Toast.makeText(MainActivity.this, "白板登录成功", Toast.LENGTH_SHORT);
+                                    Log.e("TAG", "白板登录成功");
                                     isLoginEaseSuccess = true;
                                 }
 
                                 @Override
                                 public void onFailed(int code) {
-                                    Toast.makeText(MainActivity.this,"白板登录失败"+code,Toast.LENGTH_SHORT);
-                                    Log.e("TAG","白板登录失败"+code);
+                                    Toast.makeText(MainActivity.this, "白板登录失败" + code, Toast.LENGTH_SHORT);
+                                    Log.e("TAG", "白板登录失败" + code);
                                     isLoginEaseSuccess = false;
                                 }
 
                                 @Override
                                 public void onException(Throwable exception) {
-                                    Log.e("TAG","login: onException");
-                                    Toast.makeText(MainActivity.this,"白板登录异常失败",Toast.LENGTH_SHORT);
+                                    Log.e("TAG", "login: onException");
+                                    Toast.makeText(MainActivity.this, "白板登录异常失败", Toast.LENGTH_SHORT);
                                     isLoginEaseSuccess = false;
 
                                 }
                             });
-                }catch (JSONException e)
-                {
+                } catch (JSONException e) {
                 }
             }
         }
@@ -102,6 +101,7 @@ public class MainActivity extends AppCompatActivity {
         // TODO Auto-generated method stub
         super.onStop();
     }
+
     public boolean checkSelfPermission(String permission, int requestCode) {
         Log.e("Tag", "checkSelfPermission " + permission + " " + requestCode);
         if (ContextCompat.checkSelfPermission(this,
@@ -125,24 +125,23 @@ public class MainActivity extends AppCompatActivity {
 
         checkSelfPermission(Manifest.permission_group.STORAGE, 0);
 
-        Button login_button = (Button) findViewById(R.id.login_button);
-        login_button.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                startActivity(new Intent(MainActivity.this, LoginActivity.class));
-            }
-        });
         Button room_button = (Button) findViewById(R.id.login_room);
         room_button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 startActivity(new Intent(MainActivity.this, AudioTeachActivity.class));
+                //传输课程信息
+                Intent intent = new Intent(MainActivity.this,AudioTeachActivity.class);
+                intent.putExtra("student_info",student_info);
+                startActivity(intent);
             }
         });
         startLoginEase();
+
+
     }
 
-    public  void  initActionBar(){
+    public void initActionBar() {
         android.support.v7.app.ActionBar actionBar = getSupportActionBar();
         if (actionBar != null) {
             actionBar.setTitle("");
@@ -150,7 +149,7 @@ public class MainActivity extends AppCompatActivity {
             actionBar.setDisplayShowCustomEnabled(true);
             LayoutInflater inflator = (LayoutInflater) this
                     .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-            View v = inflator.inflate(R.layout.actionbar_main,new LinearLayout(MainActivity.this),false);
+            View v = inflator.inflate(R.layout.actionbar_main, new LinearLayout(MainActivity.this), false);
             android.support.v7.app.ActionBar.LayoutParams layout = new android.support.v7.app.ActionBar.LayoutParams(
                     android.support.v7.app.ActionBar.LayoutParams.MATCH_PARENT, android.support.v7.app.ActionBar.LayoutParams.MATCH_PARENT);
             actionBar.setCustomView(v, layout);
@@ -163,6 +162,7 @@ public class MainActivity extends AppCompatActivity {
 
     //双击退回手机主页面
     private long time = 0;
+
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {
         if (keyCode == KeyEvent.KEYCODE_BACK) {
@@ -182,43 +182,62 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
-    public AVUser getCurrentUser(){
+    public AVUser getCurrentUser() {
         AVUser currentUser = AVUser.getCurrentUser();
         if (currentUser != null) {
-            Log.e("e", "+++++=========+++++" +currentUser.get("netEaseUserInfo"));
+            Log.e("e", "+++++=========+++++" + currentUser.get("netEaseUserInfo"));
 
         } else {
             //缓存用户对象为空时，可打开用户注册界面…
-            Log.e("e", "+++++=========+++++" );
+            Log.e("e", "+++++=========+++++");
             startActivity(new Intent(MainActivity.this, LoginActivity.class));
         }
         return currentUser;
 
     }
-    public AVUser getStudentinfo(){
+
+    public AVUser getStudentinfo() {
         AVUser currentUser = AVUser.getCurrentUser();
         if (currentUser != null) {
             Accid = currentUser.getObjectId();
             AVQuery<AVObject> query = new AVQuery<>("Course");
-//        query.whereEqualTo("objectID", "5b5af3a82f301e00394c7c98");
             query.whereEqualTo("teacher", AVObject.createWithoutData("_User", "" + Accid));
             query.include("student");
             query.findInBackground(new FindCallback<AVObject>() {
                 @Override
                 public void done(List<AVObject> list, AVException e) {
-                    Object student_info;
-                    String objectID;
+                    JSONArray allStuInfo = new JSONArray();
                     for (int i = 0; i < list.size(); i++) {
-                        AVObject INFO = list.get(i);
-                        student_info = INFO.get("student");
-                        Log.e("TAG", "／／／／／／／／／／／／／／／／／／" + student_info);
+                        AVObject objectInfo = list.get(i);
+                        try {
+                            JSONObject studentInfo = new JSONObject(objectInfo.get("student").toString());
+                            String studentID = studentInfo.getString("objectId");
+                            String userName = studentInfo.getJSONObject("serverData").getString("username");
+//                            Log.e("studentInfo", studentInfo.toString());
+//                            Log.e("studentID", studentID);
+//                            Log.e("userName", userName);
+                            JSONObject stuInfo = new JSONObject();
+                            stuInfo.put("userName", userName);
+                            stuInfo.put("objectId", studentID);
+//                            Log.e("stuInfo", stuInfo.toString());
+                            allStuInfo.put(stuInfo);
+                        } catch (JSONException error) {
+
+                        }
                     }
+                    student_info = allStuInfo.toString();
+//                    Intent intent = new Intent(MainActivity.this,AudioTeachActivity.class);
+//                    intent.putExtra("allStudentInfo",allStuInfo.toString());
+//                    startActivity(intent);
+
+                    Log.e("allStuInfo", student_info);
 
                 }
             });
         }
+
+
         return currentUser;
     }
-
 }
 

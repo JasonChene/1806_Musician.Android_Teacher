@@ -49,6 +49,8 @@ import com.netease.nimlib.sdk.rts.model.RTSCommonEvent;
 import com.netease.nimlib.sdk.rts.model.RTSData;
 import com.netease.nimlib.sdk.rts.model.RTSTunData;
 
+import org.json.JSONArray;
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.IOException;
@@ -66,6 +68,7 @@ import io.agora.rtc.video.VideoCanvas;
 
 import static android.net.sip.SipErrorCode.SERVER_ERROR;
 import static com.netease.nimlib.sdk.StatusCode.LOGINED;
+import static java.lang.System.err;
 
 public class AudioTeachActivity extends AppCompatActivity {
 
@@ -84,7 +87,11 @@ public class AudioTeachActivity extends AppCompatActivity {
     Draw peer_draw;
     String Channel_name = "demoChannel1";
     String Accid;
+    String student_info;
     MyLeanCloudApp myApp;
+    Object username;
+    Object object_id;
+    JSONArray mArrStudentInfo;
     private IRtcEngineEventHandler mRtcEventHandler = new IRtcEngineEventHandler() {
         @Override
         public void onJoinChannelSuccess(String channel, int uid, int elapsed) {
@@ -236,14 +243,16 @@ public class AudioTeachActivity extends AppCompatActivity {
         SysExitUtil.activityList.add(AudioTeachActivity.this);
         initActionBar();
 //        WhiteBoardManager.registerRTSIncomingCallObserver(true,this);
-        getCurrentUser();
-
         myApp=(MyLeanCloudApp) getApplication();
         myApp.setAudioTeachActivity(AudioTeachActivity.this);
 
         main_draw = findViewById(R.id.main_draw);
         peer_draw = findViewById(R.id.peer_draw);
-
+//接受传过来的课程信息
+        Intent intent = getIntent();
+        student_info = intent.getStringExtra("student_info");
+        Log.e("student_info", "11111111111111111111111111111111111111111"+student_info);
+        get_student_info_handle();
         drawBackgroud = findViewById(R.id.drawBackgroud);
         if (mRtcEngine == null && checkSelfPermission(Manifest.permission.RECORD_AUDIO, PERMISSION_REQ_ID_RECORD_AUDIO)) {
             initAgoraEngineAndJoinChannel(9998);
@@ -290,18 +299,13 @@ public class AudioTeachActivity extends AppCompatActivity {
 
 
         final Button join_first_btn = (Button) findViewById(R.id.join_first_btn);
+        join_first_btn.setText(getUserName(0));
         join_first_btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 FrameLayout container = (FrameLayout)findViewById(R.id.local_video_view_container);
                 if(container.getVisibility() == View.GONE){
-                    close_Video();
-                    showMusicPicture();
-                    leaveChannel();
-                    Channel_name = "demoChannel1";
-//                    initAgoraEngineAndJoinChannel(9998);
-                    joinChannel(9998);
-                    mRtcEngine.disableVideo();
+                    joinInNewRoom(0);
                     container.setVisibility(View.GONE);
                 }else{
                     Toast.makeText(AudioTeachActivity.this, "现在正在与学生教学,请先关闭视频", Toast.LENGTH_SHORT).show();
@@ -310,48 +314,47 @@ public class AudioTeachActivity extends AppCompatActivity {
 
         });
         final Button join_second_btn = (Button) findViewById(R.id.join_second_btn);
+        join_second_btn.setText(getUserName(1));
         join_second_btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 FrameLayout container = (FrameLayout)findViewById(R.id.local_video_view_container);
                 if(container.getVisibility() == View.GONE){
-                    close_Video();
-                    showMusicPicture();
-                    leaveChannel();
-                    Channel_name = "demoChannel2";
-//                    initAgoraEngineAndJoinChannel(9998);
-                    joinChannel(9998);
-                    mRtcEngine.disableVideo();
+                    joinInNewRoom(1);
                     container.setVisibility(View.GONE);
                 }else{
                     Toast.makeText(AudioTeachActivity.this, "现在正在与学生教学,请先关闭视频", Toast.LENGTH_SHORT).show();
                 }
             }
         });
-//        final Button join_third_btn = (Button) findViewById(R.id.join_third_btn);
-//        join_third_btn.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View view) {
-//               leaveChannel();
-//                Channel_name = "demoChannel3";
-//                initAgoraEngineAndJoinChannel(9998);
-//                mRtcEngine.disableVideo();
-//                FrameLayout container = (FrameLayout)findViewById(R.id.local_video_view_container);
-//                container.setVisibility(View.GONE);
-//            }
-//        });
-//        final Button join_fourth_btn = (Button) findViewById(R.id.join_fourth_btn);
-//        join_fourth_btn.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View view) {
-//               leaveChannel();
-//                Channel_name = "demoChannel4";
-//                initAgoraEngineAndJoinChannel(9998);
-//                mRtcEngine.disableVideo();
-//                FrameLayout container = (FrameLayout)findViewById(R.id.local_video_view_container);
-//                container.setVisibility(View.GONE);
-//            }
-//        });
+        final Button join_third_btn = (Button) findViewById(R.id.join_third_btn);
+        join_third_btn.setText(getUserName(2));
+        join_third_btn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                FrameLayout container = (FrameLayout)findViewById(R.id.local_video_view_container);
+                if(container.getVisibility() == View.GONE){
+                    joinInNewRoom(2);
+                    container.setVisibility(View.GONE);
+                }else{
+                    Toast.makeText(AudioTeachActivity.this, "现在正在与学生教学,请先关闭视频", Toast.LENGTH_SHORT).show();
+                }
+            }
+        });
+        final Button join_fourth_btn = (Button) findViewById(R.id.join_fourth_btn);
+        join_fourth_btn.setText(getUserName(3));
+        join_fourth_btn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                FrameLayout container = (FrameLayout)findViewById(R.id.local_video_view_container);
+                if(container.getVisibility() == View.GONE){
+                    joinInNewRoom(3);
+                    container.setVisibility(View.GONE);
+                }else{
+                    Toast.makeText(AudioTeachActivity.this, "现在正在与学生教学,请先关闭视频", Toast.LENGTH_SHORT).show();
+                }
+            }
+        });
 
 
 
@@ -385,21 +388,35 @@ public class AudioTeachActivity extends AppCompatActivity {
                 openBtn.setText(openBtn.getText().equals("打开视频教学")?"关闭视频教学":"打开视频教学");
             }
         });
-        //离开房间
-//        final Button close_video_button = (Button) findViewById(R.id.close_video_button);
-//        close_video_button.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View view) {
-//                if (checkSelfPermission(Manifest.permission.CAMERA, PERMISSION_REQ_ID_CAMERA))
-//                {
-//                    close_Video();
-//                    showMusicPicture();
-//                }
-//
-//            }
-//        });
 
 }
+
+    public String getUserName(int index) {
+        String user_name = "未上线";
+        try {
+            user_name = mArrStudentInfo.getJSONObject(index).getString("userName");
+        }catch (JSONException e)
+        {
+
+        }
+        return user_name;
+    }
+
+    public void joinInNewRoom(int index) {
+        String objectID = "";
+        try {
+            objectID = mArrStudentInfo.getJSONObject(index).getString("objectId");
+        }catch (JSONException e)
+        {
+
+        }
+        close_Video();
+        showMusicPicture();
+        leaveChannel();
+        Channel_name = objectID;
+        joinChannel(9998);
+        mRtcEngine.disableVideo();
+    }
 
     //初始化进入房间
     private void initAgoraEngineAndJoinChannel(int uid) {
@@ -551,6 +568,7 @@ public class AudioTeachActivity extends AppCompatActivity {
             if (main_draw.getVisibility() == View.GONE){
                 if (local_video.getVisibility() == View.GONE){
                     this.finish();
+                    startActivity(new Intent(AudioTeachActivity.this, MainActivity.class));
                 }
                 else {
                     Toast.makeText(AudioTeachActivity.this, "现在正在与学生教学", Toast.LENGTH_SHORT).show();
@@ -562,27 +580,6 @@ public class AudioTeachActivity extends AppCompatActivity {
         }
         return false;
     }
-//private long time = 0;
-//    @Override
-//    public boolean onKeyDown(int keyCode, KeyEvent event) {
-//        if (keyCode == KeyEvent.KEYCODE_BACK) {
-//            if ((System.currentTimeMillis() - time > 1000)) {
-//                Toast.makeText(this, "正在与学生教学，再点一次返回", Toast.LENGTH_SHORT).show();
-//                time = System.currentTimeMillis();
-//            } else {
-//                leaveChannel();
-//                startActivity(new Intent(AudioTeachActivity.this, MainActivity.class));
-//            }
-//            return true;
-//        } else {
-//            NIMClient.getService(AuthService.class).logout();
-//            return super.onKeyDown(keyCode, event);
-//        }
-//
-//    }
-//
-//
-
     @Override
     protected void onDestroy() {
         Log.e("TAG","onDestroy=============+++++++++++");
@@ -590,36 +587,20 @@ public class AudioTeachActivity extends AppCompatActivity {
         mRtcEngine.destroy();
         super.onDestroy();
     }
-    public AVUser getCurrentUser(){
-        AVUser currentUser = AVUser.getCurrentUser();
-        Accid = currentUser.getObjectId();
-        AVQuery<AVObject> query = new AVQuery<>("Course");
-//        query.whereEqualTo("objectID", "5b5af3a82f301e00394c7c98");
-         query.whereEqualTo("teacher", AVObject.createWithoutData("_User", ""+Accid));
-         query.include("student");
-        query.findInBackground(new FindCallback<AVObject>() {
-                                   @Override
-                                   public void done(List<AVObject> list, AVException e) {
-                                       Object student_info;
-                                       String objectID;
-                                       for (int i = 0; i<list.size();i++){
-                                           AVObject INFO = list.get(i);
-                                            student_info = INFO.get("student");
-                                            student_info.toString());
-                                           Log.e("TAG","／／／／／／／／／／／／／／／／／／"+student_info);
+    public void get_student_info_handle(){
+        try {
+            mArrStudentInfo = new JSONArray(student_info);
+            Channel_name = mArrStudentInfo.getJSONObject(0).getString("objectId");
+        }
+        catch (JSONException error) {
 
-                                       }
+            Log.e("error", "////////////"+error);
+        }
 
-                                   }
-                               });
-        return currentUser;
+
+
     }
 
 }
-
-
-
-
-
 
 
