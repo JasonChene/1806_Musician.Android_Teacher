@@ -1,6 +1,7 @@
 package com.example.macbookpro.musictrainerteacher;
 
 import android.Manifest;
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.ActivityManager;
 import android.content.Context;
@@ -15,6 +16,7 @@ import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
+import android.text.Html;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
@@ -40,6 +42,8 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
 
 import static com.netease.nimlib.sdk.StatusCode.LOGINED;
@@ -122,7 +126,7 @@ public class MainActivity extends AppCompatActivity {
         SysExitUtil.activityList.add(MainActivity.this);
         initActionBar();
         getStudentinfo();
-
+        setTime();
         checkSelfPermission(Manifest.permission_group.STORAGE, 0);
 
         Button room_button = (Button) findViewById(R.id.login_room);
@@ -131,8 +135,8 @@ public class MainActivity extends AppCompatActivity {
             public void onClick(View view) {
                 startActivity(new Intent(MainActivity.this, AudioTeachActivity.class));
                 //传输课程信息
-                Intent intent = new Intent(MainActivity.this,AudioTeachActivity.class);
-                intent.putExtra("student_info",student_info);
+                Intent intent = new Intent(MainActivity.this, AudioTeachActivity.class);
+                intent.putExtra("student_info", student_info);
                 startActivity(intent);
             }
         });
@@ -206,38 +210,41 @@ public class MainActivity extends AppCompatActivity {
             query.findInBackground(new FindCallback<AVObject>() {
                 @Override
                 public void done(List<AVObject> list, AVException e) {
-                    JSONArray allStuInfo = new JSONArray();
-                    for (int i = 0; i < list.size(); i++) {
-                        AVObject objectInfo = list.get(i);
-                        try {
-                            JSONObject studentInfo = new JSONObject(objectInfo.get("student").toString());
-                            String studentID = studentInfo.getString("objectId");
-                            String userName = studentInfo.getJSONObject("serverData").getString("username");
-//                            Log.e("studentInfo", studentInfo.toString());
-//                            Log.e("studentID", studentID);
-//                            Log.e("userName", userName);
-                            JSONObject stuInfo = new JSONObject();
-                            stuInfo.put("userName", userName);
-                            stuInfo.put("objectId", studentID);
-//                            Log.e("stuInfo", stuInfo.toString());
-                            allStuInfo.put(stuInfo);
-                        } catch (JSONException error) {
+                    if ( list!= null) {
+                        JSONArray allStuInfo = new JSONArray();
+                        for (int i = 0; i < list.size(); i++) {
+                            AVObject objectInfo = list.get(i);
+                            try {
+                                JSONObject studentInfo = new JSONObject(objectInfo.get("student").toString());
+                                String studentID = studentInfo.getString("objectId");
+                                String userName = studentInfo.getJSONObject("serverData").getString("username");
+                                JSONObject stuInfo = new JSONObject();
+                                stuInfo.put("userName", userName);
+                                stuInfo.put("objectId", studentID);
+                                allStuInfo.put(stuInfo);
+                            } catch (JSONException error) {
 
+                            }
                         }
+                        student_info = allStuInfo.toString();
+                        Log.e("allStuInfo", student_info);
+
                     }
-                    student_info = allStuInfo.toString();
-//                    Intent intent = new Intent(MainActivity.this,AudioTeachActivity.class);
-//                    intent.putExtra("allStudentInfo",allStuInfo.toString());
-//                    startActivity(intent);
-
-                    Log.e("allStuInfo", student_info);
-
                 }
             });
         }
-
-
         return currentUser;
+    }
+    //获取时间
+    @SuppressLint("SimpleDateFormat")
+    public static String getTime() {
+        SimpleDateFormat df = new SimpleDateFormat("yyyy年MM月dd日");//设置日期格式
+        return df.format(new Date());// new Date()为获取当前系统时间
+    }
+    public void setTime(){
+        TextView textView = (TextView) findViewById(R.id.time);
+        textView.setText(Html.fromHtml(getTime()));
+
     }
 }
 

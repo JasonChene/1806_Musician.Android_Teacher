@@ -132,7 +132,6 @@ public class VerificationCodeActivity extends AppCompatActivity {
                         @Override
                         public void done(final AVUser avUser, AVException e) {
                             Log.e("e", "" + avUser);
-                            Log.e("error", "===========" + avUser.getObjectId());
                             /* 请求成功 */
                             if (null == e) {
                                 if (!avUser.containsKey("netEaseUserInfo"))

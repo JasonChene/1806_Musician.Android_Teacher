@@ -1,28 +1,144 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!--<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"-->
-    <!--xmlns:app="http://schemas.android.com/apk/res-auto"-->
-    <!--xmlns:tools="http://schemas.android.com/tools"-->
-    <!--android:layout_width="match_parent"-->
-    <!--android:layout_height="match_parent"-->
-    <!--tools:context=".MainActivity">-->
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<?xml version="1.0" encoding="utf-8"?><!--<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"--><!--xmlns:app="http://schemas.android.com/apk/res-auto"--><!--xmlns:tools="http://schemas.android.com/tools"--><!--android:layout_width="match_parent"--><!--android:layout_height="match_parent"--><!--tools:context=".MainActivity">-->
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:background="@android:color/white"
-    android:baselineAligned="false"
-    android:orientation="vertical"
+    android:orientation="horizontal"
     tools:context=".MainActivity">
 
-    <Button
-        android:id="@+id/login_room"
+    <RelativeLayout
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="进入老师上课教室"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
-</LinearLayout>
-<!--</android.support.constraint.ConstraintLayout>-->
+        android:layout_height="wrap_content">
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="42dp"
+            android:background="#475969">
+
+        </View>
+
+        <LinearLayout
+            android:layout_width="fill_parent"
+            android:layout_height="42dp"
+            android:layout_marginTop="6dp"
+            android:gravity="left">
+
+            <Button
+                android:id="@+id/last_week"
+                android:layout_width="73dp"
+                android:layout_height="30dp"
+                android:layout_marginLeft="6dp"
+                android:background="@drawable/course_button"
+                android:text="上一周" />
+        </LinearLayout>
+        <LinearLayout
+            android:id="@+id/week"
+            android:layout_width="fill_parent"
+            android:layout_height="42dp"
+            android:gravity="center">
+            <Button
+                android:id="@+id/monday"
+                android:layout_width="29dp"
+                android:layout_height="30dp"
+                android:layout_marginLeft="1dp"
+                android:background="@drawable/course_button"
+                android:text="一" />
+            <Button
+                android:id="@+id/tuesday"
+                android:layout_width="29dp"
+                android:layout_height="30dp"
+                android:layout_marginLeft="1dp"
+                android:background="@drawable/course_button"
+                android:text="二" />
+            <Button
+                android:id="@+id/wednesday"
+                android:layout_width="29dp"
+                android:layout_height="30dp"
+                android:layout_marginLeft="1dp"
+                android:background="@drawable/course_button"
+                android:text="三" />
+            <Button
+                android:id="@+id/thursday"
+                android:layout_width="29dp"
+                android:layout_height="30dp"
+                android:layout_marginLeft="1dp"
+                android:background="@drawable/course_button"
+                android:text="四" />
+            <Button
+                android:id="@+id/friday"
+                android:layout_width="29dp"
+                android:layout_height="30dp"
+                android:layout_marginLeft="1dp"
+                android:background="@drawable/course_button"
+                android:text="五" />
+            <Button
+                android:id="@+id/saturday"
+                android:layout_width="29dp"
+                android:layout_height="30dp"
+                android:layout_marginLeft="1dp"
+                android:background="@drawable/course_button"
+                android:text="六" />
+            <Button
+                android:id="@+id/sunday"
+                android:layout_width="29dp"
+                android:layout_height="30dp"
+                android:layout_marginLeft="1dp"
+                android:background="@drawable/course_button"
+                android:text="日" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="fill_parent"
+            android:layout_height="42dp"
+            android:layout_marginTop="6dp"
+            android:gravity="right">
+
+            <Button
+                android:id="@+id/next_week"
+                android:layout_width="73dp"
+                android:layout_height="30dp"
+                android:layout_marginRight="6dp"
+                android:background="@drawable/course_button"
+                android:text="下一周" />
+        </LinearLayout>
+
+    </RelativeLayout>
+
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="23dp"
+            android:layout_marginTop="42dp">
+
+            <TextView
+                android:id="@+id/time"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:gravity="center"
+                android:textColor="#101010"
+                android:textSize="16sp"
+                android:textStyle="normal" />
+        </LinearLayout>
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginTop="300dp">
+
+        <Button
+            android:id="@+id/login_room"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="进入老师上课教室"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+    </RelativeLayout>
+</android.support.constraint.ConstraintLayout>

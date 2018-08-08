@@ -21,7 +21,6 @@
             android:layout_weight="1"
             android:background="#48586A"
             android:gravity="center"
-            android:text="张小花"
             android:textColor="#FFFFFF"
             android:textSize="14dp" />
 
@@ -33,7 +32,6 @@
             android:layout_weight="1"
             android:background="#48586A"
             android:gravity="center"
-            android:text="李小花"
             android:textColor="#FFFFFF"
             android:textSize="14dp" />
 
@@ -45,7 +43,6 @@
             android:layout_weight="1"
             android:background="#48586A"
             android:gravity="center"
-            android:text="周小花"
             android:textColor="#FFFFFF"
             android:textSize="14dp"
             />
@@ -58,7 +55,6 @@
             android:layout_weight="1"
             android:background="#48586A"
             android:gravity="center"
-            android:text="未上线"
             android:textColor="#FFFFFF"
             android:textSize="14dp" />
     </LinearLayout>
