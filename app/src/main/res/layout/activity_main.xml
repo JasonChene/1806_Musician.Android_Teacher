@@ -10,26 +10,22 @@
     <RelativeLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content">
-
         <View
             android:layout_width="match_parent"
             android:layout_height="42dp"
             android:background="#475969">
-
         </View>
-
         <LinearLayout
             android:layout_width="fill_parent"
             android:layout_height="42dp"
             android:layout_marginTop="6dp"
             android:gravity="left">
-
             <Button
                 android:id="@+id/last_week"
-                android:layout_width="73dp"
+                android:layout_width="63dp"
                 android:layout_height="30dp"
                 android:layout_marginLeft="6dp"
-                android:background="@drawable/course_button"
+                android:background="@drawable/white_button"
                 android:text="上一周" />
         </LinearLayout>
         <LinearLayout
@@ -42,49 +38,49 @@
                 android:layout_width="29dp"
                 android:layout_height="30dp"
                 android:layout_marginLeft="1dp"
-                android:background="@drawable/course_button"
+                android:background="@drawable/white_button"
                 android:text="一" />
             <Button
                 android:id="@+id/tuesday"
                 android:layout_width="29dp"
                 android:layout_height="30dp"
                 android:layout_marginLeft="1dp"
-                android:background="@drawable/course_button"
+                android:background="@drawable/white_button"
                 android:text="二" />
             <Button
                 android:id="@+id/wednesday"
                 android:layout_width="29dp"
                 android:layout_height="30dp"
                 android:layout_marginLeft="1dp"
-                android:background="@drawable/course_button"
+                android:background="@drawable/white_button"
                 android:text="三" />
             <Button
                 android:id="@+id/thursday"
                 android:layout_width="29dp"
                 android:layout_height="30dp"
                 android:layout_marginLeft="1dp"
-                android:background="@drawable/course_button"
+                android:background="@drawable/white_button"
                 android:text="四" />
             <Button
                 android:id="@+id/friday"
                 android:layout_width="29dp"
                 android:layout_height="30dp"
                 android:layout_marginLeft="1dp"
-                android:background="@drawable/course_button"
+                android:background="@drawable/white_button"
                 android:text="五" />
             <Button
                 android:id="@+id/saturday"
                 android:layout_width="29dp"
                 android:layout_height="30dp"
                 android:layout_marginLeft="1dp"
-                android:background="@drawable/course_button"
+                android:background="@drawable/white_button"
                 android:text="六" />
             <Button
                 android:id="@+id/sunday"
                 android:layout_width="29dp"
                 android:layout_height="30dp"
                 android:layout_marginLeft="1dp"
-                android:background="@drawable/course_button"
+                android:background="@drawable/white_button"
                 android:text="日" />
         </LinearLayout>
 
@@ -93,13 +89,12 @@
             android:layout_height="42dp"
             android:layout_marginTop="6dp"
             android:gravity="right">
-
             <Button
                 android:id="@+id/next_week"
-                android:layout_width="73dp"
+                android:layout_width="63dp"
                 android:layout_height="30dp"
                 android:layout_marginRight="6dp"
-                android:background="@drawable/course_button"
+                android:background="@drawable/white_button"
                 android:text="下一周" />
         </LinearLayout>
 

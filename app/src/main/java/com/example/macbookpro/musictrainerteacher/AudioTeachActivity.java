@@ -87,7 +87,7 @@ public class AudioTeachActivity extends AppCompatActivity {
     Draw peer_draw;
     String Channel_name = "demoChannel1";
     String Accid;
-    String student_info;
+    String student_info = "null";
     MyLeanCloudApp myApp;
     Object username;
     Object object_id;

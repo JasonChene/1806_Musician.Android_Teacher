@@ -2,17 +2,12 @@ package com.example.macbookpro.musictrainerteacher;
 
 import android.Manifest;
 import android.annotation.SuppressLint;
-import android.app.Activity;
-import android.app.ActivityManager;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.graphics.LinearGradient;
-import android.os.SystemClock;
+import android.graphics.Color;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
-import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
@@ -42,7 +37,9 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
@@ -53,6 +50,7 @@ public class MainActivity extends AppCompatActivity {
     Boolean isLoginEaseSuccess = false;
     String Accid;
     String student_info;
+    String now_week_day = getWeek(new Date());//周几
 
     @Override
     protected void onResume() {
@@ -127,8 +125,8 @@ public class MainActivity extends AppCompatActivity {
         initActionBar();
         getStudentinfo();
         setTime();
+        week_onclick();
         checkSelfPermission(Manifest.permission_group.STORAGE, 0);
-
         Button room_button = (Button) findViewById(R.id.login_room);
         room_button.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -210,7 +208,7 @@ public class MainActivity extends AppCompatActivity {
             query.findInBackground(new FindCallback<AVObject>() {
                 @Override
                 public void done(List<AVObject> list, AVException e) {
-                    if ( list!= null) {
+                    if (list != null) {
                         JSONArray allStuInfo = new JSONArray();
                         for (int i = 0; i < list.size(); i++) {
                             AVObject objectInfo = list.get(i);
@@ -235,16 +233,99 @@ public class MainActivity extends AppCompatActivity {
         }
         return currentUser;
     }
+
     //获取时间
     @SuppressLint("SimpleDateFormat")
-    public static String getTime() {
-        SimpleDateFormat df = new SimpleDateFormat("yyyy年MM月dd日");//设置日期格式
-        return df.format(new Date());// new Date()为获取当前系统时间
+    public static String getTime(int week_code,Date date) {
+        SimpleDateFormat sdf=new SimpleDateFormat("yyyy年MM月dd日");
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTime(date);
+        calendar.add(Calendar.DAY_OF_MONTH, week_code);
+        date = calendar.getTime();
+         return  sdf.format(date);
     }
-    public void setTime(){
-        TextView textView = (TextView) findViewById(R.id.time);
-        textView.setText(Html.fromHtml(getTime()));
 
+    @SuppressLint("SimpleDateFormat")
+//    public static String getWeek() {
+//        SimpleDateFormat week = new SimpleDateFormat("E");//设置日期格式
+//        return week.format(new Date());
+//    }
+    public static String getWeek(Date date) {
+        SimpleDateFormat week = new SimpleDateFormat("E");//设置日期格式
+        return week.format(date);
+    }
+
+    public void setTime() {
+        TextView textView = (TextView) findViewById(R.id.time);
+        textView.setText(getTime(0,new Date()));
+    }
+
+    public void week_onclick() {
+        final LinearLayout weekLinearLayout = (LinearLayout) findViewById(R.id.week);
+
+        for (int i = 0; i < weekLinearLayout.getChildCount(); i++) {
+            Button btn = (Button) weekLinearLayout.getChildAt(i);
+            btn.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    Button test = (Button) view;
+                    String week_day = "周"+test.getText().toString();
+                    Log.e("test", "++++++++++"+week_day);
+                    //修改按钮颜色
+                    for (int m = 0; m < weekLinearLayout.getChildCount(); m++) {
+                        Button weekbtn = (Button) weekLinearLayout.getChildAt(m);
+                        if (test.getText().toString().equals(weekbtn.getText().toString())) {
+                            weekbtn.setBackground(getResources().getDrawable(R.drawable.red_button));
+                            weekbtn.setTextColor(Color.WHITE);
+                        } else {
+                            weekbtn.setBackground(getResources().getDrawable(R.drawable.white_button));
+                            weekbtn.setTextColor(Color.BLACK);
+                        }
+                    }
+                    //更新时间
+                    int diff_day_number = get_now_week_code(week_day) - get_now_week_code(now_week_day);
+
+                    TextView textView = (TextView) findViewById(R.id.time);
+                    try {
+                        Date nowDate = stringToDate(textView.getText().toString());
+                        textView.setText(getTime(diff_day_number, nowDate));
+                        now_week_day = week_day;
+                    }catch (ParseException err)
+                    {
+                    }
+                }
+            });
+        }
+    }
+    public int get_now_week_code(String day){
+        Log.e("get_now_week_code", day);
+        if (day.equals("周一") ){
+            return  1;
+        }
+        else if (day.equals("周二")){
+            return  2;
+        }
+        else if (day.equals("周三")){
+            return  3;
+        }
+        else if (day.equals("周四")){
+            return  4;
+        }
+        else if (day.equals("周五")){
+            return  5;
+        }
+        else if (day.equals("周六")){
+            return  6;
+        }
+        else {
+            return  7;
+        }
+    }
+
+    public Date stringToDate(String strTime) throws ParseException
+    {
+        SimpleDateFormat formatter = new SimpleDateFormat("yyyy年MM月dd日");
+        Date date = formatter.parse(strTime);
+        return date;
     }
 }
-
