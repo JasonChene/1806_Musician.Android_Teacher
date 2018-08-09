@@ -126,6 +126,7 @@ public class MainActivity extends AppCompatActivity {
         getStudentinfo();
         setTime();
         week_onclick();
+        init_week();
         checkSelfPermission(Manifest.permission_group.STORAGE, 0);
         Button room_button = (Button) findViewById(R.id.login_room);
         room_button.setOnClickListener(new View.OnClickListener() {
@@ -164,7 +165,6 @@ public class MainActivity extends AppCompatActivity {
 
     //双击退回手机主页面
     private long time = 0;
-
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {
         if (keyCode == KeyEvent.KEYCODE_BACK) {
@@ -254,15 +254,26 @@ public class MainActivity extends AppCompatActivity {
         SimpleDateFormat week = new SimpleDateFormat("E");//设置日期格式
         return week.format(date);
     }
-
     public void setTime() {
         TextView textView = (TextView) findViewById(R.id.time);
         textView.setText(getTime(0,new Date()));
     }
-
+//初始显示的星期
+    public void init_week(){
+        final LinearLayout weekLinearLayout = (LinearLayout) findViewById(R.id.week);
+        for (int m = 0; m < weekLinearLayout.getChildCount(); m++) {
+            Button weekbtn = (Button) weekLinearLayout.getChildAt(m);
+            if (now_week_day.equals("周"+weekbtn.getText().toString())) {
+                weekbtn.setBackground(getResources().getDrawable(R.drawable.red_button));
+                weekbtn.setTextColor(Color.WHITE);
+            } else {
+                weekbtn.setBackground(getResources().getDrawable(R.drawable.white_button));
+                weekbtn.setTextColor(Color.BLACK);
+            }
+        }
+    }
     public void week_onclick() {
         final LinearLayout weekLinearLayout = (LinearLayout) findViewById(R.id.week);
-
         for (int i = 0; i < weekLinearLayout.getChildCount(); i++) {
             Button btn = (Button) weekLinearLayout.getChildAt(i);
             btn.setOnClickListener(new View.OnClickListener() {
@@ -274,6 +285,7 @@ public class MainActivity extends AppCompatActivity {
                     //修改按钮颜色
                     for (int m = 0; m < weekLinearLayout.getChildCount(); m++) {
                         Button weekbtn = (Button) weekLinearLayout.getChildAt(m);
+
                         if (test.getText().toString().equals(weekbtn.getText().toString())) {
                             weekbtn.setBackground(getResources().getDrawable(R.drawable.red_button));
                             weekbtn.setTextColor(Color.WHITE);
@@ -296,6 +308,34 @@ public class MainActivity extends AppCompatActivity {
                 }
             });
         }
+        Button last_button = (Button) findViewById(R.id.last_week);
+        last_button.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                TextView textView = (TextView) findViewById(R.id.time);
+                int code =  -7;
+                try{
+                    Date nowDate = stringToDate(textView.getText().toString());
+                    textView.setText(getTime(code, nowDate));
+                }
+                catch (ParseException err){
+                }
+            }
+        });
+        Button next_button = (Button) findViewById(R.id.next_week);
+        next_button.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                TextView textView = (TextView) findViewById(R.id.time);
+                int code =  7;
+                try{
+                    Date nowDate = stringToDate(textView.getText().toString());
+                    textView.setText(getTime(code, nowDate));
+                }
+                catch (ParseException err){
+                }
+            }
+        });
     }
     public int get_now_week_code(String day){
         Log.e("get_now_week_code", day);
@@ -321,7 +361,6 @@ public class MainActivity extends AppCompatActivity {
             return  7;
         }
     }
-
     public Date stringToDate(String strTime) throws ParseException
     {
         SimpleDateFormat formatter = new SimpleDateFormat("yyyy年MM月dd日");
@@ -329,3 +368,71 @@ public class MainActivity extends AppCompatActivity {
         return date;
     }
 }
+//- (void) getAllCoursesInfo :(NSDate *)date
+//{
+//    [mAllStudentCourseInfo removeAllObjects];
+//    AVUser *user = [AVUser currentUser];
+//    //获取课程信息
+//    if (user != nil)
+//    {
+//        NSString *strMinusDate = [self getFormatDateStringWithMinus:date];
+//        NSDate *startDate = [self getDateFromStringWithMinus:[NSString stringWithFormat:@"%@ 00:00:00",strMinusDate]];
+//        NSDate *endDate = [self getDateFromStringWithMinus:[NSString stringWithFormat:@"%@ 23:59:59",strMinusDate]];
+//
+//        NSLog(@"startDate:%f",[endDate timeIntervalSinceDate:startDate]);
+//        NSString *userID = [user objectForKey:@"objectId"];
+//
+//        AVQuery *studentQuery = [AVQuery queryWithClassName:@"Course"];
+//        [studentQuery whereKey:@"student" equalTo:[AVObject objectWithClassName:@"_User" objectId:userID]];
+//        AVQuery *startTimeQuery = [AVQuery queryWithClassName:@"Course"];
+//        [startTimeQuery whereKey:@"startTime" greaterThanOrEqualTo:startDate];
+//        AVQuery *endTimeQuery = [AVQuery queryWithClassName:@"Course"];
+//        [endTimeQuery whereKey:@"startTime" lessThanOrEqualTo:endDate];
+//
+//        AVQuery *query = [AVQuery andQueryWithSubqueries:[NSArray arrayWithObjects:studentQuery,startTimeQuery,endTimeQuery,nil]];
+//        [query findObjectsInBackgroundWithBlock:^(NSArray *objects, NSError *error) {
+//            // objects 返回的就是有图片的 Todo 集合
+////            NSDictionary *dicStudentInfo = [objects objectAtIndex:0];
+////            NSString *teacherID = [[dicStudentInfo objectForKey:@"teacher"] objectForKey:@"objectId"];
+////            NSString *studentID = [[dicStudentInfo objectForKey:@"student"] objectForKey:@"objectId"];
+////            self->mTeacherID = teacherID;
+////            self->mStudentID = studentID;
+//            NSMutableArray *arrAMCourse = [[NSMutableArray alloc]initWithCapacity:0];
+//            NSMutableArray *arrPMCourse = [[NSMutableArray alloc]initWithCapacity:0];
+//            NSMutableArray *arrNightCourse = [[NSMutableArray alloc]initWithCapacity:0];
+//            for (int i = 0; i < objects.count; i ++)
+//            {
+//                NSDictionary *dicStudentInfo = [objects objectAtIndex:i];
+//                NSDate *noonTime = [self getDateFromStringWithMinus:[NSString stringWithFormat:@"%@ 12:00:00",strMinusDate]];
+//                NSDate *nightTime = [self getDateFromStringWithMinus:[NSString stringWithFormat:@"%@ 18:00:00",strMinusDate]];
+//                NSDate *startDateTime = [dicStudentInfo objectForKey:@"startTime"];
+//                startDateTime = [startDateTime dateByAddingTimeInterval:8*60*60];
+//                //上午的课
+//                if ([startDateTime timeIntervalSince1970] < [noonTime timeIntervalSince1970])
+//                {
+//                    [arrAMCourse addObject:dicStudentInfo];
+//                    continue;
+//                }
+//                else if ([startDateTime timeIntervalSince1970] > [nightTime timeIntervalSince1970])
+//                {
+//                    [arrNightCourse addObject:dicStudentInfo];
+//                    continue;
+//                }
+//                else
+//                {
+//                    [arrPMCourse addObject:dicStudentInfo];
+//                    continue;
+//                }
+//            }
+//            if (arrAMCourse.count != 0)
+//                [self->mAllStudentCourseInfo setObject:arrAMCourse forKey:@"AMCourse"];
+//            if (arrPMCourse.count != 0)
+//                [self->mAllStudentCourseInfo setObject:arrPMCourse forKey:@"PMCourse"];
+//            if (arrNightCourse.count != 0)
+//                [self->mAllStudentCourseInfo setObject:arrNightCourse forKey:@"NightCourse"];
+//
+//            NSLog(@"============%@",self->mAllStudentCourseInfo);
+//
+//        }];
+//    }
+//}

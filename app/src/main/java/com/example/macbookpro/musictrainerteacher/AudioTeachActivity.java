@@ -71,32 +71,25 @@ import static com.netease.nimlib.sdk.StatusCode.LOGINED;
 import static java.lang.System.err;
 
 public class AudioTeachActivity extends AppCompatActivity {
-
     RtcEngine mRtcEngine = null;
     private static final int PERMISSION_REQ_ID_RECORD_AUDIO = 22;
     private static final int PERMISSION_REQ_ID_CAMERA = PERMISSION_REQ_ID_RECORD_AUDIO + 1;
     private static final String LOG_TAG = "LOG_TAG";
-
-
     public static final int GET_DATA_SUCCESS = 1;
     public static final int NETWORK_ERROR = 2;
     public static final int SERVER_ERROR = 3;
-
     Draw main_draw;
     View drawBackgroud;
     Draw peer_draw;
     String Channel_name = "demoChannel1";
-    String Accid;
     String student_info = "null";
     MyLeanCloudApp myApp;
-    Object username;
-    Object object_id;
     JSONArray mArrStudentInfo;
     private IRtcEngineEventHandler mRtcEventHandler = new IRtcEngineEventHandler() {
         @Override
         public void onJoinChannelSuccess(String channel, int uid, int elapsed) {
             super.onJoinChannelSuccess(channel, uid, elapsed);
-            Log.e(LOG_TAG, uid + ":onJoinChannelSuccess===================="+ channel);
+            Log.e(LOG_TAG, uid + ":onJoinChannelSuccess" + channel);
         }
 
         @Override
@@ -105,73 +98,68 @@ public class AudioTeachActivity extends AppCompatActivity {
                 @Override
                 public void run() {
                     setupRemoteVideo(uid);
-                    Log.e(LOG_TAG, uid + ":onFirstRemoteVideoDecoded====================");
+                    Log.e(LOG_TAG, uid + ":onFirstRemoteVideoDecoded");
                 }
             });
         }
     };
-
     private Handler handler = new Handler() {
         @Override
         public void handleMessage(Message msg) {
-            switch (msg.what){
+            switch (msg.what) {
                 case GET_DATA_SUCCESS:
                     Bitmap bitmap = (Bitmap) msg.obj;
                     setImageBitmap(bitmap);
                     break;
                 case NETWORK_ERROR:
-                    Toast.makeText(AudioTeachActivity.this,"网络连接失败",Toast.LENGTH_SHORT).show();
+                    Toast.makeText(AudioTeachActivity.this, "网络连接失败", Toast.LENGTH_SHORT).show();
                     break;
                 case SERVER_ERROR:
-                    Toast.makeText(AudioTeachActivity.this,"服务器发生错误",Toast.LENGTH_SHORT).show();
+                    Toast.makeText(AudioTeachActivity.this, "服务器发生错误", Toast.LENGTH_SHORT).show();
                     break;
             }
         }
     };
-    public void setImageBitmap(Bitmap bitmap)
-    {
-        drawBackgroud.setBackground(new BitmapDrawable(getResources(),bitmap));
+
+    public void setImageBitmap(Bitmap bitmap) {
+        drawBackgroud.setBackground(new BitmapDrawable(getResources(), bitmap));
         //显示清除按钮
         Button clear_button = (Button) findViewById(R.id.clear);
         clear_button.setVisibility(View.VISIBLE);
     }
 
-    public void startKeepUpBoard(String sessionID, String toAccount)
-    {
+    public void startKeepUpBoard(String sessionID, String toAccount) {
         main_draw.sessionID = sessionID;     //参数传递
         main_draw.toAccount = toAccount;     //参数传递
         main_draw.setVisibility(View.VISIBLE);
         peer_draw.sessionID = sessionID;
         peer_draw.toAccount = toAccount;
         peer_draw.setVisibility(View.VISIBLE);
-//        //显示清除按钮
-//        Button clear_button = (Button) findViewById(R.id.clear);
-//        clear_button.setVisibility(View.VISIBLE);
         drawBackgroud.setVisibility(View.VISIBLE);
 
         //注册收到数据的监听
-        WhiteBoardManager.registerIncomingData(sessionID,true, main_draw, AudioTeachActivity.this);
-        WhiteBoardManager.registerRTSCloseObserver(sessionID,true,AudioTeachActivity.this);
+        WhiteBoardManager.registerIncomingData(sessionID, true, main_draw, AudioTeachActivity.this);
+        WhiteBoardManager.registerRTSCloseObserver(sessionID, true, AudioTeachActivity.this);
         //隐藏本地视频窗口
         FrameLayout local_container = (FrameLayout) findViewById(R.id.local_video_view_container);
         local_container.setVisibility(View.GONE);
     }
-    public void terminateRTS(String sessionID)
-    {
+
+    public void terminateRTS(String sessionID) {
         //注销收数据监听
         Boolean isDataSuccess = RTSManager.getInstance().observeReceiveData(sessionID, new Observer<RTSTunData>() {
             @Override
             public void onEvent(RTSTunData rtsTunData) {
             }
         }, false);
-        Log.e("TAG","注销收数据监听"+isDataSuccess);
+        Log.e("TAG", "注销收数据监听" + isDataSuccess);
         //注销挂断监听
         Boolean isCloseSuccess = RTSManager.getInstance().observeHangUpNotification(sessionID, new Observer<RTSCommonEvent>() {
             @Override
             public void onEvent(RTSCommonEvent rtsCommonEvent) {
             }
-        },false);
-        Log.e("TAG","注销挂断监听"+isCloseSuccess);
+        }, false);
+        Log.e("TAG", "注销挂断监听" + isCloseSuccess);
 
         main_draw.Clear();
         main_draw.setVisibility(View.GONE);
@@ -184,14 +172,13 @@ public class AudioTeachActivity extends AppCompatActivity {
         drawBackgroud.setBackgroundResource(0);
         drawBackgroud.setVisibility(View.GONE);
     }
-    public void updateWhiteBoardChannelID(String channelID)
-    {
+
+    public void updateWhiteBoardChannelID(String channelID) {
         main_draw.channelID = channelID;
     }
-    public void addMusicPic(String strMusicImageUrl)
-    {
+    public void addMusicPic(String strMusicImageUrl) {
         //设置本地图片
-        Log.i("MusicPicUrl:","---------------------:"+strMusicImageUrl);
+        Log.i("MusicPicUrl:", "" + strMusicImageUrl);
         setImageURL(strMusicImageUrl);
     }
 
@@ -221,7 +208,7 @@ public class AudioTeachActivity extends AppCompatActivity {
                         msg.what = GET_DATA_SUCCESS;
                         handler.sendMessage(msg);
                         inputStream.close();
-                    }else {
+                    } else {
                         //服务启发生错误
                         handler.sendEmptyMessage(SERVER_ERROR);
                     }
@@ -233,32 +220,28 @@ public class AudioTeachActivity extends AppCompatActivity {
             }
         }.start();
     }
-
-
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_audio_teach);
         SysExitUtil.activityList.add(AudioTeachActivity.this);
         initActionBar();
-//        WhiteBoardManager.registerRTSIncomingCallObserver(true,this);
-        myApp=(MyLeanCloudApp) getApplication();
+        myApp = (MyLeanCloudApp) getApplication();
         myApp.setAudioTeachActivity(AudioTeachActivity.this);
 
         main_draw = findViewById(R.id.main_draw);
         peer_draw = findViewById(R.id.peer_draw);
-//接受传过来的课程信息
+        //接受传过来的课程信息
         Intent intent = getIntent();
         student_info = intent.getStringExtra("student_info");
-        Log.e("student_info", "11111111111111111111111111111111111111111"+student_info);
+        Log.e("student_info", "" + student_info);
         get_student_info_handle();
         drawBackgroud = findViewById(R.id.drawBackgroud);
         if (mRtcEngine == null && checkSelfPermission(Manifest.permission.RECORD_AUDIO, PERMISSION_REQ_ID_RECORD_AUDIO)) {
             initAgoraEngineAndJoinChannel(9998);
             joinChannel(9998);
             mRtcEngine.disableVideo();
-            FrameLayout container = (FrameLayout)findViewById(R.id.local_video_view_container);
+            FrameLayout container = (FrameLayout) findViewById(R.id.local_video_view_container);
             container.setVisibility(View.GONE);
         }
 
@@ -267,24 +250,20 @@ public class AudioTeachActivity extends AppCompatActivity {
         back_button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if (main_draw.getVisibility() == View.GONE){
+                if (main_draw.getVisibility() == View.GONE) {
                     final FrameLayout remote_video = findViewById(R.id.remote_video_view_container);
-                    if (remote_video.getVisibility() == View.GONE){
+                    if (remote_video.getVisibility() == View.GONE) {
                         finish();
                         startActivity(new Intent(AudioTeachActivity.this, MainActivity.class));
-                    }
-                    else {
+                    } else {
                         Toast.makeText(AudioTeachActivity.this, "现在正在与学生教学", Toast.LENGTH_SHORT).show();
                     }
-                }
-                else {
+                } else {
                     Toast.makeText(AudioTeachActivity.this, "现在正在与学生教学", Toast.LENGTH_SHORT).show();
                 }
 
             }
         });
-
-
         //清空画板
         Button clear_button = (Button) findViewById(R.id.clear);
         clear_button.setOnClickListener(new View.OnClickListener() {
@@ -293,7 +272,7 @@ public class AudioTeachActivity extends AppCompatActivity {
                 main_draw.Clear();
                 peer_draw.Clear();
                 String clear_remote = "clear";
-                WhiteBoardManager.sendToRemote(main_draw.sessionID,main_draw.toAccount,clear_remote);
+                WhiteBoardManager.sendToRemote(main_draw.sessionID, main_draw.toAccount, clear_remote);
             }
         });
 
@@ -303,11 +282,11 @@ public class AudioTeachActivity extends AppCompatActivity {
         join_first_btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                FrameLayout container = (FrameLayout)findViewById(R.id.local_video_view_container);
-                if(container.getVisibility() == View.GONE){
+                FrameLayout container = (FrameLayout) findViewById(R.id.local_video_view_container);
+                if (container.getVisibility() == View.GONE) {
                     joinInNewRoom(0);
                     container.setVisibility(View.GONE);
-                }else{
+                } else {
                     Toast.makeText(AudioTeachActivity.this, "现在正在与学生教学,请先关闭视频", Toast.LENGTH_SHORT).show();
                 }
             }
@@ -318,11 +297,11 @@ public class AudioTeachActivity extends AppCompatActivity {
         join_second_btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                FrameLayout container = (FrameLayout)findViewById(R.id.local_video_view_container);
-                if(container.getVisibility() == View.GONE){
+                FrameLayout container = (FrameLayout) findViewById(R.id.local_video_view_container);
+                if (container.getVisibility() == View.GONE) {
                     joinInNewRoom(1);
                     container.setVisibility(View.GONE);
-                }else{
+                } else {
                     Toast.makeText(AudioTeachActivity.this, "现在正在与学生教学,请先关闭视频", Toast.LENGTH_SHORT).show();
                 }
             }
@@ -332,11 +311,11 @@ public class AudioTeachActivity extends AppCompatActivity {
         join_third_btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                FrameLayout container = (FrameLayout)findViewById(R.id.local_video_view_container);
-                if(container.getVisibility() == View.GONE){
+                FrameLayout container = (FrameLayout) findViewById(R.id.local_video_view_container);
+                if (container.getVisibility() == View.GONE) {
                     joinInNewRoom(2);
                     container.setVisibility(View.GONE);
-                }else{
+                } else {
                     Toast.makeText(AudioTeachActivity.this, "现在正在与学生教学,请先关闭视频", Toast.LENGTH_SHORT).show();
                 }
             }
@@ -346,69 +325,55 @@ public class AudioTeachActivity extends AppCompatActivity {
         join_fourth_btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                FrameLayout container = (FrameLayout)findViewById(R.id.local_video_view_container);
-                if(container.getVisibility() == View.GONE){
+                FrameLayout container = (FrameLayout) findViewById(R.id.local_video_view_container);
+                if (container.getVisibility() == View.GONE) {
                     joinInNewRoom(3);
                     container.setVisibility(View.GONE);
-                }else{
+                } else {
                     Toast.makeText(AudioTeachActivity.this, "现在正在与学生教学,请先关闭视频", Toast.LENGTH_SHORT).show();
                 }
             }
         });
-
-
-
         //离开房间
         final Button close_video_button = (Button) findViewById(R.id.open_video_button);
         close_video_button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Button openBtn = (Button)view;
-                if (openBtn.getText().equals("打开视频教学"))
-                {
-                    if (checkSelfPermission(Manifest.permission.CAMERA, PERMISSION_REQ_ID_CAMERA))
-                    {
+                Button openBtn = (Button) view;
+                if (openBtn.getText().equals("打开视频教学")) {
+                    if (checkSelfPermission(Manifest.permission.CAMERA, PERMISSION_REQ_ID_CAMERA)) {
                         hideMusicPicture();
                         mRtcEngine.enableVideo();
                         FrameLayout local_container = (FrameLayout) findViewById(R.id.local_video_view_container);
                         local_container.setVisibility(View.VISIBLE);
                         FrameLayout remote_container = (FrameLayout) findViewById(R.id.remote_video_view_container);
                         remote_container.setVisibility(View.VISIBLE);
-//                        openBtn.setText("关闭视频教学");
                     }
-                }else if(openBtn.getText().equals("关闭视频教学"))
-                {
-                    if (checkSelfPermission(Manifest.permission.CAMERA, PERMISSION_REQ_ID_CAMERA))
-                    {
+                } else if (openBtn.getText().equals("关闭视频教学")) {
+                    if (checkSelfPermission(Manifest.permission.CAMERA, PERMISSION_REQ_ID_CAMERA)) {
                         close_Video();
                         showMusicPicture();
-//                        openBtn.setText("打开视频教学");
                     }
                 }
-                openBtn.setText(openBtn.getText().equals("打开视频教学")?"关闭视频教学":"打开视频教学");
+                openBtn.setText(openBtn.getText().equals("打开视频教学") ? "关闭视频教学" : "打开视频教学");
             }
         });
-
-}
-
+    }
     public String getUserName(int index) {
         String user_name = "未上线";
         try {
             user_name = mArrStudentInfo.getJSONObject(index).getString("userName");
-        }catch (JSONException e)
-        {
+        } catch (JSONException e) {
 
         }
         return user_name;
     }
-
     public void joinInNewRoom(int index) {
         String objectID = "";
         try {
             objectID = mArrStudentInfo.getJSONObject(index).getString("objectId");
-        }catch (JSONException e)
-        {
-
+        }
+        catch (JSONException e) {
         }
         close_Video();
         showMusicPicture();
@@ -461,17 +426,12 @@ public class AudioTeachActivity extends AppCompatActivity {
         TextView actionBarTitle = (TextView) findViewById(R.id.action_bar_title);
         actionBarTitle.setText("老师线上教室");
     }
-
-    // Tutorial Step 4
-    //加入频道 (joinChannel)
     private void joinChannel(int uid) {
         mRtcEngine.joinChannel(null, "" + Channel_name, null, uid); // if you do not specify the uid, we will generate the uid for you
     }
-    //离开房间
     private void leaveChannel() {
         mRtcEngine.leaveChannel();
     }
-
     public boolean checkSelfPermission(String permission, int requestCode) {
         Log.e(LOG_TAG, "checkSelfPermission " + permission + " " + requestCode);
         if (ContextCompat.checkSelfPermission(this,
@@ -495,11 +455,8 @@ public class AudioTeachActivity extends AppCompatActivity {
         mRtcEngine.setupRemoteVideo(new VideoCanvas(surfaceView, VideoCanvas.RENDER_MODE_HIDDEN, uid));
         surfaceView.setTag(uid); // for mark purpose
     }
-
-
-    private  void close_Video(){
-        if (checkSelfPermission(Manifest.permission.CAMERA, PERMISSION_REQ_ID_CAMERA))
-        {
+    private void close_Video() {
+        if (checkSelfPermission(Manifest.permission.CAMERA, PERMISSION_REQ_ID_CAMERA)) {
             showMusicPicture();
             mRtcEngine.disableVideo();
             FrameLayout container_local = (FrameLayout) findViewById(R.id.local_video_view_container);
@@ -516,28 +473,24 @@ public class AudioTeachActivity extends AppCompatActivity {
         container.addView(surfaceView);
         mRtcEngine.setupLocalVideo(new VideoCanvas(surfaceView, VideoCanvas.RENDER_MODE_HIDDEN, uid));
         surfaceView.setTag(uid); // for mark purpose
-
     }
-    private  void hideMusicPicture (){
-        View  MusicPicture = (View) findViewById(R.id.music_picture);
+    private void hideMusicPicture() {
+        View MusicPicture = (View) findViewById(R.id.music_picture);
         MusicPicture.setVisibility(View.GONE);
     }
-    private  void showMusicPicture (){
-        View  MusicPicture = (View) findViewById(R.id.music_picture);
+    private void showMusicPicture() {
+        View MusicPicture = (View) findViewById(R.id.music_picture);
         MusicPicture.setVisibility(View.VISIBLE);
     }
-
-
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-
         switch (requestCode) {//根据请求码判断是哪一次申请的权限
             case PERMISSION_REQ_ID_RECORD_AUDIO:
                 if (grantResults.length > 0) {//grantResults 数组中存放的是授权结果
                     if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {//同意授权
                         //授权后做一些你想做的事情，即原来不需要动态授权时做的操作
                         checkSelfPermission(Manifest.permission.CAMERA, PERMISSION_REQ_ID_CAMERA);
-                    }else {//用户拒绝授权
+                    } else {//用户拒绝授权
                         //可以简单提示用户
                         Toast.makeText(AudioTeachActivity.this, "没有授权继续操作", Toast.LENGTH_SHORT).show();
                     }
@@ -551,13 +504,14 @@ public class AudioTeachActivity extends AppCompatActivity {
                         mRtcEngine.disableVideo();
                         FrameLayout container = (FrameLayout) findViewById(R.id.local_video_view_container);
                         container.setVisibility(View.GONE);
-                    }else {//用户拒绝授权
+                    } else {//用户拒绝授权
                         //可以简单提示用户
                         Toast.makeText(AudioTeachActivity.this, "没有授权继续操作", Toast.LENGTH_SHORT).show();
                     }
                 }
                 break;
-            default: super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+            default:
+                super.onRequestPermissionsResult(requestCode, permissions, grantResults);
         }
     }
     @Override
@@ -565,40 +519,35 @@ public class AudioTeachActivity extends AppCompatActivity {
         final FrameLayout local_video = findViewById(R.id.local_video_view_container);
         /* 返回键 */
         if (keyCode == KeyEvent.KEYCODE_BACK) {
-            if (main_draw.getVisibility() == View.GONE){
-                if (local_video.getVisibility() == View.GONE){
+            if (main_draw.getVisibility() == View.GONE) {
+                if (local_video.getVisibility() == View.GONE) {
                     this.finish();
                     startActivity(new Intent(AudioTeachActivity.this, MainActivity.class));
-                }
-                else {
+                } else {
                     Toast.makeText(AudioTeachActivity.this, "现在正在与学生教学", Toast.LENGTH_SHORT).show();
                 }
-            }
-            else {
+            } else {
                 Toast.makeText(AudioTeachActivity.this, "现在正在与学生教学", Toast.LENGTH_SHORT).show();
             }
         }
         return false;
     }
+
     @Override
     protected void onDestroy() {
-        Log.e("TAG","onDestroy=============+++++++++++");
+        Log.e("TAG", "onDestroy");
         leaveChannel();
         mRtcEngine.destroy();
         super.onDestroy();
     }
-    public void get_student_info_handle(){
+
+    public void get_student_info_handle() {
         try {
             mArrStudentInfo = new JSONArray(student_info);
             Channel_name = mArrStudentInfo.getJSONObject(0).getString("objectId");
+        } catch (JSONException error) {
+            Log.e("error", "error" + error);
         }
-        catch (JSONException error) {
-
-            Log.e("error", "////////////"+error);
-        }
-
-
-
     }
 
 }
