@@ -39,11 +39,13 @@ import org.json.JSONObject;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
 import static com.netease.nimlib.sdk.StatusCode.LOGINED;
+import static com.netease.nimlib.sdk.msg.constant.SystemMessageStatus.init;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -51,7 +53,7 @@ public class MainActivity extends AppCompatActivity {
     String Accid;
     String student_info;
     String now_week_day = getWeek(new Date());//周几
-
+    Date now_data;
     @Override
     protected void onResume() {
         // TODO Auto-generated method stub
@@ -127,6 +129,9 @@ public class MainActivity extends AppCompatActivity {
         setTime();
         week_onclick();
         init_week();
+        SimpleDateFormat formatter  =   new  SimpleDateFormat( " yyyy-MM-dd HH:mm:ss " );
+//         date = formatter.parse(now_data);
+//        getCourse(data);
         checkSelfPermission(Manifest.permission_group.STORAGE, 0);
         Button room_button = (Button) findViewById(R.id.login_room);
         room_button.setOnClickListener(new View.OnClickListener() {
@@ -165,6 +170,7 @@ public class MainActivity extends AppCompatActivity {
 
     //双击退回手机主页面
     private long time = 0;
+
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {
         if (keyCode == KeyEvent.KEYCODE_BACK) {
@@ -236,34 +242,32 @@ public class MainActivity extends AppCompatActivity {
 
     //获取时间
     @SuppressLint("SimpleDateFormat")
-    public static String getTime(int week_code,Date date) {
-        SimpleDateFormat sdf=new SimpleDateFormat("yyyy年MM月dd日");
+    public static String getTime(int week_code, Date date) {
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy年MM月dd日");
         Calendar calendar = Calendar.getInstance();
         calendar.setTime(date);
         calendar.add(Calendar.DAY_OF_MONTH, week_code);
         date = calendar.getTime();
-         return  sdf.format(date);
+        return sdf.format(date);
     }
 
     @SuppressLint("SimpleDateFormat")
-//    public static String getWeek() {
-//        SimpleDateFormat week = new SimpleDateFormat("E");//设置日期格式
-//        return week.format(new Date());
-//    }
     public static String getWeek(Date date) {
         SimpleDateFormat week = new SimpleDateFormat("E");//设置日期格式
         return week.format(date);
     }
+
     public void setTime() {
         TextView textView = (TextView) findViewById(R.id.time);
-        textView.setText(getTime(0,new Date()));
+        textView.setText(getTime(0, new Date()));
     }
-//初始显示的星期
-    public void init_week(){
+
+    //初始显示的星期
+    public void init_week() {
         final LinearLayout weekLinearLayout = (LinearLayout) findViewById(R.id.week);
         for (int m = 0; m < weekLinearLayout.getChildCount(); m++) {
             Button weekbtn = (Button) weekLinearLayout.getChildAt(m);
-            if (now_week_day.equals("周"+weekbtn.getText().toString())) {
+            if (now_week_day.equals("周" + weekbtn.getText().toString())) {
                 weekbtn.setBackground(getResources().getDrawable(R.drawable.red_button));
                 weekbtn.setTextColor(Color.WHITE);
             } else {
@@ -280,8 +284,8 @@ public class MainActivity extends AppCompatActivity {
                 @Override
                 public void onClick(View view) {
                     Button test = (Button) view;
-                    String week_day = "周"+test.getText().toString();
-                    Log.e("test", "++++++++++"+week_day);
+                    String week_day = "周" + test.getText().toString();
+                    Log.e("test", "++++++++++" + week_day);
                     //修改按钮颜色
                     for (int m = 0; m < weekLinearLayout.getChildCount(); m++) {
                         Button weekbtn = (Button) weekLinearLayout.getChildAt(m);
@@ -296,14 +300,14 @@ public class MainActivity extends AppCompatActivity {
                     }
                     //更新时间
                     int diff_day_number = get_now_week_code(week_day) - get_now_week_code(now_week_day);
-
                     TextView textView = (TextView) findViewById(R.id.time);
                     try {
                         Date nowDate = stringToDate(textView.getText().toString());
                         textView.setText(getTime(diff_day_number, nowDate));
+//                        now_data = getTime(diff_day_number, nowDate);
                         now_week_day = week_day;
-                    }catch (ParseException err)
-                    {
+                    } catch (ParseException err) {
+
                     }
                 }
             });
@@ -313,12 +317,11 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 TextView textView = (TextView) findViewById(R.id.time);
-                int code =  -7;
-                try{
+                int code = -7;
+                try {
                     Date nowDate = stringToDate(textView.getText().toString());
                     textView.setText(getTime(code, nowDate));
-                }
-                catch (ParseException err){
+                } catch (ParseException err) {
                 }
             }
         });
@@ -327,45 +330,82 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 TextView textView = (TextView) findViewById(R.id.time);
-                int code =  7;
-                try{
+                int code = 7;
+                try {
                     Date nowDate = stringToDate(textView.getText().toString());
                     textView.setText(getTime(code, nowDate));
-                }
-                catch (ParseException err){
+                } catch (ParseException err) {
                 }
             }
         });
     }
-    public int get_now_week_code(String day){
+
+    public int get_now_week_code(String day) {
         Log.e("get_now_week_code", day);
-        if (day.equals("周一") ){
-            return  1;
-        }
-        else if (day.equals("周二")){
-            return  2;
-        }
-        else if (day.equals("周三")){
-            return  3;
-        }
-        else if (day.equals("周四")){
-            return  4;
-        }
-        else if (day.equals("周五")){
-            return  5;
-        }
-        else if (day.equals("周六")){
-            return  6;
-        }
-        else {
-            return  7;
+        if (day.equals("周一")) {
+            return 1;
+        } else if (day.equals("周二")) {
+            return 2;
+        } else if (day.equals("周三")) {
+            return 3;
+        } else if (day.equals("周四")) {
+            return 4;
+        } else if (day.equals("周五")) {
+            return 5;
+        } else if (day.equals("周六")) {
+            return 6;
+        } else {
+            return 7;
         }
     }
-    public Date stringToDate(String strTime) throws ParseException
-    {
+
+    public Date stringToDate(String strTime) throws ParseException {
         SimpleDateFormat formatter = new SimpleDateFormat("yyyy年MM月dd日");
         Date date = formatter.parse(strTime);
         return date;
+    }
+
+    //获取课程表信息
+
+    public String getFormatDateStringWithMinus(Date date)
+    {
+        SimpleDateFormat formatter = new SimpleDateFormat("YYYY-MM-dd");
+        return formatter.format(date);
+    }
+    public Date getDateFromStringWithMinus(String strDate) throws ParseException
+    {
+        SimpleDateFormat formatter = new SimpleDateFormat("YYYY-MM-dd HH:mm:ss");
+        Date date = formatter.parse(strDate);
+        return date;
+    }
+    public void getCourse(Date date) {
+        AVUser currentUser = AVUser.getCurrentUser();
+        if (currentUser != null) {
+            String strMinusDate = getFormatDateStringWithMinus(date);
+            try {
+                Date startDate = getDateFromStringWithMinus(strMinusDate + "00:00:00");
+                Date endDate = getDateFromStringWithMinus(strMinusDate + "23:59:59");
+                final AVQuery<AVObject> startDateQuery = new AVQuery<>("Course");
+                startDateQuery.whereGreaterThanOrEqualTo("startTime", startDate);
+                final AVQuery<AVObject> endDateQuery = new AVQuery<>("Course");
+                endDateQuery.whereLessThan("startTime", endDate);
+//            Accid = currentUser.getObjectId();
+//            AVQuery<AVObject> query = new AVQuery<>("Course");
+//            query.whereEqualTo("teacher", AVObject.createWithoutData("_User", "" + Accid));
+//            query.include("student");
+
+                AVQuery<AVObject> query = AVQuery.and(Arrays.asList(startDateQuery, endDateQuery));
+                query.findInBackground(new FindCallback<AVObject>() {
+                    @Override
+                    public void done(List<AVObject> list, AVException e) {
+                        Log.e("list", "list" + list);
+                    }
+                });
+            } catch (ParseException e) {
+            }
+
+
+        }
     }
 }
 //- (void) getAllCoursesInfo :(NSDate *)date
@@ -378,8 +418,6 @@ public class MainActivity extends AppCompatActivity {
 //        NSString *strMinusDate = [self getFormatDateStringWithMinus:date];
 //        NSDate *startDate = [self getDateFromStringWithMinus:[NSString stringWithFormat:@"%@ 00:00:00",strMinusDate]];
 //        NSDate *endDate = [self getDateFromStringWithMinus:[NSString stringWithFormat:@"%@ 23:59:59",strMinusDate]];
-//
-//        NSLog(@"startDate:%f",[endDate timeIntervalSinceDate:startDate]);
 //        NSString *userID = [user objectForKey:@"objectId"];
 //
 //        AVQuery *studentQuery = [AVQuery queryWithClassName:@"Course"];
@@ -391,7 +429,6 @@ public class MainActivity extends AppCompatActivity {
 //
 //        AVQuery *query = [AVQuery andQueryWithSubqueries:[NSArray arrayWithObjects:studentQuery,startTimeQuery,endTimeQuery,nil]];
 //        [query findObjectsInBackgroundWithBlock:^(NSArray *objects, NSError *error) {
-//            // objects 返回的就是有图片的 Todo 集合
 ////            NSDictionary *dicStudentInfo = [objects objectAtIndex:0];
 ////            NSString *teacherID = [[dicStudentInfo objectForKey:@"teacher"] objectForKey:@"objectId"];
 ////            NSString *studentID = [[dicStudentInfo objectForKey:@"student"] objectForKey:@"objectId"];
