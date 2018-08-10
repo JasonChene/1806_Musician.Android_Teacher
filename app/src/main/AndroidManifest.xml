@@ -53,6 +53,19 @@
         android:supportsRtl="true"
         android:name=".MyLeanCloudApp"
         android:theme="@style/AppTheme">
+
+        <!-- 即时通讯模块、推送（均需要加入以下声明） START -->
+        <!-- 即时通讯模块、推送都要使用 PushService -->
+        <service android:name="com.avos.avoscloud.PushService"/>
+        <receiver android:name="com.avos.avoscloud.AVBroadcastReceiver">
+            <intent-filter>
+                <action android:name="android.intent.action.BOOT_COMPLETED"/>
+                <action android:name="android.intent.action.USER_PRESENT"/>
+                <action android:name="android.net.conn.CONNECTIVITY_CHANGE" />
+            </intent-filter>
+        </receiver>
+        <!-- 即时通讯模块、推送 END -->
+
         <activity android:name=".MainActivity" android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
