@@ -35,9 +35,12 @@ public class MyLeanCloudApp extends Application {
             tom.open(new AVIMClientCallback() {
                 @Override
                 public void done(AVIMClient client, AVIMException e) {
-                    Log.e("TAg","leancloud 即时消息打开成功"+e.toString());
                     if (e == null) {
                         Log.e("TAg","leancloud 即时消息打开成功");
+                    }
+                    else
+                    {
+                        Log.e("TAg","leancloud 即时消息打开失败"+e.toString());
                     }
                 }
             });

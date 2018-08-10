@@ -44,6 +44,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.text.ParseException;
+import java.text.ParsePosition;
 import java.text.SimpleDateFormat;
 import java.util.Arrays;
 import java.util.Calendar;
@@ -169,10 +170,9 @@ public class MainActivity extends AppCompatActivity {
         setTime();
         week_onclick();
         init_week();
-        SimpleDateFormat formatter = new SimpleDateFormat(" yyyy-MM-dd HH:mm:ss ");
+        //获取课程表数据
+        getCourseList(new Date());
 
-//         date = formatter.parse(now_data);
-//        getCourse(data);
         checkSelfPermission(Manifest.permission_group.STORAGE, 0);
         Button room_button = (Button) findViewById(R.id.login_room);
         room_button.setOnClickListener(new View.OnClickListener() {
@@ -346,12 +346,7 @@ public class MainActivity extends AppCompatActivity {
                     textView.setText(getTime(code, nowDate));
                 } catch (ParseException err) {
                 }
-                try {
-                    getCourse(stringToDate(now_data));
 
-                }catch (ParseException e){
-                    Log.e("e", "+++++++++++++++++++++++++*********************++++++++++++++++++"+e);
-                }
             }
         });
         Button next_button = (Button) findViewById(R.id.next_week);
@@ -395,33 +390,36 @@ public class MainActivity extends AppCompatActivity {
 
     //获取课程表信息
 
-    public String getFormatDateStringWithMinus(Date date) {
-        SimpleDateFormat formatter = new SimpleDateFormat("YYYY-MM-dd");
+
+    public String getFormatDateStringWithMinus(Date date)
+    {
+        SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
         return formatter.format(date);
     }
-
-    public Date getDateFromStringWithMinus(String strDate) throws ParseException {
-        SimpleDateFormat formatter = new SimpleDateFormat("YYYY-MM-dd HH:mm:ss");
+    public Date getDateFromStringWithMinus(String strDate) throws ParseException
+    {
+        SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         Date date = formatter.parse(strDate);
         return date;
     }
-
-    public void getCourse(Date date) {
+    public void getCourseList(Date date) {
+        Log.e("getCourseList", "list" + date.toString());
         AVUser currentUser = AVUser.getCurrentUser();
         if (currentUser != null) {
             String strMinusDate = getFormatDateStringWithMinus(date);
             try {
-                Date startDate = getDateFromStringWithMinus(strMinusDate + "00:00:00");
-                Date endDate = getDateFromStringWithMinus(strMinusDate + "23:59:59");
+                Date startDate = getDateFromStringWithMinus(strMinusDate + " 00:00:00");
+                Date endDate = getDateFromStringWithMinus(strMinusDate + " 23:59:59");
                 final AVQuery<AVObject> startDateQuery = new AVQuery<>("Course");
-                startDateQuery.whereGreaterThanOrEqualTo("startTime", startDate);
+                startDateQuery.whereGreaterThan("startTime", startDate);
                 final AVQuery<AVObject> endDateQuery = new AVQuery<>("Course");
                 endDateQuery.whereLessThan("startTime", endDate);
-//            Accid = currentUser.getObjectId();
-//            AVQuery<AVObject> course_info = new AVQuery<>("Course");
-//            course_info.whereEqualTo("teacher", AVObject.createWithoutData("_User", "" + Accid));
-//            course_info.include("student")　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　
-                AVQuery<AVObject> query = AVQuery.and(Arrays.asList(startDateQuery, endDateQuery));
+                String accountID = currentUser.getObjectId();
+
+                AVQuery<AVObject> userQuery = new AVQuery<>("Course");
+                userQuery.whereEqualTo("teacher", AVObject.createWithoutData("_User", "" + accountID));
+                userQuery.include("student");
+                AVQuery<AVObject> query = AVQuery.and(Arrays.asList(userQuery,startDateQuery, endDateQuery));
                 query.findInBackground(new FindCallback<AVObject>() {
                     @Override
                     public void done(List<AVObject> list, AVException e) {
@@ -434,68 +432,3 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 }
-//- (void) getAllCoursesInfo :(NSDate *)date
-//{
-//    [mAllStudentCourseInfo removeAllObjects];
-//    AVUser *user = [AVUser currentUser];
-//    //获取课程信息
-//    if (user != nil)
-//    {
-//        NSString *strMinusDate = [self getFormatDateStringWithMinus:date];
-//        NSDate *startDate = [self getDateFromStringWithMinus:[NSString stringWithFormat:@"%@ 00:00:00",strMinusDate]];
-//        NSDate *endDate = [self getDateFromStringWithMinus:[NSString stringWithFormat:@"%@ 23:59:59",strMinusDate]];
-//        NSString *userID = [user objectForKey:@"objectId"];
-//
-//        AVQuery *studentQuery = [AVQuery queryWithClassName:@"Course"];
-//        [studentQuery whereKey:@"student" equalTo:[AVObject objectWithClassName:@"_User" objectId:userID]];
-//        AVQuery *startTimeQuery = [AVQuery queryWithClassName:@"Course"];
-//        [startTimeQuery whereKey:@"startTime" greaterThanOrEqualTo:startDate];
-//        AVQuery *endTimeQuery = [AVQuery queryWithClassName:@"Course"];
-//        [endTimeQuery whereKey:@"startTime" lessThanOrEqualTo:endDate];
-//
-//        AVQuery *query = [AVQuery andQueryWithSubqueries:[NSArray arrayWithObjects:studentQuery,startTimeQuery,endTimeQuery,nil]];
-//        [query findObjectsInBackgroundWithBlock:^(NSArray *objects, NSError *error) {
-////            NSDictionary *dicStudentInfo = [objects objectAtIndex:0];
-////            NSString *teacherID = [[dicStudentInfo objectForKey:@"teacher"] objectForKey:@"objectId"];
-////            NSString *studentID = [[dicStudentInfo objectForKey:@"student"] objectForKey:@"objectId"];
-////            self->mTeacherID = teacherID;
-////            self->mStudentID = studentID;
-//            NSMutableArray *arrAMCourse = [[NSMutableArray alloc]initWithCapacity:0];
-//            NSMutableArray *arrPMCourse = [[NSMutableArray alloc]initWithCapacity:0];
-//            NSMutableArray *arrNightCourse = [[NSMutableArray alloc]initWithCapacity:0];
-//            for (int i = 0; i < objects.count; i ++)
-//            {
-//                NSDictionary *dicStudentInfo = [objects objectAtIndex:i];
-//                NSDate *noonTime = [self getDateFromStringWithMinus:[NSString stringWithFormat:@"%@ 12:00:00",strMinusDate]];
-//                NSDate *nightTime = [self getDateFromStringWithMinus:[NSString stringWithFormat:@"%@ 18:00:00",strMinusDate]];
-//                NSDate *startDateTime = [dicStudentInfo objectForKey:@"startTime"];
-//                startDateTime = [startDateTime dateByAddingTimeInterval:8*60*60];
-//                //上午的课
-//                if ([startDateTime timeIntervalSince1970] < [noonTime timeIntervalSince1970])
-//                {
-//                    [arrAMCourse addObject:dicStudentInfo];
-//                    continue;
-//                }
-//                else if ([startDateTime timeIntervalSince1970] > [nightTime timeIntervalSince1970])
-//                {
-//                    [arrNightCourse addObject:dicStudentInfo];
-//                    continue;
-//                }
-//                else
-//                {
-//                    [arrPMCourse addObject:dicStudentInfo];
-//                    continue;
-//                }
-//            }
-//            if (arrAMCourse.count != 0)
-//                [self->mAllStudentCourseInfo setObject:arrAMCourse forKey:@"AMCourse"];
-//            if (arrPMCourse.count != 0)
-//                [self->mAllStudentCourseInfo setObject:arrPMCourse forKey:@"PMCourse"];
-//            if (arrNightCourse.count != 0)
-//                [self->mAllStudentCourseInfo setObject:arrNightCourse forKey:@"NightCourse"];
-//
-//            NSLog(@"============%@",self->mAllStudentCourseInfo);
-//
-//        }];
-//    }
-//}
