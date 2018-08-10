@@ -26,6 +26,7 @@ import com.avos.avoscloud.AVObject;
 import com.avos.avoscloud.AVQuery;
 import com.avos.avoscloud.AVUser;
 import com.avos.avoscloud.FindCallback;
+import com.avos.avoscloud.GetCallback;
 import com.avos.avoscloud.im.v2.AVIMClient;
 import com.avos.avoscloud.im.v2.AVIMConversation;
 import com.avos.avoscloud.im.v2.AVIMMessage;
@@ -50,6 +51,7 @@ import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
 import static com.netease.nimlib.sdk.StatusCode.LOGINED;
 import static com.netease.nimlib.sdk.msg.constant.SystemMessageStatus.init;
@@ -421,29 +423,77 @@ public class MainActivity extends AppCompatActivity {
 
                 AVQuery<AVObject> userQuery = new AVQuery<>("Course");
                 userQuery.whereEqualTo("teacher", AVObject.createWithoutData("_User", "" + accountID));
-                userQuery.include("student");
+//                userQuery.include("student");
+
                 AVQuery<AVObject> query = AVQuery.and(Arrays.asList(userQuery,startDateQuery, endDateQuery));
+//                query.include("student");
                 query.findInBackground(new FindCallback<AVObject>() {
                     @Override
                     public void done(List<AVObject> list, AVException e) {
                         Log.e("list", "list" + list);
+                        JSONArray allStuInfo = new JSONArray();
+                        for (int i = 0; i < list.size(); i ++)
+                        {
+                            AVObject objectInfo = list.get(i);
+                            Log.e("objectInfo",objectInfo.getObjectId());
+//                            findWithObjectID(objectInfo.getObjectId());
+                            try {
+                                JSONObject studentInfo = new JSONObject(objectInfo.get("student").toString());
+                                JSONObject teacherInfo = new JSONObject(objectInfo.get("teacher").toString());
+                                Log.e("===","studentInfo======="+studentInfo.toString());
+                                Log.e("===","teacherInfo======="+teacherInfo.toString());
+                                Date startTime = new Date(objectInfo.get("startTime").toString());
+                                Log.e("===","startTime======="+startTime.toString());
+                                
+                            } catch (JSONException error) {
+                                Log.e("JSONException",error.toString());
+                            }
+
+                        }
+//                        Log.e("allStuInfo","===="+allStuInfo.toString());
                     }
                 });
-
-//                AVQuery<AVObject> query = AVQuery.and(Arrays.asList(startDateQuery, endDateQuery));
-//                query.findInBackground(new FindCallback<AVObject>() {
-//                    @Override
-//                    public void done(List<AVObject> list, AVException e) {
-//                        Log.e("list", "list" + list);
-//                    }
-//                });
             } catch (ParseException e) {
             }
 
 
         }
     }
+    public void findWithObjectID(final String objectID)
+    {
+        AVQuery<AVObject> avQuery = new AVQuery<>("Course");
+        avQuery.whereEqualTo("objectId",objectID);
+        avQuery.include("student");
+        avQuery.findInBackground(new FindCallback<AVObject>() {
+            @Override
+            public void done(List<AVObject> list, AVException e) {
+                if (list != null) {
+                    JSONArray allStuInfo = new JSONArray();
+                    for (int i = 0; i < list.size(); i++) {
+                        AVObject objectInfo = list.get(i);
+                        Log.e("===",objectInfo.toString());
+                        try {
+                            JSONObject studentInfo = new JSONObject(objectInfo.get("student").toString());
+                            Log.e("===","======="+studentInfo.toString());
+//                            String studentID = studentInfo.getString("objectId");
+//                            String userName = studentInfo.getJSONObject("serverData").getString("username");
+//                            JSONObject stuInfo = new JSONObject();
+//                            stuInfo.put("userName", userName);
+//                            stuInfo.put("objectId", studentID);
+//                            allStuInfo.put(stuInfo);
+                        } catch (JSONException error) {
+                            Log.e("findWithObjectID",error.toString());
+                        }
+                    }
+                    student_info = allStuInfo.toString();
+                    Log.e("allStuInfo", student_info);
+
+                }
+            }
+        });
+    }
 }
+
 //- (void) getAllCoursesInfo :(NSDate *)date
 //{
 //    [mAllStudentCourseInfo removeAllObjects];

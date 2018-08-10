@@ -66,6 +66,8 @@ dependencies {
     implementation fileTree(dir:'libs',includes: ['*.jar'])
     implementation 'com.google.code.gson:gson:2.6.2'
 
+    implementation 'com.google.code.gson:gson:2.7'
+
 
     // 添加依赖。注意，版本号必须一致。
     // 基础功能 (必需)
