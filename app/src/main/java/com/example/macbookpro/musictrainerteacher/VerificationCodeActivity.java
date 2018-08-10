@@ -33,6 +33,9 @@ import com.avos.avoscloud.FindCallback;
 import com.avos.avoscloud.FunctionCallback;
 import com.avos.avoscloud.LogInCallback;
 import com.avos.avoscloud.RequestMobileCodeCallback;
+import com.avos.avoscloud.im.v2.AVIMClient;
+import com.avos.avoscloud.im.v2.AVIMException;
+import com.avos.avoscloud.im.v2.callback.AVIMClientCallback;
 import com.example.macbookpro.musictrainerteacher.common.SysExitUtil;
 import com.tuo.customview.VerificationCodeView;
 
@@ -149,6 +152,9 @@ public class VerificationCodeActivity extends AppCompatActivity {
                                                     try {
                                                         avUser.put("netEaseUserInfo",netEaseUserInfo.get("data"));
                                                         AVUser.changeCurrentUser(avUser,true);
+
+                                                        openLeancloudIM(avUser);
+
                                                         startActivity(new Intent(VerificationCodeActivity.this, MainActivity.class));
                                                     }catch (JSONException error)
                                                     {
@@ -181,6 +187,7 @@ public class VerificationCodeActivity extends AppCompatActivity {
                                             }
                                         }
                                         if (allRoes == true) {
+                                            openLeancloudIM(avUser);
                                             startActivity(new Intent(VerificationCodeActivity.this, MainActivity.class));
                                             Toast.makeText(VerificationCodeActivity.this, "登录成功", Toast.LENGTH_SHORT).show();
 
@@ -224,6 +231,23 @@ public class VerificationCodeActivity extends AppCompatActivity {
     }
 
 
+    public void openLeancloudIM(AVUser user)
+    {
+        AVIMClient tom = AVIMClient.getInstance(user.getUsername());
+        // 与服务器连接
+        tom.open(new AVIMClientCallback() {
+            @Override
+            public void done(AVIMClient client, AVIMException e) {
+                if (e == null) {
+                    Log.e("TAg","leancloud 即时消息打开成功");
+                }
+                else
+                {
+                    Log.e("TAg","leancloud 即时消息打开失败"+e.toString());
+                }
+            }
+        });
+    }
     public void initActionBar() {
         android.support.v7.app.ActionBar actionBar = getSupportActionBar();
         if (actionBar != null) {

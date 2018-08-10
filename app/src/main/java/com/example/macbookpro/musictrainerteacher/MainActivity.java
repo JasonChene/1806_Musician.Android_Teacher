@@ -44,6 +44,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.text.ParseException;
+import java.text.ParsePosition;
 import java.text.SimpleDateFormat;
 import java.util.Arrays;
 import java.util.Calendar;
@@ -149,9 +150,13 @@ public class MainActivity extends AppCompatActivity {
         setTime();
         week_onclick();
         init_week();
-        SimpleDateFormat formatter  =   new  SimpleDateFormat( " yyyy-MM-dd HH:mm:ss " );
+//        SimpleDateFormat formatter  =   new  SimpleDateFormat( " yyyy-MM-dd HH:mm:ss " );
 //         date = formatter.parse(now_data);
 //        getCourse(data);
+
+        //获取课程表数据
+        getCourseList(new Date());
+
         checkSelfPermission(Manifest.permission_group.STORAGE, 0);
         Button room_button = (Button) findViewById(R.id.login_room);
         room_button.setOnClickListener(new View.OnClickListener() {
@@ -391,38 +396,47 @@ public class MainActivity extends AppCompatActivity {
 
     public String getFormatDateStringWithMinus(Date date)
     {
-        SimpleDateFormat formatter = new SimpleDateFormat("YYYY-MM-dd");
+        SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
         return formatter.format(date);
     }
     public Date getDateFromStringWithMinus(String strDate) throws ParseException
     {
-        SimpleDateFormat formatter = new SimpleDateFormat("YYYY-MM-dd HH:mm:ss");
+        SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         Date date = formatter.parse(strDate);
         return date;
     }
-    public void getCourse(Date date) {
+    public void getCourseList(Date date) {
+        Log.e("getCourseList", "list" + date.toString());
         AVUser currentUser = AVUser.getCurrentUser();
         if (currentUser != null) {
             String strMinusDate = getFormatDateStringWithMinus(date);
             try {
-                Date startDate = getDateFromStringWithMinus(strMinusDate + "00:00:00");
-                Date endDate = getDateFromStringWithMinus(strMinusDate + "23:59:59");
+                Date startDate = getDateFromStringWithMinus(strMinusDate + " 00:00:00");
+                Date endDate = getDateFromStringWithMinus(strMinusDate + " 23:59:59");
                 final AVQuery<AVObject> startDateQuery = new AVQuery<>("Course");
-                startDateQuery.whereGreaterThanOrEqualTo("startTime", startDate);
+                startDateQuery.whereGreaterThan("startTime", startDate);
                 final AVQuery<AVObject> endDateQuery = new AVQuery<>("Course");
                 endDateQuery.whereLessThan("startTime", endDate);
-//            Accid = currentUser.getObjectId();
-//            AVQuery<AVObject> query = new AVQuery<>("Course");
-//            query.whereEqualTo("teacher", AVObject.createWithoutData("_User", "" + Accid));
-//            query.include("student");
+                String accountID = currentUser.getObjectId();
 
-                AVQuery<AVObject> query = AVQuery.and(Arrays.asList(startDateQuery, endDateQuery));
+                AVQuery<AVObject> userQuery = new AVQuery<>("Course");
+                userQuery.whereEqualTo("teacher", AVObject.createWithoutData("_User", "" + accountID));
+                userQuery.include("student");
+                AVQuery<AVObject> query = AVQuery.and(Arrays.asList(userQuery,startDateQuery, endDateQuery));
                 query.findInBackground(new FindCallback<AVObject>() {
                     @Override
                     public void done(List<AVObject> list, AVException e) {
                         Log.e("list", "list" + list);
                     }
                 });
+
+//                AVQuery<AVObject> query = AVQuery.and(Arrays.asList(startDateQuery, endDateQuery));
+//                query.findInBackground(new FindCallback<AVObject>() {
+//                    @Override
+//                    public void done(List<AVObject> list, AVException e) {
+//                        Log.e("list", "list" + list);
+//                    }
+//                });
             } catch (ParseException e) {
             }
 
