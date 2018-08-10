@@ -186,8 +186,6 @@ public class MainActivity extends AppCompatActivity {
             }
         });
         startLoginEase();
-
-
         //注册默认的消息处理逻辑
         AVIMMessageManager.registerDefaultMessageHandler(new CustomMessageHandler());
     }
@@ -255,6 +253,7 @@ public class MainActivity extends AppCompatActivity {
                 @Override
                 public void done(List<AVObject> list, AVException e) {
                     if (list != null) {
+                        Log.e("LIST", "*****//////***********************"+list);
                         JSONArray allStuInfo = new JSONArray();
                         for (int i = 0; i < list.size(); i++) {
                             AVObject objectInfo = list.get(i);
@@ -388,7 +387,6 @@ public class MainActivity extends AppCompatActivity {
             return 7;
         }
     }
-
     public Date stringToDate(String strTime) throws ParseException {
         SimpleDateFormat formatter = new SimpleDateFormat("yyyy年MM月dd日");
         Date date = formatter.parse(strTime);
