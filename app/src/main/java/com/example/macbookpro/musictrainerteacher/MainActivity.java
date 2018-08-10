@@ -53,7 +53,27 @@ public class MainActivity extends AppCompatActivity {
     String Accid;
     String student_info;
     String now_week_day = getWeek(new Date());//周几
-    Date now_data;
+    String now_data;
+    //双击退回手机主页面
+    private long time = 0;
+
+    //获取时间
+    @SuppressLint("SimpleDateFormat")
+    public static String getTime(int week_code, Date date) {
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy年MM月dd日");
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTime(date);
+        calendar.add(Calendar.DAY_OF_MONTH, week_code);
+        date = calendar.getTime();
+        return sdf.format(date);
+    }
+
+    @SuppressLint("SimpleDateFormat")
+    public static String getWeek(Date date) {
+        SimpleDateFormat week = new SimpleDateFormat("E");//设置日期格式
+        return week.format(date);
+    }
+
     @Override
     protected void onResume() {
         // TODO Auto-generated method stub
@@ -129,7 +149,8 @@ public class MainActivity extends AppCompatActivity {
         setTime();
         week_onclick();
         init_week();
-        SimpleDateFormat formatter  =   new  SimpleDateFormat( " yyyy-MM-dd HH:mm:ss " );
+        SimpleDateFormat formatter = new SimpleDateFormat(" yyyy-MM-dd HH:mm:ss ");
+
 //         date = formatter.parse(now_data);
 //        getCourse(data);
         checkSelfPermission(Manifest.permission_group.STORAGE, 0);
@@ -167,9 +188,6 @@ public class MainActivity extends AppCompatActivity {
         TextView actionBarTitle = (TextView) findViewById(R.id.action_bar_title);
         actionBarTitle.setText("老师课程表");
     }
-
-    //双击退回手机主页面
-    private long time = 0;
 
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {
@@ -240,23 +258,6 @@ public class MainActivity extends AppCompatActivity {
         return currentUser;
     }
 
-    //获取时间
-    @SuppressLint("SimpleDateFormat")
-    public static String getTime(int week_code, Date date) {
-        SimpleDateFormat sdf = new SimpleDateFormat("yyyy年MM月dd日");
-        Calendar calendar = Calendar.getInstance();
-        calendar.setTime(date);
-        calendar.add(Calendar.DAY_OF_MONTH, week_code);
-        date = calendar.getTime();
-        return sdf.format(date);
-    }
-
-    @SuppressLint("SimpleDateFormat")
-    public static String getWeek(Date date) {
-        SimpleDateFormat week = new SimpleDateFormat("E");//设置日期格式
-        return week.format(date);
-    }
-
     public void setTime() {
         TextView textView = (TextView) findViewById(R.id.time);
         textView.setText(getTime(0, new Date()));
@@ -276,6 +277,7 @@ public class MainActivity extends AppCompatActivity {
             }
         }
     }
+
     public void week_onclick() {
         final LinearLayout weekLinearLayout = (LinearLayout) findViewById(R.id.week);
         for (int i = 0; i < weekLinearLayout.getChildCount(); i++) {
@@ -304,8 +306,8 @@ public class MainActivity extends AppCompatActivity {
                     try {
                         Date nowDate = stringToDate(textView.getText().toString());
                         textView.setText(getTime(diff_day_number, nowDate));
-//                        now_data = getTime(diff_day_number, nowDate);
-                        now_week_day = week_day;
+                        now_data = getTime(diff_day_number, nowDate);
+                        now_week_day =  week_day;
                     } catch (ParseException err) {
 
                     }
@@ -322,6 +324,12 @@ public class MainActivity extends AppCompatActivity {
                     Date nowDate = stringToDate(textView.getText().toString());
                     textView.setText(getTime(code, nowDate));
                 } catch (ParseException err) {
+                }
+                try {
+                    getCourse(stringToDate(now_data));
+
+                }catch (ParseException e){
+                    Log.e("e", "+++++++++++++++++++++++++*********************++++++++++++++++++"+e);
                 }
             }
         });
@@ -367,17 +375,17 @@ public class MainActivity extends AppCompatActivity {
 
     //获取课程表信息
 
-    public String getFormatDateStringWithMinus(Date date)
-    {
+    public String getFormatDateStringWithMinus(Date date) {
         SimpleDateFormat formatter = new SimpleDateFormat("YYYY-MM-dd");
         return formatter.format(date);
     }
-    public Date getDateFromStringWithMinus(String strDate) throws ParseException
-    {
+
+    public Date getDateFromStringWithMinus(String strDate) throws ParseException {
         SimpleDateFormat formatter = new SimpleDateFormat("YYYY-MM-dd HH:mm:ss");
         Date date = formatter.parse(strDate);
         return date;
     }
+
     public void getCourse(Date date) {
         AVUser currentUser = AVUser.getCurrentUser();
         if (currentUser != null) {
@@ -390,10 +398,9 @@ public class MainActivity extends AppCompatActivity {
                 final AVQuery<AVObject> endDateQuery = new AVQuery<>("Course");
                 endDateQuery.whereLessThan("startTime", endDate);
 //            Accid = currentUser.getObjectId();
-//            AVQuery<AVObject> query = new AVQuery<>("Course");
-//            query.whereEqualTo("teacher", AVObject.createWithoutData("_User", "" + Accid));
-//            query.include("student");
-
+//            AVQuery<AVObject> course_info = new AVQuery<>("Course");
+//            course_info.whereEqualTo("teacher", AVObject.createWithoutData("_User", "" + Accid));
+//            course_info.include("student")　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　
                 AVQuery<AVObject> query = AVQuery.and(Arrays.asList(startDateQuery, endDateQuery));
                 query.findInBackground(new FindCallback<AVObject>() {
                     @Override
@@ -402,9 +409,8 @@ public class MainActivity extends AppCompatActivity {
                     }
                 });
             } catch (ParseException e) {
+
             }
-
-
         }
     }
 }
