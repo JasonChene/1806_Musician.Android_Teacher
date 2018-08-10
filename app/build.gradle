@@ -57,6 +57,7 @@ dependencies {
 //    api 'com.netease.nimlib:rts:4.4.0'
 
     implementation fileTree(dir: 'libs', include: ['*.jar'])
+    implementation ('com.android.support:appcompat-v7:24.2.1')
     implementation 'com.android.support:appcompat-v7:28.0.0-alpha3'
     implementation 'com.android.support.constraint:constraint-layout:1.1.2'
     testImplementation 'junit:junit:4.12'
@@ -80,11 +81,14 @@ dependencies {
 
     //leancloud
 //    implementation ('com.android.support:support-v4:21.0.3')
-    // LeanCloud 基础包
-    implementation ('cn.leancloud.android:avoscloud-sdk:v4.6.4')
 
-    // 推送与实时聊天需要的包
-//    implementation ('cn.leancloud.android:avoscloud-push:v4.6.4@aar'){transitive = true}
+    implementation ('com.android.support:support-v4:27.1.0')
+    // LeanCloud 基础包
+    implementation ('cn.leancloud.android:avoscloud-sdk:v4.7.0')
+
+
+//     推送与实时聊天需要的包
+    implementation ('cn.leancloud.android:avoscloud-push:v4.7.0@aar'){transitive = true}
 
     // LeanCloud 统计包
 //    implementation ('cn.leancloud.android:avoscloud-statistics:v4.6.4')
