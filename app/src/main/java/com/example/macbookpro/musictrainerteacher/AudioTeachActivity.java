@@ -362,7 +362,7 @@ public class AudioTeachActivity extends AppCompatActivity {
     public String getUserName(int index) {
         String user_name = "未上线";
         try {
-            user_name = mArrStudentInfo.getJSONObject(index).getString("userName");
+            user_name = mArrStudentInfo.getJSONObject(index).getString("name");
         } catch (JSONException e) {
 
         }
@@ -371,7 +371,7 @@ public class AudioTeachActivity extends AppCompatActivity {
     public void joinInNewRoom(int index) {
         String objectID = "";
         try {
-            objectID = mArrStudentInfo.getJSONObject(index).getString("objectId");
+            objectID = mArrStudentInfo.getJSONObject(index).getString("studentID");
         }
         catch (JSONException e) {
         }
@@ -544,7 +544,7 @@ public class AudioTeachActivity extends AppCompatActivity {
     public void get_student_info_handle() {
         try {
             mArrStudentInfo = new JSONArray(student_info);
-            Channel_name = mArrStudentInfo.getJSONObject(0).getString("objectId");
+            Channel_name = mArrStudentInfo.getJSONObject(0).getString("studentID");
         } catch (JSONException error) {
             Log.e("error", "error" + error);
         }

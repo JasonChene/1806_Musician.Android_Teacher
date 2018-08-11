@@ -181,6 +181,27 @@ public class MainActivity extends AppCompatActivity {
     public void startTeaching(JSONObject courseInfo)
     {
         Log.e("===", courseInfo.toString());
+        JSONArray student_info = new JSONArray();
+        try {
+            JSONArray course = courseInfo.getJSONArray("value");
+            for (int i = 0; i < course.length(); i ++)
+            {
+                JSONObject student = course.getJSONObject(i).getJSONObject("student");
+                student_info.put(student);
+            }
+        }catch (JSONException e)
+        {
+
+        }
+        startActivity(new Intent(MainActivity.this, AudioTeachActivity.class));
+        //传输课程信息
+        Intent intent = new Intent(MainActivity.this, AudioTeachActivity.class);
+        intent.putExtra("student_info", student_info.toString());
+        startActivity(intent);
+    }
+    public void startComment(JSONObject courseInfo)
+    {
+        Log.e("===", courseInfo.toString());
 //        startActivity(new Intent(MainActivity.this, AudioTeachActivity.class));
 //        //传输课程信息
 //        Intent intent = new Intent(MainActivity.this, AudioTeachActivity.class);
