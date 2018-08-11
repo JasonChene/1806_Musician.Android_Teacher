@@ -232,42 +232,6 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
-//    public AVUser getStudentinfo() {
-//        AVUser currentUser = AVUser.getCurrentUser();
-//        if (currentUser != null) {
-//            Accid = currentUser.getObjectId();
-//            AVQuery<AVObject> query = new AVQuery<>("Course");
-//            query.whereEqualTo("teacher", AVObject.createWithoutData("_User", "" + Accid));
-//            query.include("student");
-//            query.findInBackground(new FindCallback<AVObject>() {
-//                @Override
-//                public void done(List<AVObject> list, AVException e) {
-//                    if (list != null) {
-//                        JSONArray allStuInfo = new JSONArray();
-//                        for (int i = 0; i < list.size(); i++) {
-//                            AVObject objectInfo = list.get(i);
-//                            try {
-//                                JSONObject studentInfo = new JSONObject(objectInfo.get("student").toString());
-//                                String studentID = studentInfo.getString("objectId");
-//                                String userName = studentInfo.getJSONObject("serverData").getString("username");
-//                                JSONObject stuInfo = new JSONObject();
-//                                stuInfo.put("userName", userName);
-//                                stuInfo.put("objectId", studentID);
-//                                allStuInfo.put(stuInfo);
-//                            } catch (JSONException error) {
-//
-//                            }
-//                        }
-//                        student_info = allStuInfo.toString();
-//                        Log.e("allStuInfo", student_info);
-//
-//                    }
-//                }
-//            });
-//        }
-//        return currentUser;
-//    }
-
     //获取时间
     @SuppressLint("SimpleDateFormat")
     public static String getTime(int week_code, Date date) {
@@ -407,12 +371,20 @@ public class MainActivity extends AppCompatActivity {
         Date date = formatter.parse(strDate);
         return date;
     }
+
+    public Date addSecondToDate(Date date,int numberSecond) {
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTime(date);
+        calendar.add(Calendar.SECOND, numberSecond);
+        return calendar.getTime();
+    }
+
     public void getCourseList(Date date) {
         AVUser currentUser = AVUser.getCurrentUser();
         if (currentUser != null) {
             final String strMinusDate = getFormatDateStringWithMinus(date);
             try {
-                Date startDate = getDateFromStringWithMinus(strMinusDate + " 00:00:00");
+                final Date startDate = getDateFromStringWithMinus(strMinusDate + " 00:00:00");
                 Date endDate = getDateFromStringWithMinus(strMinusDate + " 23:59:59");
                 final AVQuery<AVObject> startDateQuery = new AVQuery<>("Course");
                 startDateQuery.whereGreaterThan("startTime", startDate);
@@ -424,6 +396,7 @@ public class MainActivity extends AppCompatActivity {
                 userQuery.whereEqualTo("teacher", AVObject.createWithoutData("_User", "" + accountID));
 
                 AVQuery<AVObject> query = AVQuery.and(Arrays.asList(userQuery,startDateQuery, endDateQuery));
+                query.include("student");
                 query.findInBackground(new FindCallback<AVObject>() {
                     @Override
                     public void done(List<AVObject> list, AVException e) {
@@ -435,17 +408,25 @@ public class MainActivity extends AppCompatActivity {
                             AVObject objectInfo = list.get(i);
                             try {
                                 JSONObject studentInfo = new JSONObject(objectInfo.get("student").toString());
-                                JSONObject teacherInfo = new JSONObject(objectInfo.get("teacher").toString());
                                 Date startTime = new Date(objectInfo.get("startTime").toString());
                                 String duration = objectInfo.get("duration").toString();
+                                Date endDate = addSecondToDate(startTime,Integer.valueOf(duration)/1000);
                                 String courseName = objectInfo.get("name").toString();
+                                String comment = objectInfo.get("comment").toString();
+
+                                //学生信息
+                                JSONObject student = new JSONObject();
+                                student.put("name",studentInfo.getJSONObject("serverData").getString("username"));
+                                student.put("studentID",studentInfo.getString("objectId"));
+
+                                Log.e("student",student.toString());
 
                                 JSONObject newCourseInfo = new JSONObject();
-                                newCourseInfo.put("student",studentInfo);
-                                newCourseInfo.put("teacher",teacherInfo);
+                                newCourseInfo.put("student",student);
                                 newCourseInfo.put("startTime",startTime);
-                                newCourseInfo.put("duration",duration);
+                                newCourseInfo.put("endDate",endDate);
                                 newCourseInfo.put("name",courseName);
+                                newCourseInfo.put("comment",comment);
 
                                 Date noonTime = getDateFromStringWithMinus(strMinusDate + " 12:00:00");
                                 Date nightTime = getDateFromStringWithMinus(strMinusDate + " 18:00:00");
@@ -463,9 +444,6 @@ public class MainActivity extends AppCompatActivity {
                                     noonCourse.put(newCourseInfo);
                                 }
 
-                                Log.e("morningCourse",morningCourse.toString());
-                                Log.e("noonCourse",noonCourse.toString());
-                                Log.e("nightCourse",nightCourse.toString());
                             } catch (Exception error) {
                                 Log.e("JSONException",error.toString());
                             }
