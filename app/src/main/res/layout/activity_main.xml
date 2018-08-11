@@ -133,10 +133,25 @@
         </LinearLayout>
     </RelativeLayout>
 
-    <ListView
-        android:id="@+id/list_view"
-        android:layout_width="fill_parent"
-        android:layout_height="match_parent"
-        android:layout_marginTop="36dp"
-        />
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginTop="60dp">
+
+            <ListView
+                android:id="@+id/list_view"
+                android:layout_width="fill_parent"
+                android:layout_height="match_parent"
+                android:layout_marginTop="36dp"
+                />
+        </LinearLayout>
+    </RelativeLayout>
+
+
+
 </android.support.constraint.ConstraintLayout>

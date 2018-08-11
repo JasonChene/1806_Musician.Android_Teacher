@@ -159,9 +159,6 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         SysExitUtil.activityList.add(MainActivity.this);
 
-
-
-
         initActionBar();
         setTime();
         week_onclick();
