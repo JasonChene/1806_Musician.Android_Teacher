@@ -16,8 +16,10 @@ import android.util.Log;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.LinearLayout;
+import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -47,6 +49,7 @@ import org.json.JSONObject;
 import java.text.ParseException;
 import java.text.ParsePosition;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
@@ -162,11 +165,41 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+
+
+
+
+//    private List<Course> course_info = new ArrayList<Course>();
+//    private void initCourse() {
+//        Course morning = new Course("morning","rr", R.drawable.morning);
+//        course_info.add(morning);
+//        Course noon = new Course("noon","rr", R.drawable.noon);
+//        course_info.add(noon);
+//        Course night = new Course("night","", R.drawable.evening);
+//        course_info.add(night);
+//    }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         SysExitUtil.activityList.add(MainActivity.this);
+
+
+//        initCourse(); // 初始化数据
+        FruitAdapter adapter = new FruitAdapter(MainActivity.this, R.layout.list_items, null);
+        ListView listView = (ListView) findViewById(R.id.list_view);
+        listView.setAdapter(adapter);
+
+
+
+
+
+
+
+
+
+
         initActionBar();
         getStudentinfo();
         setTime();
@@ -190,6 +223,15 @@ public class MainActivity extends AppCompatActivity {
         startLoginEase();
         //注册默认的消息处理逻辑
         AVIMMessageManager.registerDefaultMessageHandler(new CustomMessageHandler());
+    }
+
+    public void startTeaching(JSONObject courseInfo)
+    {
+        startActivity(new Intent(MainActivity.this, AudioTeachActivity.class));
+        //传输课程信息
+        Intent intent = new Intent(MainActivity.this, AudioTeachActivity.class);
+        intent.putExtra("student_info", student_info);
+        startActivity(intent);
     }
 
     public void initActionBar() {
@@ -488,5 +530,8 @@ public class MainActivity extends AppCompatActivity {
             }
         });
     }
+
+
+
 }
 

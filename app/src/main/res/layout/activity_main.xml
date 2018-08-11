@@ -14,7 +14,8 @@
         <View
             android:layout_width="match_parent"
             android:layout_height="42dp"
-            android:background="#475969"></View>
+            android:background="#475969">
+        </View>
 
         <LinearLayout
             android:layout_width="fill_parent"
@@ -131,296 +132,299 @@
                 android:textStyle="normal" />
         </LinearLayout>
     </RelativeLayout>
+    <!--<RelativeLayout-->
+        <!--android:id="@+id/morning"-->
+        <!--android:layout_width="match_parent"-->
+        <!--android:layout_height="match_parent">-->
+
+        <!--<ImageView-->
+            <!--android:layout_width="24dp"-->
+            <!--android:layout_height="24dp"-->
+            <!--android:layout_marginTop="76dp"-->
+            <!--android:layout_marginLeft="10dp"-->
+            <!--android:background="@drawable/morning" />-->
+        <!--<RelativeLayout-->
+            <!--android:layout_width="341dp"-->
+            <!--android:layout_height="79dp"-->
+            <!--android:layout_centerHorizontal="true"-->
+            <!--android:layout_marginTop="101dp"-->
+            <!--android:background="@drawable/relative_layout_border">-->
+
+            <!--<LinearLayout-->
+                <!--android:layout_width="80dp"-->
+                <!--android:layout_height="79dp"-->
+                <!--android:background="@drawable/linerlayout_shape_morning"-->
+                <!--android:orientation="vertical">-->
+
+                <!--<TextView-->
+                    <!--android:layout_width="match_parent"-->
+                    <!--android:layout_height="match_parent"-->
+                    <!--android:layout_weight="1"-->
+                    <!--android:gravity="center"-->
+                    <!--android:text="9  : 30"-->
+                    <!--android:textColor="#FFFFFF" />-->
+
+                <!--<TextView-->
+                    <!--android:layout_width="match_parent"-->
+                    <!--android:layout_height="match_parent"-->
+                    <!--android:layout_weight="1"-->
+                    <!--android:gravity="center"-->
+                    <!--android:text="|"-->
+                    <!--android:textColor="#FFFFFF" />-->
+
+                <!--<TextView-->
+                    <!--android:layout_width="match_parent"-->
+                    <!--android:layout_height="match_parent"-->
+                    <!--android:layout_weight="1"-->
+                    <!--android:gravity="center"-->
+                    <!--android:text="11 : 30"-->
+                    <!--android:textColor="#FFFFFF" />-->
 
 
-    <RelativeLayout
-        android:id="@+id/morning"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent">
+            <!--</LinearLayout>-->
 
-        <ImageView
-            android:layout_width="24dp"
-            android:layout_height="24dp"
-            android:layout_marginTop="76dp"
-            android:layout_marginLeft="10dp"
-            android:background="@drawable/morning" />
-        <RelativeLayout
-            android:layout_width="341dp"
-            android:layout_height="79dp"
-            android:layout_centerHorizontal="true"
-            android:layout_marginTop="101dp"
-            android:background="@drawable/relative_layout_border">
+            <!--<TextView-->
+                <!--android:id="@+id/morning_course"-->
+                <!--android:layout_width="80dp"-->
+                <!--android:layout_height="29dp"-->
+                <!--android:layout_marginStart="90dp"-->
+                <!--android:layout_marginTop="8dp"-->
+                <!--android:fontFamily="Arial"-->
+                <!--android:gravity="center"-->
+                <!--android:text="钢琴课"-->
+                <!--android:textColor="#101010"-->
+                <!--android:textSize="18dp" />-->
 
-            <LinearLayout
-                android:layout_width="80dp"
-                android:layout_height="79dp"
-                android:background="@drawable/linerlayout_shape_morning"
-                android:orientation="vertical">
+            <!--<TextView-->
+                <!--android:id="@+id/morning_stu_name"-->
+                <!--android:layout_width="170dp"-->
+                <!--android:layout_height="20dp"-->
+                <!--android:layout_marginStart="90dp"-->
+                <!--android:layout_marginTop="48dp"-->
+                <!--android:text="杜小花,张小花,周小花,李小花"-->
+                <!--android:textSize="12dp" />-->
 
-                <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:layout_weight="1"
-                    android:gravity="center"
-                    android:text="9  : 30"
-                    android:textColor="#FFFFFF" />
+            <!--<RelativeLayout-->
+                <!--android:layout_width="70dp"-->
+                <!--android:layout_height="79dp"-->
+                <!--android:layout_marginStart="263dp">-->
 
-                <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:layout_weight="1"
-                    android:gravity="center"
-                    android:text="|"
-                    android:textColor="#FFFFFF" />
+                <!--<Button-->
+                    <!--android:layout_width="70dp"-->
+                    <!--android:layout_height="25dp"-->
+                    <!--android:layout_marginTop="10dp"-->
+                    <!--android:background="@drawable/btn_shape"-->
+                    <!--android:text="上课按钮"-->
+                    <!--android:textColor="#FFFFFF"-->
+                    <!--android:textSize="14sp" />-->
 
-                <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:layout_weight="1"
-                    android:gravity="center"
-                    android:text="11 : 30"
-                    android:textColor="#FFFFFF" />
+                <!--<Button-->
+                    <!--android:layout_width="70dp"-->
+                    <!--android:layout_height="25dp"-->
+                    <!--android:layout_marginTop="45dp"-->
+                    <!--android:background="@drawable/btn_shape"-->
+                    <!--android:text="评价按钮"-->
+                    <!--android:textColor="#FFFFFF" />-->
+            <!--</RelativeLayout>-->
+        <!--</RelativeLayout>-->
+    <!--</RelativeLayout>-->
 
+    <!--<RelativeLayout-->
+        <!--android:id="@+id/noon"-->
+        <!--android:layout_width="match_parent"-->
+        <!--android:layout_height="match_parent">-->
+        <!--<ImageView-->
+            <!--android:layout_width="24dp"-->
+            <!--android:layout_height="24dp"-->
+            <!--android:layout_marginTop="216dp"-->
+            <!--android:layout_marginLeft="10dp"-->
+            <!--android:background="@drawable/noon" />-->
+        <!--<RelativeLayout-->
+            <!--android:layout_width="341dp"-->
+            <!--android:layout_height="79dp"-->
+            <!--android:layout_centerHorizontal="true"-->
+            <!--android:layout_marginTop="241dp"-->
+            <!--android:background="@drawable/relative_layout_border">-->
 
-            </LinearLayout>
+            <!--<LinearLayout-->
+                <!--android:layout_width="80dp"-->
+                <!--android:layout_height="79dp"-->
+                <!--android:background="@drawable/linerlayout_shape_noon"-->
+                <!--android:orientation="vertical">-->
 
-            <TextView
-                android:id="@+id/morning_course"
-                android:layout_width="80dp"
-                android:layout_height="29dp"
-                android:layout_marginStart="90dp"
-                android:layout_marginTop="8dp"
-                android:fontFamily="Arial"
-                android:gravity="center"
-                android:text="钢琴课"
-                android:textColor="#101010"
-                android:textSize="18dp" />
+                <!--<TextView-->
+                    <!--android:layout_width="match_parent"-->
+                    <!--android:layout_height="match_parent"-->
+                    <!--android:layout_weight="1"-->
+                    <!--android:gravity="center"-->
+                    <!--android:text="13 : 30"-->
+                    <!--android:textColor="#FFFFFF" />-->
 
-            <TextView
-                android:id="@+id/morning_stu_name"
-                android:layout_width="170dp"
-                android:layout_height="20dp"
-                android:layout_marginStart="90dp"
-                android:layout_marginTop="48dp"
-                android:text="杜小花,张小花,周小花,李小花"
-                android:textSize="12dp" />
+                <!--<TextView-->
+                    <!--android:layout_width="match_parent"-->
+                    <!--android:layout_height="match_parent"-->
+                    <!--android:layout_weight="1"-->
+                    <!--android:gravity="center"-->
+                    <!--android:text="|"-->
+                    <!--android:textColor="#FFFFFF" />-->
 
-            <RelativeLayout
-                android:layout_width="70dp"
-                android:layout_height="79dp"
-                android:layout_marginStart="263dp">
-
-                <Button
-                    android:layout_width="70dp"
-                    android:layout_height="25dp"
-                    android:layout_marginTop="10dp"
-                    android:background="@drawable/btn_shape"
-                    android:text="上课按钮"
-                    android:textColor="#FFFFFF"
-                    android:textSize="14sp" />
-
-                <Button
-                    android:layout_width="70dp"
-                    android:layout_height="25dp"
-                    android:layout_marginTop="45dp"
-                    android:background="@drawable/btn_shape"
-                    android:text="评价按钮"
-                    android:textColor="#FFFFFF" />
-            </RelativeLayout>
-        </RelativeLayout>
-    </RelativeLayout>
-
-    <RelativeLayout
-        android:id="@+id/noon"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent">
-        <ImageView
-            android:layout_width="24dp"
-            android:layout_height="24dp"
-            android:layout_marginTop="216dp"
-            android:layout_marginLeft="10dp"
-            android:background="@drawable/noon" />
-        <RelativeLayout
-            android:layout_width="341dp"
-            android:layout_height="79dp"
-            android:layout_centerHorizontal="true"
-            android:layout_marginTop="241dp"
-            android:background="@drawable/relative_layout_border">
-
-            <LinearLayout
-                android:layout_width="80dp"
-                android:layout_height="79dp"
-                android:background="@drawable/linerlayout_shape_noon"
-                android:orientation="vertical">
-
-                <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:layout_weight="1"
-                    android:gravity="center"
-                    android:text="13 : 30"
-                    android:textColor="#FFFFFF" />
-
-                <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:layout_weight="1"
-                    android:gravity="center"
-                    android:text="|"
-                    android:textColor="#FFFFFF" />
-
-                <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:layout_weight="1"
-                    android:gravity="center"
-                    android:text="14 : 30"
-                    android:textColor="#FFFFFF" />
+                <!--<TextView-->
+                    <!--android:layout_width="match_parent"-->
+                    <!--android:layout_height="match_parent"-->
+                    <!--android:layout_weight="1"-->
+                    <!--android:gravity="center"-->
+                    <!--android:text="14 : 30"-->
+                    <!--android:textColor="#FFFFFF" />-->
 
 
-            </LinearLayout>
+            <!--</LinearLayout>-->
 
-            <TextView
-                android:id="@+id/noon_course"
-                android:layout_width="80dp"
-                android:layout_height="29dp"
-                android:layout_marginStart="90dp"
-                android:layout_marginTop="8dp"
-                android:fontFamily="Arial"
-                android:gravity="center"
-                android:text="钢琴课"
-                android:textColor="#101010"
-                android:textSize="18dp" />
+            <!--<TextView-->
+                <!--android:id="@+id/noon_course"-->
+                <!--android:layout_width="80dp"-->
+                <!--android:layout_height="29dp"-->
+                <!--android:layout_marginStart="90dp"-->
+                <!--android:layout_marginTop="8dp"-->
+                <!--android:fontFamily="Arial"-->
+                <!--android:gravity="center"-->
+                <!--android:text="钢琴课"-->
+                <!--android:textColor="#101010"-->
+                <!--android:textSize="18dp" />-->
 
-            <TextView
-                android:id="@+id/noon_stu_name"
-                android:layout_width="170dp"
-                android:layout_height="20dp"
-                android:layout_marginStart="90dp"
-                android:layout_marginTop="48dp"
-                android:text="杜小花,张小花,周小花,李小花"
-                android:textSize="12dp" />
+            <!--<TextView-->
+                <!--android:id="@+id/noon_stu_name"-->
+                <!--android:layout_width="170dp"-->
+                <!--android:layout_height="20dp"-->
+                <!--android:layout_marginStart="90dp"-->
+                <!--android:layout_marginTop="48dp"-->
+                <!--android:text="杜小花,张小花,周小花,李小花"-->
+                <!--android:textSize="12dp" />-->
 
-            <RelativeLayout
-                android:layout_width="70dp"
-                android:layout_height="79dp"
-                android:layout_marginStart="263dp">
+            <!--<RelativeLayout-->
+                <!--android:layout_width="70dp"-->
+                <!--android:layout_height="79dp"-->
+                <!--android:layout_marginStart="263dp">-->
 
-                <Button
-                    android:layout_width="70dp"
-                    android:layout_height="25dp"
-                    android:layout_marginTop="10dp"
-                    android:background="@drawable/btn_shape"
-                    android:text="上课按钮"
-                    android:textColor="#FFFFFF"
-                    android:textSize="14sp" />
+                <!--<Button-->
+                    <!--android:layout_width="70dp"-->
+                    <!--android:layout_height="25dp"-->
+                    <!--android:layout_marginTop="10dp"-->
+                    <!--android:background="@drawable/btn_shape"-->
+                    <!--android:text="上课按钮"-->
+                    <!--android:textColor="#FFFFFF"-->
+                    <!--android:textSize="14sp" />-->
 
-                <Button
-                    android:layout_width="70dp"
-                    android:layout_height="25dp"
-                    android:layout_marginTop="45dp"
-                    android:background="@drawable/btn_shape"
-                    android:text="评价"
-                    android:textColor="#FFFFFF" />
-            </RelativeLayout>
-        </RelativeLayout>
-    </RelativeLayout>
+                <!--<Button-->
+                    <!--android:layout_width="70dp"-->
+                    <!--android:layout_height="25dp"-->
+                    <!--android:layout_marginTop="45dp"-->
+                    <!--android:background="@drawable/btn_shape"-->
+                    <!--android:text="评价"-->
+                    <!--android:textColor="#FFFFFF" />-->
+            <!--</RelativeLayout>-->
+        <!--</RelativeLayout>-->
+    <!--</RelativeLayout>-->
 
-    <RelativeLayout
-        android:id="@+id/night"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent">
-        <ImageView
-            android:layout_width="24dp"
-            android:layout_height="24dp"
-            android:layout_marginTop="357dp"
-            android:layout_marginLeft="10dp"
-            android:background="@drawable/evening" />
-        <RelativeLayout
-            android:layout_width="341dp"
-            android:layout_height="79dp"
-            android:layout_centerHorizontal="true"
-            android:layout_marginTop="381dp"
-            android:background="@drawable/relative_layout_border">
+    <!--<RelativeLayout-->
+        <!--android:id="@+id/night"-->
+        <!--android:layout_width="match_parent"-->
+        <!--android:layout_height="match_parent">-->
+        <!--<ImageView-->
+            <!--android:layout_width="24dp"-->
+            <!--android:layout_height="24dp"-->
+            <!--android:layout_marginTop="357dp"-->
+            <!--android:layout_marginLeft="10dp"-->
+            <!--android:background="@drawable/evening" />-->
+        <!--<RelativeLayout-->
+            <!--android:layout_width="341dp"-->
+            <!--android:layout_height="79dp"-->
+            <!--android:layout_centerHorizontal="true"-->
+            <!--android:layout_marginTop="381dp"-->
+            <!--android:background="@drawable/relative_layout_border">-->
 
-            <LinearLayout
-                android:layout_width="80dp"
-                android:layout_height="79dp"
-                android:background="@drawable/linerlayout_shape_night"
-                android:orientation="vertical">
+            <!--<LinearLayout-->
+                <!--android:layout_width="80dp"-->
+                <!--android:layout_height="79dp"-->
+                <!--android:background="@drawable/linerlayout_shape_night"-->
+                <!--android:orientation="vertical">-->
 
-                <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:layout_weight="1"
-                    android:gravity="center"
-                    android:text="18 : 30"
-                    android:textColor="#FFFFFF" />
+                <!--<TextView-->
+                    <!--android:layout_width="match_parent"-->
+                    <!--android:layout_height="match_parent"-->
+                    <!--android:layout_weight="1"-->
+                    <!--android:gravity="center"-->
+                    <!--android:text="18 : 30"-->
+                    <!--android:textColor="#FFFFFF" />-->
 
-                <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:layout_weight="1"
-                    android:gravity="center"
-                    android:text="|"
-                    android:textColor="#FFFFFF" />
+                <!--<TextView-->
+                    <!--android:layout_width="match_parent"-->
+                    <!--android:layout_height="match_parent"-->
+                    <!--android:layout_weight="1"-->
+                    <!--android:gravity="center"-->
+                    <!--android:text="|"-->
+                    <!--android:textColor="#FFFFFF" />-->
 
-                <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:layout_weight="1"
-                    android:gravity="center"
-                    android:text="21 : 30"
-                    android:textColor="#FFFFFF" />
-            </LinearLayout>
+                <!--<TextView-->
+                    <!--android:layout_width="match_parent"-->
+                    <!--android:layout_height="match_parent"-->
+                    <!--android:layout_weight="1"-->
+                    <!--android:gravity="center"-->
+                    <!--android:text="21 : 30"-->
+                    <!--android:textColor="#FFFFFF" />-->
+            <!--</LinearLayout>-->
 
-            <TextView
-                android:id="@+id/night_course"
-                android:layout_width="80dp"
-                android:layout_height="29dp"
-                android:layout_marginStart="90dp"
-                android:layout_marginTop="8dp"
-                android:fontFamily="Arial"
-                android:gravity="center"
-                android:text="钢琴课"
-                android:textColor="#101010"
-                android:textSize="18dp" />
+            <!--<TextView-->
+                <!--android:id="@+id/night_course"-->
+                <!--android:layout_width="80dp"-->
+                <!--android:layout_height="29dp"-->
+                <!--android:layout_marginStart="90dp"-->
+                <!--android:layout_marginTop="8dp"-->
+                <!--android:fontFamily="Arial"-->
+                <!--android:gravity="center"-->
+                <!--android:text="钢琴课"-->
+                <!--android:textColor="#101010"-->
+                <!--android:textSize="18dp" />-->
 
-            <TextView
-                android:id="@+id/night_stu_name"
-                android:layout_width="170dp"
-                android:layout_height="20dp"
-                android:layout_marginStart="90dp"
-                android:layout_marginTop="48dp"
-                android:text="杜小花,张小花,周小花,李小花"
-                android:textSize="12dp" />
+            <!--<TextView-->
+                <!--android:id="@+id/night_stu_name"-->
+                <!--android:layout_width="170dp"-->
+                <!--android:layout_height="20dp"-->
+                <!--android:layout_marginStart="90dp"-->
+                <!--android:layout_marginTop="48dp"-->
+                <!--android:text="杜小花,张小花,周小花,李小花"-->
+                <!--android:textSize="12dp" />-->
 
-            <RelativeLayout
-                android:layout_width="70dp"
-                android:layout_height="79dp"
-                android:layout_marginStart="263dp">
+            <!--<RelativeLayout-->
+                <!--android:layout_width="70dp"-->
+                <!--android:layout_height="79dp"-->
+                <!--android:layout_marginStart="263dp">-->
 
-                <Button
-                    android:layout_width="70dp"
-                    android:layout_height="25dp"
-                    android:layout_marginTop="10dp"
-                    android:background="@drawable/btn_shape"
-                    android:text="上课按钮"
-                    android:textColor="#FFFFFF"
-                    android:textSize="14sp" />
+                <!--<Button-->
+                    <!--android:layout_width="70dp"-->
+                    <!--android:layout_height="25dp"-->
+                    <!--android:layout_marginTop="10dp"-->
+                    <!--android:background="@drawable/btn_shape"-->
+                    <!--android:text="上课按钮"-->
+                    <!--android:textColor="#FFFFFF"-->
+                    <!--android:textSize="14sp" />-->
 
-                <Button
-                    android:layout_width="70dp"
-                    android:layout_height="25dp"
-                    android:layout_marginTop="45dp"
-                    android:background="@drawable/btn_shape"
-                    android:text="评价按钮"
-                    android:textColor="#FFFFFF" />
-            </RelativeLayout>
-        </RelativeLayout>
-    </RelativeLayout>
+                <!--<Button-->
+                    <!--android:layout_width="70dp"-->
+                    <!--android:layout_height="25dp"-->
+                    <!--android:layout_marginTop="45dp"-->
+                    <!--android:background="@drawable/btn_shape"-->
+                    <!--android:text="评价按钮"-->
+                    <!--android:textColor="#FFFFFF" />-->
+            <!--</RelativeLayout>-->
+        <!--</RelativeLayout>-->
+    <!--</RelativeLayout>-->
 
-
+    <ListView
+        android:id="@+id/list_view"
+        android:layout_width="fill_parent"
+        android:layout_height="match_parent"
+        android:layout_marginTop="36dp"
+        />
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent">
