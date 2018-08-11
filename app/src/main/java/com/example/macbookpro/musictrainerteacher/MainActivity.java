@@ -148,7 +148,6 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         SysExitUtil.activityList.add(MainActivity.this);
         initActionBar();
-//        getStudentinfo();
         setTime();
         week_onclick();
         init_week();
@@ -297,7 +296,7 @@ public class MainActivity extends AppCompatActivity {
                         Date nowDate = stringToDate(textView.getText().toString());
                         String showTime = getTime(diff_day_number, nowDate);
                         textView.setText(showTime);
-                        getCourseList(new Date(showTime));
+                        getCourseList(stringToDate(showTime));
                         now_week_day = week_day;
                     } catch (ParseException err) {
 
