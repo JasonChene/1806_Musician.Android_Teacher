@@ -62,7 +62,7 @@ public class MainActivity extends AppCompatActivity {
     String Accid;
     String student_info;
     String now_week_day = getWeek(new Date());//周几
-    Date now_data;
+    JSONObject currentCourseInfo;
     @Override
     protected void onResume() {
         // TODO Auto-generated method stub
@@ -148,13 +148,12 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         SysExitUtil.activityList.add(MainActivity.this);
         initActionBar();
-        getStudentinfo();
+//        getStudentinfo();
         setTime();
         week_onclick();
         init_week();
-//        SimpleDateFormat formatter  =   new  SimpleDateFormat( " yyyy-MM-dd HH:mm:ss " );
-//         date = formatter.parse(now_data);
-//        getCourse(data);
+
+        currentCourseInfo = new JSONObject();
 
         //获取课程表数据
         getCourseList(new Date());
@@ -233,41 +232,41 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
-    public AVUser getStudentinfo() {
-        AVUser currentUser = AVUser.getCurrentUser();
-        if (currentUser != null) {
-            Accid = currentUser.getObjectId();
-            AVQuery<AVObject> query = new AVQuery<>("Course");
-            query.whereEqualTo("teacher", AVObject.createWithoutData("_User", "" + Accid));
-            query.include("student");
-            query.findInBackground(new FindCallback<AVObject>() {
-                @Override
-                public void done(List<AVObject> list, AVException e) {
-                    if (list != null) {
-                        JSONArray allStuInfo = new JSONArray();
-                        for (int i = 0; i < list.size(); i++) {
-                            AVObject objectInfo = list.get(i);
-                            try {
-                                JSONObject studentInfo = new JSONObject(objectInfo.get("student").toString());
-                                String studentID = studentInfo.getString("objectId");
-                                String userName = studentInfo.getJSONObject("serverData").getString("username");
-                                JSONObject stuInfo = new JSONObject();
-                                stuInfo.put("userName", userName);
-                                stuInfo.put("objectId", studentID);
-                                allStuInfo.put(stuInfo);
-                            } catch (JSONException error) {
-
-                            }
-                        }
-                        student_info = allStuInfo.toString();
-                        Log.e("allStuInfo", student_info);
-
-                    }
-                }
-            });
-        }
-        return currentUser;
-    }
+//    public AVUser getStudentinfo() {
+//        AVUser currentUser = AVUser.getCurrentUser();
+//        if (currentUser != null) {
+//            Accid = currentUser.getObjectId();
+//            AVQuery<AVObject> query = new AVQuery<>("Course");
+//            query.whereEqualTo("teacher", AVObject.createWithoutData("_User", "" + Accid));
+//            query.include("student");
+//            query.findInBackground(new FindCallback<AVObject>() {
+//                @Override
+//                public void done(List<AVObject> list, AVException e) {
+//                    if (list != null) {
+//                        JSONArray allStuInfo = new JSONArray();
+//                        for (int i = 0; i < list.size(); i++) {
+//                            AVObject objectInfo = list.get(i);
+//                            try {
+//                                JSONObject studentInfo = new JSONObject(objectInfo.get("student").toString());
+//                                String studentID = studentInfo.getString("objectId");
+//                                String userName = studentInfo.getJSONObject("serverData").getString("username");
+//                                JSONObject stuInfo = new JSONObject();
+//                                stuInfo.put("userName", userName);
+//                                stuInfo.put("objectId", studentID);
+//                                allStuInfo.put(stuInfo);
+//                            } catch (JSONException error) {
+//
+//                            }
+//                        }
+//                        student_info = allStuInfo.toString();
+//                        Log.e("allStuInfo", student_info);
+//
+//                    }
+//                }
+//            });
+//        }
+//        return currentUser;
+//    }
 
     //获取时间
     @SuppressLint("SimpleDateFormat")
@@ -332,8 +331,9 @@ public class MainActivity extends AppCompatActivity {
                     TextView textView = (TextView) findViewById(R.id.time);
                     try {
                         Date nowDate = stringToDate(textView.getText().toString());
-                        textView.setText(getTime(diff_day_number, nowDate));
-//                        now_data = getTime(diff_day_number, nowDate);
+                        String showTime = getTime(diff_day_number, nowDate);
+                        textView.setText(showTime);
+                        getCourseList(new Date(showTime));
                         now_week_day = week_day;
                     } catch (ParseException err) {
 
@@ -408,10 +408,9 @@ public class MainActivity extends AppCompatActivity {
         return date;
     }
     public void getCourseList(Date date) {
-        Log.e("getCourseList", "list" + date.toString());
         AVUser currentUser = AVUser.getCurrentUser();
         if (currentUser != null) {
-            String strMinusDate = getFormatDateStringWithMinus(date);
+            final String strMinusDate = getFormatDateStringWithMinus(date);
             try {
                 Date startDate = getDateFromStringWithMinus(strMinusDate + " 00:00:00");
                 Date endDate = getDateFromStringWithMinus(strMinusDate + " 23:59:59");
@@ -428,28 +427,76 @@ public class MainActivity extends AppCompatActivity {
                 query.findInBackground(new FindCallback<AVObject>() {
                     @Override
                     public void done(List<AVObject> list, AVException e) {
-                        Log.e("list", "list" + list);
-                        JSONArray allStuInfo = new JSONArray();
+                        JSONArray morningCourse = new JSONArray();
+                        JSONArray noonCourse = new JSONArray();
+                        JSONArray nightCourse = new JSONArray();
                         for (int i = 0; i < list.size(); i ++)
                         {
                             AVObject objectInfo = list.get(i);
-                            Log.e("objectInfo",objectInfo.getObjectId());
                             try {
                                 JSONObject studentInfo = new JSONObject(objectInfo.get("student").toString());
                                 JSONObject teacherInfo = new JSONObject(objectInfo.get("teacher").toString());
                                 Date startTime = new Date(objectInfo.get("startTime").toString());
-                                Log.e("===","startTime======="+startTime.toString());
+                                String duration = objectInfo.get("duration").toString();
+                                String courseName = objectInfo.get("name").toString();
 
-                            } catch (JSONException error) {
+                                JSONObject newCourseInfo = new JSONObject();
+                                newCourseInfo.put("student",studentInfo);
+                                newCourseInfo.put("teacher",teacherInfo);
+                                newCourseInfo.put("startTime",startTime);
+                                newCourseInfo.put("duration",duration);
+                                newCourseInfo.put("name",courseName);
+
+                                Date noonTime = getDateFromStringWithMinus(strMinusDate + " 12:00:00");
+                                Date nightTime = getDateFromStringWithMinus(strMinusDate + " 18:00:00");
+                                if (startTime.before(noonTime))
+                                {
+
+                                    morningCourse.put(newCourseInfo);
+                                }
+                                else if (startTime.after(nightTime))
+                                {
+                                    nightCourse.put(newCourseInfo);
+                                }
+                                else
+                                {
+                                    noonCourse.put(newCourseInfo);
+                                }
+
+                                Log.e("morningCourse",morningCourse.toString());
+                                Log.e("noonCourse",noonCourse.toString());
+                                Log.e("nightCourse",nightCourse.toString());
+                            } catch (Exception error) {
                                 Log.e("JSONException",error.toString());
                             }
 
                         }
+                        try {
+                            currentCourseInfo.remove("morningCourse");
+                            currentCourseInfo.remove("noonCourse");
+                            currentCourseInfo.remove("nightCourse");
+                            if (morningCourse.length() > 0)
+                            {
+                                currentCourseInfo.put("morningCourse",morningCourse);
+                            }
+                            if (noonCourse.length() > 0)
+                            {
+                                currentCourseInfo.put("noonCourse",noonCourse);
+                            }
+                            if (nightCourse.length() > 0)
+                            {
+                                currentCourseInfo.put("nightCourse",nightCourse);
+                            }
+                        }catch (JSONException error)
+                        {
+
+                        }
+                        Log.e("currentCourseInfo",currentCourseInfo.toString());
                     }
                 });
             } catch (ParseException e) {
             }
-
+            //更新数据
 
         }
     }
