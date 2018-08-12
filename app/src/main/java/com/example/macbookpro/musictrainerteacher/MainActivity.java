@@ -6,6 +6,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
+import android.provider.ContactsContract;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
@@ -61,10 +62,13 @@ import java.util.List;
 import java.util.ListIterator;
 import java.util.Map;
 
+import static com.avos.avoscloud.Messages.CommandType.data;
 import static com.netease.nimlib.sdk.StatusCode.LOGINED;
 import static com.netease.nimlib.sdk.msg.constant.SystemMessageStatus.init;
 
 public class MainActivity extends AppCompatActivity {
+
+
 
     Boolean isLoginEaseSuccess = false;
     String now_week_day = getWeek(new Date());//周几
@@ -137,8 +141,8 @@ public class MainActivity extends AppCompatActivity {
         }
         return true;
     }
-
     public static class CustomMessageHandler extends AVIMMessageHandler {
+        //即时通讯
         //接收到消息后的处理逻辑
         @Override
         public void onMessage(AVIMMessage message, AVIMConversation conversation, AVIMClient client){
@@ -202,11 +206,6 @@ public class MainActivity extends AppCompatActivity {
     public void startComment(JSONObject courseInfo)
     {
         Log.e("===", courseInfo.toString());
-//        startActivity(new Intent(MainActivity.this, AudioTeachActivity.class));
-//        //传输课程信息
-//        Intent intent = new Intent(MainActivity.this, AudioTeachActivity.class);
-//        intent.putExtra("student_info", student_info);
-//        startActivity(intent);
     }
 
     public void initActionBar() {
@@ -304,6 +303,7 @@ public class MainActivity extends AppCompatActivity {
         final LinearLayout weekLinearLayout = (LinearLayout) findViewById(R.id.week);
         for (int i = 0; i < weekLinearLayout.getChildCount(); i++) {
             Button btn = (Button) weekLinearLayout.getChildAt(i);
+
             btn.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
@@ -313,6 +313,7 @@ public class MainActivity extends AppCompatActivity {
                     //修改按钮颜色
                     for (int m = 0; m < weekLinearLayout.getChildCount(); m++) {
                         Button weekbtn = (Button) weekLinearLayout.getChildAt(m);
+                        Log.e("test", "++++++++++" + m);
 
                         if (test.getText().toString().equals(weekbtn.getText().toString())) {
                             weekbtn.setBackground(getResources().getDrawable(R.drawable.red_button));
@@ -346,6 +347,7 @@ public class MainActivity extends AppCompatActivity {
                 try {
                     Date nowDate = stringToDate(textView.getText().toString());
                     textView.setText(getTime(code, nowDate));
+                    getCourseList(stringToDate(getTime(code, nowDate)));
                 } catch (ParseException err) {
                 }
 
@@ -360,6 +362,7 @@ public class MainActivity extends AppCompatActivity {
                 try {
                     Date nowDate = stringToDate(textView.getText().toString());
                     textView.setText(getTime(code, nowDate));
+                    getCourseList(stringToDate(getTime(code, nowDate)));
                 } catch (ParseException err) {
                 }
             }

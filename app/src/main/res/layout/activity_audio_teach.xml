@@ -8,6 +8,7 @@
     android:layout_width="wrap_content"
     android:layout_height="match_parent">
     <LinearLayout
+        android:id="@+id/all_student"
         android:layout_width="fill_parent"
         android:layout_height="match_parent"
         android:layout_margin="0dp"
@@ -22,7 +23,8 @@
             android:background="#48586A"
             android:gravity="center"
             android:textColor="#FFFFFF"
-            android:textSize="14dp" />
+            android:textSize="14dp"
+            />
 
         <Button
             android:id="@+id/join_second_btn"

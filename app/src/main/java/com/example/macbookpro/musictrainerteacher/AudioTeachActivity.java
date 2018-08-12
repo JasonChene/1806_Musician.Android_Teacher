@@ -9,6 +9,8 @@ import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.graphics.PixelFormat;
 import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.Drawable;
+import android.media.Image;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -58,7 +60,9 @@ import java.io.InputStream;
 import java.lang.reflect.Array;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.text.ParseException;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import io.agora.rtc.Constants;
@@ -66,6 +70,7 @@ import io.agora.rtc.IRtcEngineEventHandler;
 import io.agora.rtc.RtcEngine;
 import io.agora.rtc.video.VideoCanvas;
 
+import static android.graphics.Color.WHITE;
 import static android.net.sip.SipErrorCode.SERVER_ERROR;
 import static com.netease.nimlib.sdk.StatusCode.LOGINED;
 import static java.lang.System.err;
@@ -78,6 +83,10 @@ public class AudioTeachActivity extends AppCompatActivity {
     public static final int GET_DATA_SUCCESS = 1;
     public static final int NETWORK_ERROR = 2;
     public static final int SERVER_ERROR = 3;
+    private Button button1;
+    private Button button2;
+    private Button button3;
+    private Button button4;
     Draw main_draw;
     View drawBackgroud;
     Draw peer_draw;
@@ -176,6 +185,7 @@ public class AudioTeachActivity extends AppCompatActivity {
     public void updateWhiteBoardChannelID(String channelID) {
         main_draw.channelID = channelID;
     }
+
     public void addMusicPic(String strMusicImageUrl) {
         //设置本地图片
         Log.i("MusicPicUrl:", "" + strMusicImageUrl);
@@ -220,6 +230,8 @@ public class AudioTeachActivity extends AppCompatActivity {
             }
         }.start();
     }
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -228,9 +240,9 @@ public class AudioTeachActivity extends AppCompatActivity {
         initActionBar();
         myApp = (MyLeanCloudApp) getApplication();
         myApp.setAudioTeachActivity(AudioTeachActivity.this);
-
         main_draw = findViewById(R.id.main_draw);
         peer_draw = findViewById(R.id.peer_draw);
+//        week_onclick();
         //接受传过来的课程信息
         Intent intent = getIntent();
         student_info = intent.getStringExtra("student_info");
@@ -359,6 +371,7 @@ public class AudioTeachActivity extends AppCompatActivity {
             }
         });
     }
+
     public String getUserName(int index) {
         String user_name = "未上线";
         try {
@@ -368,12 +381,12 @@ public class AudioTeachActivity extends AppCompatActivity {
         }
         return user_name;
     }
+
     public void joinInNewRoom(int index) {
         String objectID = "";
         try {
             objectID = mArrStudentInfo.getJSONObject(index).getString("studentID");
-        }
-        catch (JSONException e) {
+        } catch (JSONException e) {
         }
         close_Video();
         showMusicPicture();
@@ -426,12 +439,15 @@ public class AudioTeachActivity extends AppCompatActivity {
         TextView actionBarTitle = (TextView) findViewById(R.id.action_bar_title);
         actionBarTitle.setText("老师线上教室");
     }
+
     private void joinChannel(int uid) {
         mRtcEngine.joinChannel(null, "" + Channel_name, null, uid); // if you do not specify the uid, we will generate the uid for you
     }
+
     private void leaveChannel() {
         mRtcEngine.leaveChannel();
     }
+
     public boolean checkSelfPermission(String permission, int requestCode) {
         Log.e(LOG_TAG, "checkSelfPermission " + permission + " " + requestCode);
         if (ContextCompat.checkSelfPermission(this,
@@ -444,6 +460,7 @@ public class AudioTeachActivity extends AppCompatActivity {
         }
         return true;
     }
+
     private void setupRemoteVideo(int uid) {
         FrameLayout container = (FrameLayout) findViewById(R.id.remote_video_view_container);
         if (container.getChildCount() >= 1) {
@@ -455,6 +472,7 @@ public class AudioTeachActivity extends AppCompatActivity {
         mRtcEngine.setupRemoteVideo(new VideoCanvas(surfaceView, VideoCanvas.RENDER_MODE_HIDDEN, uid));
         surfaceView.setTag(uid); // for mark purpose
     }
+
     private void close_Video() {
         if (checkSelfPermission(Manifest.permission.CAMERA, PERMISSION_REQ_ID_CAMERA)) {
             showMusicPicture();
@@ -465,6 +483,7 @@ public class AudioTeachActivity extends AppCompatActivity {
             container_remote.setVisibility(View.GONE);
         }
     }
+
     private void setupLocalVideo(int uid) {
         FrameLayout container = (FrameLayout) findViewById(R.id.local_video_view_container);
         container.setVisibility(View.VISIBLE);
@@ -474,14 +493,17 @@ public class AudioTeachActivity extends AppCompatActivity {
         mRtcEngine.setupLocalVideo(new VideoCanvas(surfaceView, VideoCanvas.RENDER_MODE_HIDDEN, uid));
         surfaceView.setTag(uid); // for mark purpose
     }
+
     private void hideMusicPicture() {
         View MusicPicture = (View) findViewById(R.id.music_picture);
         MusicPicture.setVisibility(View.GONE);
     }
+
     private void showMusicPicture() {
         View MusicPicture = (View) findViewById(R.id.music_picture);
         MusicPicture.setVisibility(View.VISIBLE);
     }
+
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         switch (requestCode) {//根据请求码判断是哪一次申请的权限
@@ -514,6 +536,7 @@ public class AudioTeachActivity extends AppCompatActivity {
                 super.onRequestPermissionsResult(requestCode, permissions, grantResults);
         }
     }
+
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {
         final FrameLayout local_video = findViewById(R.id.local_video_view_container);
@@ -550,6 +573,59 @@ public class AudioTeachActivity extends AppCompatActivity {
         }
     }
 
+//    public void week_onclick() {
+//        final LinearLayout weekLinearLayout = (LinearLayout) findViewById(R.id.all_student);
+//        for (int i = 0; i < weekLinearLayout.getChildCount(); i++) {
+//            Button btn = (Button) weekLinearLayout.getChildAt(i);
+//            btn.setOnClickListener(new View.OnClickListener() {
+//                @Override
+//                public void onClick(View view) {
+//                    Button test = (Button) view;
+//                    String week_day = "周" + test.getText().toString();
+//                    Log.e("test", "++++++++++" + week_day);
+//                    //修改按钮颜色
+//                    for (int m = 0; m < weekLinearLayout.getChildCount(); m++) {
+//                        Button weekbtn = (Button) weekLinearLayout.getChildAt(m);
+//
+//                        if (test.getText().toString().equals(weekbtn.getText().toString())) {
+//                            weekbtn.setBackground(getResources().getDrawable(R.drawable.red_button));
+//                            weekbtn.setTextColor(Color.WHITE);
+//                        } else {
+//                            weekbtn.setBackground(getResources().getDrawable(R.drawable.white_button));
+//                            weekbtn.setTextColor(Color.BLACK);
+//                        }
+//                    }
+//                }
+//            });
+//        }
+//public void week_onclick() {
+//    final LinearLayout weekLinearLayout = (LinearLayout) findViewById(R.id.all_student);
+//    for (int i = 0; i < weekLinearLayout.getChildCount(); i++) {
+//        Button btn = (Button) weekLinearLayout.getChildAt(i);
+//
+//        btn.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View view) {
+//                Button test = (Button) view;
+//                String week_day = test.getText().toString();
+//                Log.e("test", "++++++++++" + week_day);
+//                //修改按钮颜色
+//                for (int m = 0; m < weekLinearLayout.getChildCount(); m++) {
+//                    Button weekbtn = (Button) weekLinearLayout.getChildAt(m);
+//                    Log.e("test", "++++++++++" + m);
+//
+//                    if (test.getText().toString().equals(weekbtn.getText().toString())) {
+//                        weekbtn.setBackground(getResources().getDrawable(R.drawable.red_button));
+//                        weekbtn.setTextColor(Color.WHITE);
+//                    } else {
+//                        weekbtn.setBackground(getResources().getDrawable(R.drawable.white_button));
+//                        weekbtn.setTextColor(Color.WHITE);
+//                    }
+//                }
+//            }
+//        });
+//    }
+//}
 }
 
 
