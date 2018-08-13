@@ -7,14 +7,11 @@ import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
-import android.graphics.PixelFormat;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
-import android.media.Image;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
-import android.os.ParcelUuid;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
@@ -23,70 +20,44 @@ import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
-import android.view.MotionEvent;
 import android.view.SurfaceView;
 import android.view.View;
-import android.view.ViewOutlineProvider;
 import android.widget.Button;
 import android.widget.FrameLayout;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.avos.avoscloud.AVException;
-import com.avos.avoscloud.AVObject;
-import com.avos.avoscloud.AVQuery;
-import com.avos.avoscloud.AVUser;
-import com.avos.avoscloud.FindCallback;
 import com.example.macbookpro.musictrainerteacher.CustomView.Draw;
 import com.example.macbookpro.musictrainerteacher.common.SysExitUtil;
-import com.example.macbookpro.musictrainerteacher.storage.LocalStorage;
-import com.netease.nimlib.sdk.NIMClient;
 import com.netease.nimlib.sdk.Observer;
-import com.netease.nimlib.sdk.auth.AuthService;
-import com.netease.nimlib.sdk.rts.RTSCallback;
 import com.netease.nimlib.sdk.rts.RTSManager;
-import com.netease.nimlib.sdk.rts.constant.RTSTunnelType;
 import com.netease.nimlib.sdk.rts.model.RTSCommonEvent;
-import com.netease.nimlib.sdk.rts.model.RTSData;
 import com.netease.nimlib.sdk.rts.model.RTSTunData;
 
 import org.json.JSONArray;
 import org.json.JSONException;
-import org.json.JSONObject;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.lang.reflect.Array;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.text.ParseException;
-import java.util.ArrayList;
 import java.util.Date;
-import java.util.List;
 
 import io.agora.rtc.Constants;
 import io.agora.rtc.IRtcEngineEventHandler;
 import io.agora.rtc.RtcEngine;
 import io.agora.rtc.video.VideoCanvas;
 
-import static android.graphics.Color.WHITE;
-import static android.net.sip.SipErrorCode.SERVER_ERROR;
-import static com.netease.nimlib.sdk.StatusCode.LOGINED;
-import static java.lang.System.err;
-
 public class AudioTeachActivity extends AppCompatActivity {
-    RtcEngine mRtcEngine = null;
-    private static final int PERMISSION_REQ_ID_RECORD_AUDIO = 22;
-    private static final int PERMISSION_REQ_ID_CAMERA = PERMISSION_REQ_ID_RECORD_AUDIO + 1;
-    private static final String LOG_TAG = "LOG_TAG";
     public static final int GET_DATA_SUCCESS = 1;
     public static final int NETWORK_ERROR = 2;
     public static final int SERVER_ERROR = 3;
-    private Button button1;
-    private Button button2;
-    private Button button3;
-    private Button button4;
+    private static final int PERMISSION_REQ_ID_RECORD_AUDIO = 22;
+    private static final int PERMISSION_REQ_ID_CAMERA = PERMISSION_REQ_ID_RECORD_AUDIO + 1;
+    private static final String LOG_TAG = "LOG_TAG";
+    RtcEngine mRtcEngine = null;
     Draw main_draw;
     View drawBackgroud;
     Draw peer_draw;
@@ -242,7 +213,8 @@ public class AudioTeachActivity extends AppCompatActivity {
         myApp.setAudioTeachActivity(AudioTeachActivity.this);
         main_draw = findViewById(R.id.main_draw);
         peer_draw = findViewById(R.id.peer_draw);
-//        week_onclick();
+        //设置教学页面的学生按钮的颜色
+        week_onclick();
         //接受传过来的课程信息
         Intent intent = getIntent();
         student_info = intent.getStringExtra("student_info");
@@ -256,7 +228,6 @@ public class AudioTeachActivity extends AppCompatActivity {
             FrameLayout container = (FrameLayout) findViewById(R.id.local_video_view_container);
             container.setVisibility(View.GONE);
         }
-
         //顶部返回按键
         Button back_button = (Button) findViewById(R.id.back_button);
         back_button.setOnClickListener(new View.OnClickListener() {
@@ -291,61 +262,16 @@ public class AudioTeachActivity extends AppCompatActivity {
 
         final Button join_first_btn = (Button) findViewById(R.id.join_first_btn);
         join_first_btn.setText(getUserName(0));
-        join_first_btn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                FrameLayout container = (FrameLayout) findViewById(R.id.local_video_view_container);
-                if (container.getVisibility() == View.GONE) {
-                    joinInNewRoom(0);
-                    container.setVisibility(View.GONE);
-                } else {
-                    Toast.makeText(AudioTeachActivity.this, "现在正在与学生教学,请先关闭视频", Toast.LENGTH_SHORT).show();
-                }
-            }
-
-        });
         final Button join_second_btn = (Button) findViewById(R.id.join_second_btn);
         join_second_btn.setText(getUserName(1));
-        join_second_btn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                FrameLayout container = (FrameLayout) findViewById(R.id.local_video_view_container);
-                if (container.getVisibility() == View.GONE) {
-                    joinInNewRoom(1);
-                    container.setVisibility(View.GONE);
-                } else {
-                    Toast.makeText(AudioTeachActivity.this, "现在正在与学生教学,请先关闭视频", Toast.LENGTH_SHORT).show();
-                }
-            }
-        });
         final Button join_third_btn = (Button) findViewById(R.id.join_third_btn);
         join_third_btn.setText(getUserName(2));
-        join_third_btn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                FrameLayout container = (FrameLayout) findViewById(R.id.local_video_view_container);
-                if (container.getVisibility() == View.GONE) {
-                    joinInNewRoom(2);
-                    container.setVisibility(View.GONE);
-                } else {
-                    Toast.makeText(AudioTeachActivity.this, "现在正在与学生教学,请先关闭视频", Toast.LENGTH_SHORT).show();
-                }
-            }
-        });
         final Button join_fourth_btn = (Button) findViewById(R.id.join_fourth_btn);
         join_fourth_btn.setText(getUserName(3));
-        join_fourth_btn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                FrameLayout container = (FrameLayout) findViewById(R.id.local_video_view_container);
-                if (container.getVisibility() == View.GONE) {
-                    joinInNewRoom(3);
-                    container.setVisibility(View.GONE);
-                } else {
-                    Toast.makeText(AudioTeachActivity.this, "现在正在与学生教学,请先关闭视频", Toast.LENGTH_SHORT).show();
-                }
-            }
-        });
+
+        //初始化按钮的图标
+        stu_audio_iocn_init();
+        setTeachingFristStudent();
         //离开房间
         final Button close_video_button = (Button) findViewById(R.id.open_video_button);
         close_video_button.setOnClickListener(new View.OnClickListener() {
@@ -394,6 +320,7 @@ public class AudioTeachActivity extends AppCompatActivity {
         Channel_name = objectID;
         joinChannel(9998);
         mRtcEngine.disableVideo();
+//        Log.e("CHANNEL", "8888888888888888888888"+Channel_name);
     }
 
     //初始化进入房间
@@ -573,59 +500,95 @@ public class AudioTeachActivity extends AppCompatActivity {
         }
     }
 
-//    public void week_onclick() {
-//        final LinearLayout weekLinearLayout = (LinearLayout) findViewById(R.id.all_student);
-//        for (int i = 0; i < weekLinearLayout.getChildCount(); i++) {
-//            Button btn = (Button) weekLinearLayout.getChildAt(i);
-//            btn.setOnClickListener(new View.OnClickListener() {
-//                @Override
-//                public void onClick(View view) {
-//                    Button test = (Button) view;
-//                    String week_day = "周" + test.getText().toString();
-//                    Log.e("test", "++++++++++" + week_day);
-//                    //修改按钮颜色
-//                    for (int m = 0; m < weekLinearLayout.getChildCount(); m++) {
-//                        Button weekbtn = (Button) weekLinearLayout.getChildAt(m);
-//
-//                        if (test.getText().toString().equals(weekbtn.getText().toString())) {
-//                            weekbtn.setBackground(getResources().getDrawable(R.drawable.red_button));
-//                            weekbtn.setTextColor(Color.WHITE);
-//                        } else {
-//                            weekbtn.setBackground(getResources().getDrawable(R.drawable.white_button));
-//                            weekbtn.setTextColor(Color.BLACK);
-//                        }
-//                    }
-//                }
-//            });
-//        }
-//public void week_onclick() {
-//    final LinearLayout weekLinearLayout = (LinearLayout) findViewById(R.id.all_student);
-//    for (int i = 0; i < weekLinearLayout.getChildCount(); i++) {
-//        Button btn = (Button) weekLinearLayout.getChildAt(i);
-//
-//        btn.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View view) {
-//                Button test = (Button) view;
-//                String week_day = test.getText().toString();
-//                Log.e("test", "++++++++++" + week_day);
-//                //修改按钮颜色
-//                for (int m = 0; m < weekLinearLayout.getChildCount(); m++) {
-//                    Button weekbtn = (Button) weekLinearLayout.getChildAt(m);
-//                    Log.e("test", "++++++++++" + m);
-//
-//                    if (test.getText().toString().equals(weekbtn.getText().toString())) {
-//                        weekbtn.setBackground(getResources().getDrawable(R.drawable.red_button));
-//                        weekbtn.setTextColor(Color.WHITE);
-//                    } else {
-//                        weekbtn.setBackground(getResources().getDrawable(R.drawable.white_button));
-//                        weekbtn.setTextColor(Color.WHITE);
-//                    }
-//                }
-//            }
-//        });
-//    }
-//}
+    public void week_onclick() {
+        final LinearLayout weekLinearLayout = (LinearLayout) findViewById(R.id.all_student);
+        final FrameLayout container = (FrameLayout) findViewById(R.id.local_video_view_container);
+        for (int i = 0; i < weekLinearLayout.getChildCount(); i++) {
+            Button btn = (Button) weekLinearLayout.getChildAt(i);
+            btn.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    Button test = (Button) view;
+                    //修改按钮颜色
+                    if (container.getVisibility() == View.GONE) {
+                        for (int m = 0; m < weekLinearLayout.getChildCount(); m++) {
+                            Button stu_name = (Button) weekLinearLayout.getChildAt(m);
+                            String no_student = "未上线";
+                            if (test.getText().toString().equals(no_student) == false) {
+                                if (test.getText().toString().equals(stu_name.getText().toString())) {
+                                    FrameLayout container = (FrameLayout) findViewById(R.id.local_video_view_container);
+                                    if (container.getVisibility() == View.GONE) {
+                                        joinInNewRoom(m);
+                                        container.setVisibility(View.GONE);
+
+                                        Button button = (Button) findViewById(stu_name.getId());
+                                        Drawable drawable1 = getResources().getDrawable(R.drawable.start_audio);
+                                        drawable1.setBounds(0, 0, 40, 40);//第一0是距左边距离，第二0是距上边距离，40分别是长宽
+                                        button.setCompoundDrawables(null, null, drawable1, null);//只放右边边
+
+
+                                    }
+                                    else {
+                                        Toast.makeText(AudioTeachActivity.this, "现在正在与学生教学,请先关闭视频", Toast.LENGTH_SHORT).show();
+                                    }
+                                    stu_name.setBackground(getResources().getDrawable(R.drawable.teach_stu_name_new_color));
+                                }
+                                else {
+                                    stu_name.setBackground(getResources().getDrawable(R.drawable.teach_stu_name_old_color));
+                                    if (stu_name.getText().toString().equals(no_student) == false) {
+                                        Button button = (Button) findViewById(stu_name.getId());
+                                        Drawable drawable1 = getResources().getDrawable(R.drawable.no_start_audio);
+                                        drawable1.setBounds(0, 0, 40, 40);//第一0是距左边距离，第二0是距上边距离，40分别是长宽
+                                        button.setCompoundDrawables(null, null, drawable1, null);//只放右边边
+                                    }
+                                }
+                            }
+                        }
+                    } else {
+                        Toast.makeText(AudioTeachActivity.this, "现在正在与学生教学,请先关闭视频", Toast.LENGTH_SHORT).show();
+                    }
+                }
+            });
+        }
+    }
+
+    public void setTeachingFristStudent() {
+        Button button = (Button) findViewById(R.id.join_first_btn);
+        String no_student = "未上线";
+        if (button.getText().toString().equals(no_student)) {
+            button.setBackground(getResources().getDrawable(R.drawable.teach_stu_name_old_color));
+            button.setTextColor(Color.WHITE);
+        } else {
+            button.setBackground(getResources().getDrawable(R.drawable.teach_stu_name_new_color));
+            button.setTextColor(Color.WHITE);
+            Button join_first_btn = (Button) findViewById(R.id.join_first_btn);
+            Drawable drawable1 = getResources().getDrawable(R.drawable.start_audio);
+            drawable1.setBounds(0, 0, 40, 40);//第一0是距左边距离，第二0是距上边距离，40分别是长宽
+            join_first_btn.setCompoundDrawables(null, null, drawable1, null);//只放右边边
+        }
+    }
+
+    public void stu_audio_iocn_init() {
+        final LinearLayout weekLinearLayout = (LinearLayout) findViewById(R.id.all_student);
+        for (int i = 0; i < weekLinearLayout.getChildCount(); i++) {
+            Button btn = (Button) weekLinearLayout.getChildAt(i);
+            Button btn_id = (Button) findViewById(btn.getId());
+//            Log.e("STUDENT", "22222222222222222222222222"+btn_id.getText().toString());
+            String no_student = "未上线";
+            if (no_student.equals(btn_id.getText().toString())) {
+            }
+            else {
+                Button button = (Button) findViewById(btn.getId());
+                Drawable drawable1 = getResources().getDrawable(R.drawable.no_start_audio);
+                drawable1.setBounds(0, 0, 40, 40);//第一0是距左边距离，第二0是距上边距离，40分别是长宽
+                button.setCompoundDrawables(null, null, drawable1, null);//只放右边边
+            }
+
+
+        }
+
+    }
+
 }
 
 

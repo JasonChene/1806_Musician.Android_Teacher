@@ -76,6 +76,24 @@ public class MainActivity extends AppCompatActivity {
     ArrayList<JSONObject> allCourseArrayList;
     FruitAdapter adapter;
     ListView listView;
+    private long time = 0;
+
+    //获取时间
+    @SuppressLint("SimpleDateFormat")
+    public static String getTime(int week_code, Date date) {
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy年MM月dd日");
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTime(date);
+        calendar.add(Calendar.DAY_OF_MONTH, week_code);
+        date = calendar.getTime();
+        return sdf.format(date);
+    }
+
+    @SuppressLint("SimpleDateFormat")
+    public static String getWeek(Date date) {
+        SimpleDateFormat week = new SimpleDateFormat("E");//设置日期格式
+        return week.format(date);
+    }
 
     @Override
     protected void onResume() {
@@ -141,21 +159,6 @@ public class MainActivity extends AppCompatActivity {
         }
         return true;
     }
-    public static class CustomMessageHandler extends AVIMMessageHandler {
-        //即时通讯
-        //接收到消息后的处理逻辑
-        @Override
-        public void onMessage(AVIMMessage message, AVIMConversation conversation, AVIMClient client){
-            if(message instanceof AVIMTextMessage){
-                Log.e("Tom & Jerry","举手消息接听"+((AVIMTextMessage)message).getText());
-            }
-        }
-
-        public void onMessageReceipt(AVIMMessage message,AVIMConversation conversation,AVIMClient client){
-
-        }
-    }
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -203,6 +206,7 @@ public class MainActivity extends AppCompatActivity {
         intent.putExtra("student_info", student_info.toString());
         startActivity(intent);
     }
+
     public void startComment(JSONObject courseInfo)
     {
         Log.e("===", courseInfo.toString());
@@ -226,8 +230,6 @@ public class MainActivity extends AppCompatActivity {
         TextView actionBarTitle = (TextView) findViewById(R.id.action_bar_title);
         actionBarTitle.setText("老师课程表");
     }
-
-    private long time = 0;
 
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {
@@ -260,23 +262,6 @@ public class MainActivity extends AppCompatActivity {
         }
         return currentUser;
 
-    }
-
-    //获取时间
-    @SuppressLint("SimpleDateFormat")
-    public static String getTime(int week_code, Date date) {
-        SimpleDateFormat sdf = new SimpleDateFormat("yyyy年MM月dd日");
-        Calendar calendar = Calendar.getInstance();
-        calendar.setTime(date);
-        calendar.add(Calendar.DAY_OF_MONTH, week_code);
-        date = calendar.getTime();
-        return sdf.format(date);
-    }
-
-    @SuppressLint("SimpleDateFormat")
-    public static String getWeek(Date date) {
-        SimpleDateFormat week = new SimpleDateFormat("E");//设置日期格式
-        return week.format(date);
     }
 
     public void setTime() {
@@ -313,8 +298,6 @@ public class MainActivity extends AppCompatActivity {
                     //修改按钮颜色
                     for (int m = 0; m < weekLinearLayout.getChildCount(); m++) {
                         Button weekbtn = (Button) weekLinearLayout.getChildAt(m);
-                        Log.e("test", "++++++++++" + m);
-
                         if (test.getText().toString().equals(weekbtn.getText().toString())) {
                             weekbtn.setBackground(getResources().getDrawable(R.drawable.red_button));
                             weekbtn.setTextColor(Color.WHITE);
@@ -387,20 +370,21 @@ public class MainActivity extends AppCompatActivity {
             return 7;
         }
     }
+
     public Date stringToDate(String strTime) throws ParseException {
         SimpleDateFormat formatter = new SimpleDateFormat("yyyy年MM月dd日");
         Date date = formatter.parse(strTime);
         return date;
     }
 
-    //获取课程表信息
-
-
     public String getFormatDateStringWithMinus(Date date)
     {
         SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
         return formatter.format(date);
     }
+
+    //获取课程表信息
+
     public Date getDateFromStringWithMinus(String strDate) throws ParseException
     {
         SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
@@ -436,90 +420,98 @@ public class MainActivity extends AppCompatActivity {
                 query.findInBackground(new FindCallback<AVObject>() {
                     @Override
                     public void done(List<AVObject> list, AVException e) {
+                        Log.e("list", "1234456754325626" + list);
                         JSONArray morningCourse = new JSONArray();
                         JSONArray noonCourse = new JSONArray();
                         JSONArray nightCourse = new JSONArray();
-                        for (int i = 0; i < list.size(); i ++)
-                        {
-                            AVObject objectInfo = list.get(i);
+                            for (int i = 0; i < list.size(); i++) {
+                                AVObject objectInfo = list.get(i);
+                                try {
+                                    JSONObject studentInfo = new JSONObject(objectInfo.get("student").toString());
+                                    Date startTime = new Date(objectInfo.get("startTime").toString());
+                                    String duration = objectInfo.get("duration").toString();
+                                    Date endDate = addSecondToDate(startTime, Integer.valueOf(duration) / 1000);
+                                    String courseName = objectInfo.get("name").toString();
+                                    String comment = objectInfo.get("comment").toString();
+
+                                    //学生信息
+                                    JSONObject student = new JSONObject();
+                                    student.put("name", studentInfo.getJSONObject("serverData").getString("username"));
+                                    student.put("studentID", studentInfo.getString("objectId"));
+
+                                    Log.e("student", student.toString());
+
+                                    JSONObject newCourseInfo = new JSONObject();
+                                    newCourseInfo.put("student", student);
+                                    newCourseInfo.put("startTime", startTime);
+                                    newCourseInfo.put("endDate", endDate);
+                                    newCourseInfo.put("name", courseName);
+                                    newCourseInfo.put("comment", comment);
+
+                                    Date noonTime = getDateFromStringWithMinus(strMinusDate + " 12:00:00");
+                                    Date nightTime = getDateFromStringWithMinus(strMinusDate + " 18:00:00");
+                                    if (startTime.before(noonTime)) {
+
+                                        morningCourse.put(newCourseInfo);
+                                    } else if (startTime.after(nightTime)) {
+                                        nightCourse.put(newCourseInfo);
+                                    } else {
+                                        noonCourse.put(newCourseInfo);
+                                    }
+
+                                } catch (Exception error) {
+                                    Log.e("JSONException", error.toString());
+                                }
+
+                            }
                             try {
-                                JSONObject studentInfo = new JSONObject(objectInfo.get("student").toString());
-                                Date startTime = new Date(objectInfo.get("startTime").toString());
-                                String duration = objectInfo.get("duration").toString();
-                                Date endDate = addSecondToDate(startTime,Integer.valueOf(duration)/1000);
-                                String courseName = objectInfo.get("name").toString();
-                                String comment = objectInfo.get("comment").toString();
-
-                                //学生信息
-                                JSONObject student = new JSONObject();
-                                student.put("name",studentInfo.getJSONObject("serverData").getString("username"));
-                                student.put("studentID",studentInfo.getString("objectId"));
-
-                                Log.e("student",student.toString());
-
-                                JSONObject newCourseInfo = new JSONObject();
-                                newCourseInfo.put("student",student);
-                                newCourseInfo.put("startTime",startTime);
-                                newCourseInfo.put("endDate",endDate);
-                                newCourseInfo.put("name",courseName);
-                                newCourseInfo.put("comment",comment);
-
-                                Date noonTime = getDateFromStringWithMinus(strMinusDate + " 12:00:00");
-                                Date nightTime = getDateFromStringWithMinus(strMinusDate + " 18:00:00");
-                                if (startTime.before(noonTime))
-                                {
-
-                                    morningCourse.put(newCourseInfo);
+                                allCourseArrayList = new ArrayList<JSONObject>();
+                                if (morningCourse.length() > 0) {
+                                    JSONObject object = new JSONObject();
+                                    object.put("type", "morningCourse");
+                                    object.put("value", morningCourse);
+                                    allCourseArrayList.add(object);
                                 }
-                                else if (startTime.after(nightTime))
-                                {
-                                    nightCourse.put(newCourseInfo);
+                                if (noonCourse.length() > 0) {
+                                    JSONObject object = new JSONObject();
+                                    object.put("type", "noonCourse");
+                                    object.put("value", noonCourse);
+                                    allCourseArrayList.add(object);
                                 }
-                                else
-                                {
-                                    noonCourse.put(newCourseInfo);
+                                if (nightCourse.length() > 0) {
+                                    JSONObject object = new JSONObject();
+                                    object.put("type", "nightCourse");
+                                    object.put("value", nightCourse);
+                                    allCourseArrayList.add(object);
                                 }
+                                adapter = new FruitAdapter(MainActivity.this, R.layout.list_items, allCourseArrayList);
+                                listView.setAdapter(adapter);
+                            } catch (JSONException error) {
+                                Log.e("错误信息", error.toString());
 
-                            } catch (Exception error) {
-                                Log.e("JSONException",error.toString());
                             }
 
-                        }
-                        try {
-                            allCourseArrayList = new ArrayList<JSONObject>();
-                            if (morningCourse.length() > 0)
-                            {
-                                JSONObject object = new JSONObject();
-                                object.put("type","morningCourse");
-                                object.put("value",morningCourse);
-                                allCourseArrayList.add(object);
-                            }
-                            if (noonCourse.length() > 0)
-                            {
-                                JSONObject object = new JSONObject();
-                                object.put("type","noonCourse");
-                                object.put("value",noonCourse);
-                                allCourseArrayList.add(object);
-                            }
-                            if (nightCourse.length() > 0)
-                            {
-                                JSONObject object = new JSONObject();
-                                object.put("type","nightCourse");
-                                object.put("value",nightCourse);
-                                allCourseArrayList.add(object);
-                            }
-                            adapter = new FruitAdapter(MainActivity.this, R.layout.list_items, allCourseArrayList);
-                            listView.setAdapter(adapter);
-                        }catch (JSONException error)
-                        {
-
-                        }
                     }
                 });
             } catch (ParseException e) {
+
             }
             }
         }
+    public static class CustomMessageHandler extends AVIMMessageHandler {
+        //即时通讯
+        //接收到消息后的处理逻辑
+        @Override
+        public void onMessage(AVIMMessage message, AVIMConversation conversation, AVIMClient client){
+            if(message instanceof AVIMTextMessage){
+                Log.e("Tom & Jerry","举手消息接听"+((AVIMTextMessage)message).getText());
+            }
+        }
+
+        public void onMessageReceipt(AVIMMessage message,AVIMConversation conversation,AVIMClient client){
+
+        }
     }
+}
 
 
