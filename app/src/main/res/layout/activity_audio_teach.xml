@@ -67,10 +67,10 @@
         android:layout_height="match_parent">
 
         <TextView
+            android:id="@+id/who_be_teach"
             android:layout_width="wrap_content"
             android:layout_height="23dp"
             android:layout_marginTop="48dp"
-            android:text="正在跟张小花乐谱教学"
             android:layout_marginLeft="5dp"
             android:textColor="#101010"
             android:textSize="14dp" />

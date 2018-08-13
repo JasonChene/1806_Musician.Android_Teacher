@@ -285,8 +285,6 @@ public class AudioTeachActivity extends AppCompatActivity {
                 WhiteBoardManager.sendToRemote(main_draw.sessionID, main_draw.toAccount, clear_remote);
             }
         });
-
-
         final Button join_first_btn = (Button) findViewById(R.id.join_first_btn);
         join_first_btn.setText(getUserName(0));
         final Button join_second_btn = (Button) findViewById(R.id.join_second_btn);
@@ -295,10 +293,11 @@ public class AudioTeachActivity extends AppCompatActivity {
         join_third_btn.setText(getUserName(2));
         final Button join_fourth_btn = (Button) findViewById(R.id.join_fourth_btn);
         join_fourth_btn.setText(getUserName(3));
-
         //初始化按钮的图标
-        stu_audio_iocn_init();
+        stu_audio_icon_init();
         setTeachingFristStudent();
+        //初始化与谁视频教学
+        set_teaching_student();
         //离开房间
         final Button close_video_button = (Button) findViewById(R.id.open_video_button);
         close_video_button.setOnClickListener(new View.OnClickListener() {
@@ -347,9 +346,7 @@ public class AudioTeachActivity extends AppCompatActivity {
         Channel_name = objectID;
         joinChannel(9998);
         mRtcEngine.disableVideo();
-//        Log.e("CHANNEL", "8888888888888888888888"+Channel_name);
     }
-
     //初始化进入房间
     private void initAgoraEngineAndJoinChannel(int uid) {
         initializeAgoraEngine();     // Tutorial Step 1
@@ -546,14 +543,14 @@ public class AudioTeachActivity extends AppCompatActivity {
                                     FrameLayout container = (FrameLayout) findViewById(R.id.local_video_view_container);
                                     if (container.getVisibility() == View.GONE) {
                                         joinInNewRoom(m);
+                                        TextView textView = (TextView) findViewById(R.id.who_be_teach);
+                                        String student_teach_name = "正在和"+test.getText().toString()+"视频教学";
+                                        textView.setText(student_teach_name);
                                         container.setVisibility(View.GONE);
-
                                         Button button = (Button) findViewById(stu_name.getId());
                                         Drawable drawable1 = getResources().getDrawable(R.drawable.start_audio);
                                         drawable1.setBounds(0, 0, 40, 40);//第一0是距左边距离，第二0是距上边距离，40分别是长宽
                                         button.setCompoundDrawables(null, null, drawable1, null);//只放右边边
-
-
                                     } else {
                                         Toast.makeText(AudioTeachActivity.this, "现在正在与学生教学,请先关闭视频", Toast.LENGTH_SHORT).show();
                                     }
@@ -593,14 +590,15 @@ public class AudioTeachActivity extends AppCompatActivity {
         }
     }
 
-    public void stu_audio_iocn_init() {
+    public void stu_audio_icon_init() {
         final LinearLayout weekLinearLayout = (LinearLayout) findViewById(R.id.all_student);
         for (int i = 0; i < weekLinearLayout.getChildCount(); i++) {
             Button btn = (Button) weekLinearLayout.getChildAt(i);
             Button btn_id = (Button) findViewById(btn.getId());
-//            Log.e("STUDENT", "22222222222222222222222222"+btn_id.getText().toString());
+            TextView textView = (TextView) findViewById(R.id.who_be_teach);
             String no_student = "未上线";
             if (no_student.equals(btn_id.getText().toString())) {
+
             } else {
                 Button button = (Button) findViewById(btn.getId());
                 Drawable drawable1 = getResources().getDrawable(R.drawable.no_start_audio);
@@ -611,7 +609,25 @@ public class AudioTeachActivity extends AppCompatActivity {
 
         }
     }
+public void  set_teaching_student(){
+    final LinearLayout weekLinearLayout = (LinearLayout) findViewById(R.id.all_student);
+    for (int i = 0; i < weekLinearLayout.getChildCount(); i++) {
+        Button btn = (Button) weekLinearLayout.getChildAt(0);
+        Button btn_id = (Button) findViewById(btn.getId());
+        TextView textView = (TextView) findViewById(R.id.who_be_teach);
+        String no_student = "未上线";
+        if (no_student.equals(btn_id.getText().toString())) {
+                String student_teach_name = "现在没有学生上线,请等待学生上线";
+                textView.setText(student_teach_name);
 
+        } else {
+            String student_teach_name = "正在和"+getUserName(0)+"视频教学";
+            textView.setText(student_teach_name);
+        }
+
+
+    }
+}
         public static class CustomMessageHandler extends AVIMMessageHandler {
             //即时通讯
             //接收到消息后的处理逻辑
@@ -637,7 +653,6 @@ public class AudioTeachActivity extends AppCompatActivity {
                 }
             }
             Log.e("list", list.toString());
-
             myApp.client.createConversation(list, "通知学生老师在线", null,
                     new AVIMConversationCreatedCallback() {
 
