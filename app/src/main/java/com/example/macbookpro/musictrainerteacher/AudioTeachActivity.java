@@ -28,6 +28,22 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+
+import com.avos.avoscloud.AVException;
+import com.avos.avoscloud.AVObject;
+import com.avos.avoscloud.AVQuery;
+import com.avos.avoscloud.AVUser;
+import com.avos.avoscloud.FindCallback;
+import com.avos.avoscloud.im.v2.AVIMClient;
+import com.avos.avoscloud.im.v2.AVIMConversation;
+import com.avos.avoscloud.im.v2.AVIMException;
+import com.avos.avoscloud.im.v2.AVIMMessage;
+import com.avos.avoscloud.im.v2.AVIMMessageHandler;
+import com.avos.avoscloud.im.v2.AVIMMessageManager;
+import com.avos.avoscloud.im.v2.callback.AVIMConversationCallback;
+import com.avos.avoscloud.im.v2.callback.AVIMConversationCreatedCallback;
+import com.avos.avoscloud.im.v2.messages.AVIMTextMessage;
+
 import com.example.macbookpro.musictrainerteacher.CustomView.Draw;
 import com.example.macbookpro.musictrainerteacher.common.SysExitUtil;
 import com.netease.nimlib.sdk.Observer;
@@ -42,8 +58,10 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
-import java.text.ParseException;
-import java.util.Date;
+
+import java.util.ArrayList;
+import java.util.List;
+
 
 import io.agora.rtc.Constants;
 import io.agora.rtc.IRtcEngineEventHandler;
@@ -213,6 +231,7 @@ public class AudioTeachActivity extends AppCompatActivity {
         myApp.setAudioTeachActivity(AudioTeachActivity.this);
         main_draw = findViewById(R.id.main_draw);
         peer_draw = findViewById(R.id.peer_draw);
+
         //设置教学页面的学生按钮的颜色
         week_onclick();
         //接受传过来的课程信息
@@ -220,14 +239,22 @@ public class AudioTeachActivity extends AppCompatActivity {
         student_info = intent.getStringExtra("student_info");
         Log.e("student_info", "" + student_info);
         get_student_info_handle();
+
         drawBackgroud = findViewById(R.id.drawBackgroud);
         if (mRtcEngine == null && checkSelfPermission(Manifest.permission.RECORD_AUDIO, PERMISSION_REQ_ID_RECORD_AUDIO)) {
             initAgoraEngineAndJoinChannel(9998);
             joinChannel(9998);
             mRtcEngine.disableVideo();
+            mRtcEngine.setEnableSpeakerphone(true);
             FrameLayout container = (FrameLayout) findViewById(R.id.local_video_view_container);
             container.setVisibility(View.GONE);
         }
+
+        //注册默认的消息处理逻辑
+        AVIMMessageManager.registerDefaultMessageHandler(new AudioTeachActivity.CustomMessageHandler());
+        //通知学生老师上线
+        sendMessageToStudents();
+
         //顶部返回按键
         Button back_button = (Button) findViewById(R.id.back_button);
         back_button.setOnClickListener(new View.OnClickListener() {
@@ -527,13 +554,11 @@ public class AudioTeachActivity extends AppCompatActivity {
                                         button.setCompoundDrawables(null, null, drawable1, null);//只放右边边
 
 
-                                    }
-                                    else {
+                                    } else {
                                         Toast.makeText(AudioTeachActivity.this, "现在正在与学生教学,请先关闭视频", Toast.LENGTH_SHORT).show();
                                     }
                                     stu_name.setBackground(getResources().getDrawable(R.drawable.teach_stu_name_new_color));
-                                }
-                                else {
+                                } else {
                                     stu_name.setBackground(getResources().getDrawable(R.drawable.teach_stu_name_old_color));
                                     if (stu_name.getText().toString().equals(no_student) == false) {
                                         Button button = (Button) findViewById(stu_name.getId());
@@ -576,8 +601,7 @@ public class AudioTeachActivity extends AppCompatActivity {
 //            Log.e("STUDENT", "22222222222222222222222222"+btn_id.getText().toString());
             String no_student = "未上线";
             if (no_student.equals(btn_id.getText().toString())) {
-            }
-            else {
+            } else {
                 Button button = (Button) findViewById(btn.getId());
                 Drawable drawable1 = getResources().getDrawable(R.drawable.no_start_audio);
                 drawable1.setBounds(0, 0, 40, 40);//第一0是距左边距离，第二0是距上边距离，40分别是长宽
@@ -586,8 +610,56 @@ public class AudioTeachActivity extends AppCompatActivity {
 
 
         }
-
     }
+
+        public static class CustomMessageHandler extends AVIMMessageHandler {
+            //即时通讯
+            //接收到消息后的处理逻辑
+            @Override
+            public void onMessage(AVIMMessage message, AVIMConversation conversation, AVIMClient client) {
+                if (message instanceof AVIMTextMessage) {
+                    Log.e("Tom & Jerry", "举手消息接听" + ((AVIMTextMessage) message).getText());
+                }
+            }
+
+            public void onMessageReceipt(AVIMMessage message, AVIMConversation conversation, AVIMClient client) {
+
+            }
+        }
+
+        public void sendMessageToStudents () {
+            List<String> list = new ArrayList();
+            for (int i = 0; i < mArrStudentInfo.length(); i++) {
+                try {
+                    list.add(mArrStudentInfo.getJSONObject(i).getString("studentID"));
+                } catch (JSONException e) {
+
+                }
+            }
+            Log.e("list", list.toString());
+
+            myApp.client.createConversation(list, "通知学生老师在线", null,
+                    new AVIMConversationCreatedCallback() {
+
+                        @Override
+                        public void done(AVIMConversation conversation, AVIMException e) {
+                            if (e == null) {
+                                AVIMTextMessage msg = new AVIMTextMessage();
+                                msg.setText("老师上线");
+                                // 发送消息
+                                conversation.sendMessage(msg, new AVIMConversationCallback() {
+                                    @Override
+                                    public void done(AVIMException e) {
+//                                    Log.d("老师上线错误", e.toString());
+                                        if (e == null) {
+                                            Log.e("老师上线", "发送成功！");
+                                        }
+                                    }
+                                });
+                            }
+                        }
+                    });
+        }
 
 }
 

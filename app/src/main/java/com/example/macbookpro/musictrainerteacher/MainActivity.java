@@ -182,7 +182,7 @@ public class MainActivity extends AppCompatActivity {
 
         startLoginEase();
         //注册默认的消息处理逻辑
-        AVIMMessageManager.registerDefaultMessageHandler(new CustomMessageHandler());
+//        AVIMMessageManager.registerDefaultMessageHandler(new CustomMessageHandler());
     }
 
     public void startTeaching(JSONObject courseInfo)
@@ -498,20 +498,7 @@ public class MainActivity extends AppCompatActivity {
             }
             }
         }
-    public static class CustomMessageHandler extends AVIMMessageHandler {
-        //即时通讯
-        //接收到消息后的处理逻辑
-        @Override
-        public void onMessage(AVIMMessage message, AVIMConversation conversation, AVIMClient client){
-            if(message instanceof AVIMTextMessage){
-                Log.e("Tom & Jerry","举手消息接听"+((AVIMTextMessage)message).getText());
-            }
-        }
 
-        public void onMessageReceipt(AVIMMessage message,AVIMConversation conversation,AVIMClient client){
-
-        }
-    }
 }
 
 
