@@ -38,6 +38,15 @@ import com.avos.avoscloud.AVObject;
 import com.avos.avoscloud.AVQuery;
 import com.avos.avoscloud.AVUser;
 import com.avos.avoscloud.FindCallback;
+import com.avos.avoscloud.im.v2.AVIMClient;
+import com.avos.avoscloud.im.v2.AVIMConversation;
+import com.avos.avoscloud.im.v2.AVIMException;
+import com.avos.avoscloud.im.v2.AVIMMessage;
+import com.avos.avoscloud.im.v2.AVIMMessageHandler;
+import com.avos.avoscloud.im.v2.AVIMMessageManager;
+import com.avos.avoscloud.im.v2.callback.AVIMConversationCallback;
+import com.avos.avoscloud.im.v2.callback.AVIMConversationCreatedCallback;
+import com.avos.avoscloud.im.v2.messages.AVIMTextMessage;
 import com.example.macbookpro.musictrainerteacher.CustomView.Draw;
 import com.example.macbookpro.musictrainerteacher.common.SysExitUtil;
 import com.example.macbookpro.musictrainerteacher.storage.LocalStorage;
@@ -62,6 +71,7 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.text.ParseException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
@@ -242,20 +252,27 @@ public class AudioTeachActivity extends AppCompatActivity {
         myApp.setAudioTeachActivity(AudioTeachActivity.this);
         main_draw = findViewById(R.id.main_draw);
         peer_draw = findViewById(R.id.peer_draw);
-//        week_onclick();
+
         //接受传过来的课程信息
         Intent intent = getIntent();
         student_info = intent.getStringExtra("student_info");
         Log.e("student_info", "" + student_info);
         get_student_info_handle();
+
         drawBackgroud = findViewById(R.id.drawBackgroud);
         if (mRtcEngine == null && checkSelfPermission(Manifest.permission.RECORD_AUDIO, PERMISSION_REQ_ID_RECORD_AUDIO)) {
             initAgoraEngineAndJoinChannel(9998);
             joinChannel(9998);
             mRtcEngine.disableVideo();
+            mRtcEngine.setEnableSpeakerphone(true);
             FrameLayout container = (FrameLayout) findViewById(R.id.local_video_view_container);
             container.setVisibility(View.GONE);
         }
+
+        //注册默认的消息处理逻辑
+        AVIMMessageManager.registerDefaultMessageHandler(new AudioTeachActivity.CustomMessageHandler());
+        //通知学生老师上线
+        sendMessageToStudents();
 
         //顶部返回按键
         Button back_button = (Button) findViewById(R.id.back_button);
@@ -573,59 +590,57 @@ public class AudioTeachActivity extends AppCompatActivity {
         }
     }
 
-//    public void week_onclick() {
-//        final LinearLayout weekLinearLayout = (LinearLayout) findViewById(R.id.all_student);
-//        for (int i = 0; i < weekLinearLayout.getChildCount(); i++) {
-//            Button btn = (Button) weekLinearLayout.getChildAt(i);
-//            btn.setOnClickListener(new View.OnClickListener() {
-//                @Override
-//                public void onClick(View view) {
-//                    Button test = (Button) view;
-//                    String week_day = "周" + test.getText().toString();
-//                    Log.e("test", "++++++++++" + week_day);
-//                    //修改按钮颜色
-//                    for (int m = 0; m < weekLinearLayout.getChildCount(); m++) {
-//                        Button weekbtn = (Button) weekLinearLayout.getChildAt(m);
-//
-//                        if (test.getText().toString().equals(weekbtn.getText().toString())) {
-//                            weekbtn.setBackground(getResources().getDrawable(R.drawable.red_button));
-//                            weekbtn.setTextColor(Color.WHITE);
-//                        } else {
-//                            weekbtn.setBackground(getResources().getDrawable(R.drawable.white_button));
-//                            weekbtn.setTextColor(Color.BLACK);
-//                        }
-//                    }
-//                }
-//            });
-//        }
-//public void week_onclick() {
-//    final LinearLayout weekLinearLayout = (LinearLayout) findViewById(R.id.all_student);
-//    for (int i = 0; i < weekLinearLayout.getChildCount(); i++) {
-//        Button btn = (Button) weekLinearLayout.getChildAt(i);
-//
-//        btn.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View view) {
-//                Button test = (Button) view;
-//                String week_day = test.getText().toString();
-//                Log.e("test", "++++++++++" + week_day);
-//                //修改按钮颜色
-//                for (int m = 0; m < weekLinearLayout.getChildCount(); m++) {
-//                    Button weekbtn = (Button) weekLinearLayout.getChildAt(m);
-//                    Log.e("test", "++++++++++" + m);
-//
-//                    if (test.getText().toString().equals(weekbtn.getText().toString())) {
-//                        weekbtn.setBackground(getResources().getDrawable(R.drawable.red_button));
-//                        weekbtn.setTextColor(Color.WHITE);
-//                    } else {
-//                        weekbtn.setBackground(getResources().getDrawable(R.drawable.white_button));
-//                        weekbtn.setTextColor(Color.WHITE);
-//                    }
-//                }
-//            }
-//        });
-//    }
-//}
+    public static class CustomMessageHandler extends AVIMMessageHandler {
+        //即时通讯
+        //接收到消息后的处理逻辑
+        @Override
+        public void onMessage(AVIMMessage message, AVIMConversation conversation, AVIMClient client){
+            if(message instanceof AVIMTextMessage){
+                Log.e("Tom & Jerry","举手消息接听"+((AVIMTextMessage)message).getText());
+            }
+        }
+
+        public void onMessageReceipt(AVIMMessage message,AVIMConversation conversation,AVIMClient client){
+
+        }
+    }
+
+    public void sendMessageToStudents(){
+        List<String> list = new ArrayList();
+        for (int i = 0; i < mArrStudentInfo.length(); i ++)
+        {
+            try {
+                list.add(mArrStudentInfo.getJSONObject(i).getString("studentID"));
+            }catch (JSONException e)
+            {
+
+            }
+        }
+        Log.e("list", list.toString());
+
+        myApp.client.createConversation(list, "通知学生老师在线", null,
+                new AVIMConversationCreatedCallback() {
+
+                    @Override
+                    public void done(AVIMConversation conversation, AVIMException e) {
+                        if (e == null) {
+                            AVIMTextMessage msg = new AVIMTextMessage();
+                            msg.setText("老师上线");
+                            // 发送消息
+                            conversation.sendMessage(msg, new AVIMConversationCallback() {
+                                @Override
+                                public void done(AVIMException e) {
+//                                    Log.d("老师上线错误", e.toString());
+                                    if (e == null) {
+                                        Log.e("老师上线", "发送成功！");
+                                    }
+                                }
+                            });
+                        }
+                    }
+                });
+    }
+
 }
 
 

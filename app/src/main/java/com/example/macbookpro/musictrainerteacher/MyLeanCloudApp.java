@@ -16,6 +16,7 @@ public class MyLeanCloudApp extends Application {
 
     public Boolean isRegisterRTSIncomingCallObserver = false;
     public Context currentContext = null;
+    public AVIMClient client = null;
 
     @Override
     public void onCreate() {
@@ -30,9 +31,9 @@ public class MyLeanCloudApp extends Application {
 
         AVUser currentUser = AVUser.getCurrentUser();
         if (currentUser != null) {
-            AVIMClient tom = AVIMClient.getInstance(currentUser.getUsername());
+            client = AVIMClient.getInstance(currentUser.getUsername());
             // 与服务器连接
-            tom.open(new AVIMClientCallback() {
+            client.open(new AVIMClientCallback() {
                 @Override
                 public void done(AVIMClient client, AVIMException e) {
                     if (e == null) {
