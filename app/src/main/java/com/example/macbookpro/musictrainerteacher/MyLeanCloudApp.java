@@ -21,7 +21,7 @@ public class MyLeanCloudApp extends Application {
     @Override
     public void onCreate() {
         super.onCreate();
-
+        Log.e("MyLeanCloudApp","onCreate");
         // 初始化参数依次为 this, AppId, AppKey
         AVOSCloud.initialize(this,"dqozOWhkl50Xh5HQyfeFkDxV-gzGzoHsz","S6kknLSdUpaztxebGuLUMDUT");
         SDKOptions options = new SDKOptions();
@@ -38,11 +38,11 @@ public class MyLeanCloudApp extends Application {
                 @Override
                 public void done(AVIMClient client, AVIMException e) {
                     if (e == null) {
-                        Log.e("TAg","leancloud 即时消息打开成功");
+                        Log.e("MyLeanCloudAppTAg","leancloud 即时消息打开成功");
                     }
                     else
                     {
-                        Log.e("TAg","leancloud 即时消息打开失败"+e.toString());
+                        Log.e("MyLeanCloudAppTAg","leancloud 即时消息打开失败"+e.toString());
                     }
                 }
             });

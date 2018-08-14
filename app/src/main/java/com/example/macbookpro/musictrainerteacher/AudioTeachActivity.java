@@ -245,18 +245,19 @@ public class AudioTeachActivity extends AppCompatActivity {
 
         drawBackgroud = findViewById(R.id.drawBackgroud);
         if (mRtcEngine == null && checkSelfPermission(Manifest.permission.RECORD_AUDIO, PERMISSION_REQ_ID_RECORD_AUDIO)) {
+            Log.e("==","=======checkSelfPermission");
             initAgoraEngineAndJoinChannel(9998);
-//            joinChannel(9998);
             mRtcEngine.disableVideo();
             mRtcEngine.setEnableSpeakerphone(true);
             FrameLayout container = (FrameLayout) findViewById(R.id.local_video_view_container);
             container.setVisibility(View.GONE);
+            //注册默认的消息处理逻辑
+            AVIMMessageManager.registerDefaultMessageHandler(new AudioTeachActivity.CustomMessageHandler());
+            //通知学生老师上线
+            sendMessageToStudents();
         }
 
-        //注册默认的消息处理逻辑
-        AVIMMessageManager.registerDefaultMessageHandler(new AudioTeachActivity.CustomMessageHandler());
-        //通知学生老师上线
-        sendMessageToStudents();
+
 
         //顶部返回按键
         Button back_button = (Button) findViewById(R.id.back_button);
@@ -469,6 +470,10 @@ public class AudioTeachActivity extends AppCompatActivity {
                         mRtcEngine.disableVideo();
                         FrameLayout container = (FrameLayout) findViewById(R.id.local_video_view_container);
                         container.setVisibility(View.GONE);
+                        //注册默认的消息处理逻辑
+                        AVIMMessageManager.registerDefaultMessageHandler(new AudioTeachActivity.CustomMessageHandler());
+                        //通知学生老师上线
+                        sendMessageToStudents();
                     } else {//用户拒绝授权
                         //可以简单提示用户
                         Toast.makeText(AudioTeachActivity.this, "没有授权继续操作", Toast.LENGTH_SHORT).show();
@@ -631,34 +636,7 @@ public void  set_teaching_student(){
                     Log.e("Tom & Jerry", "消息接听:" + ((AVIMTextMessage) message).getText());
                     if (((AVIMTextMessage) message).getText().equals("成功收到老师上线通知"))
                     {
-                        //学生上线ID
-                        String fromStudentID = message.getFrom();
-                        for (int i = 0; i < mArrStudentInfo.length(); i++)
-                        {
-                            try {
-                                JSONObject stu_info = mArrStudentInfo.getJSONObject(i);
-                                if (stu_info.getString("studentID").equals(fromStudentID))
-                                {
-                                    LinearLayout all_student_names = (LinearLayout) findViewById(R.id.all_student);
-                                    Button join_button = (Button)all_student_names.getChildAt(mArrJoinStudentInfo.length());
-                                    mArrJoinStudentInfo.put(stu_info);
-                                    join_button.setText(stu_info.getString("name"));
-                                    if (mArrJoinStudentInfo.length() == 1)
-                                    {
-                                        Channel_name = mArrJoinStudentInfo.getJSONObject(0).getString("studentID");
-                                        joinChannel(9998);
-                                        setTeachingFristStudent();
-                                        //初始化与谁视频教学
-                                        set_teaching_student();
-                                    }
-                                    break;
-
-                                }
-                            }catch (JSONException e)
-                            {
-
-                            }
-                        }
+                        updateOnlineStudent(message);
                     }
                     else if (((AVIMTextMessage) message).getText().equals("HandUp"))
                     {
@@ -666,25 +644,45 @@ public void  set_teaching_student(){
                     }
                     else if (((AVIMTextMessage) message).getText().equals("studentOnline"))
                     {
-                        //学生上线ID
+                        AVIMTextMessage msg = new AVIMTextMessage();
+                        msg.setText("收到学生上线通知");
+                        // 发送消息
+                        conversation.sendMessage(msg, new AVIMConversationCallback() {
+                            @Override
+                            public void done(AVIMException e) {
+                                if (e == null) {
+                                    Log.e("Tom & Jerry", "收到学生上线通知 发送成功！");
+                                }
+                            }
+                        });
+                        updateOnlineStudent(message);
+                    }
+                    else if (((AVIMTextMessage) message).getText().equals("studentOffline"))
+                    {
+                        //学生下线ID
                         String fromStudentID = message.getFrom();
-                        for (int i = 0; i < mArrStudentInfo.length(); i++)
+                        for (int i = 0; i < mArrJoinStudentInfo.length(); i ++)
                         {
                             try {
-                                JSONObject stu_info = mArrStudentInfo.getJSONObject(i);
+                                JSONObject stu_info = mArrJoinStudentInfo.getJSONObject(i);
                                 if (stu_info.getString("studentID").equals(fromStudentID))
                                 {
                                     LinearLayout all_student_names = (LinearLayout) findViewById(R.id.all_student);
-                                    Button join_button = (Button)all_student_names.getChildAt(mArrJoinStudentInfo.length());
-                                    mArrJoinStudentInfo.put(stu_info);
-                                    join_button.setText(stu_info.getString("name"));
-                                    if (mArrJoinStudentInfo.length() == 1)
+                                    Button join_button = (Button)all_student_names.getChildAt(i);
+                                    mArrJoinStudentInfo.remove(i);
+                                    if (mArrJoinStudentInfo.length() > 0)
                                     {
-                                        Channel_name = mArrJoinStudentInfo.getJSONObject(0).getString("studentID");
-                                        joinChannel(9998);
-                                        setTeachingFristStudent();
-                                        //初始化与谁视频教学
-                                        set_teaching_student();
+
+                                    }
+                                    join_button.setText("未上线");
+                                    if (Channel_name.equals(fromStudentID))
+                                    {
+                                        leaveChannel();
+                                        Channel_name = mArrJoinStudentInfo.length() == 0 ? "channel":mArrJoinStudentInfo.getJSONObject(0).getString("studentID");
+                                        if (mArrJoinStudentInfo.length() > 0)
+                                        {
+                                            joinInNewRoom(0);
+                                        }
                                     }
                                     break;
 
@@ -700,6 +698,38 @@ public void  set_teaching_student(){
 
             public void onMessageReceipt(AVIMMessage message, AVIMConversation conversation, AVIMClient client) {
 
+            }
+        }
+
+        public void updateOnlineStudent(AVIMMessage message){
+            //学生上线ID
+            String fromStudentID = message.getFrom();
+            for (int i = 0; i < mArrStudentInfo.length(); i++)
+            {
+                try {
+                    JSONObject stu_info = mArrStudentInfo.getJSONObject(i);
+                    if (stu_info.getString("studentID").equals(fromStudentID))
+                    {
+                        LinearLayout all_student_names = (LinearLayout) findViewById(R.id.all_student);
+                        Button join_button = (Button)all_student_names.getChildAt(mArrJoinStudentInfo.length());
+                        mArrJoinStudentInfo.put(stu_info);
+                        join_button.setText(stu_info.getString("name"));
+                        if (mArrJoinStudentInfo.length() == 1)
+                        {
+                            Channel_name = mArrJoinStudentInfo.getJSONObject(0).getString("studentID");
+                            joinChannel(9998);
+
+                            setTeachingFristStudent();
+                            //初始化与谁视频教学
+                            set_teaching_student();
+                        }
+                        break;
+
+                    }
+                }catch (JSONException e)
+                {
+
+                }
             }
         }
 
