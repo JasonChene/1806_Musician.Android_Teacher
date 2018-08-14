@@ -509,10 +509,6 @@ public class AudioTeachActivity extends AppCompatActivity {
         Log.e("TAG", "onDestroy");
         leaveChannel();
         mRtcEngine.destroy();
-        //注册默认的消息处理逻辑
-//        AVIMMessageHandler.unregisterMessageHandler();
-//        AVIMMessageManager.registerDefaultMessageHandler(new AudioTeachActivity.CustomMessageHandler());
-
         super.onDestroy();
     }
 
@@ -535,42 +531,78 @@ public class AudioTeachActivity extends AppCompatActivity {
                     Button test = (Button) view;
                     //修改按钮颜色
                     if (container.getVisibility() == View.GONE) {
-                        for (int m = 0; m < weekLinearLayout.getChildCount(); m++) {
-                            Button stu_name = (Button) weekLinearLayout.getChildAt(m);
-                            String no_student = "未上线";
-                            if (test.getText().toString().equals(no_student) == false) {
-                                if (test.getText().toString().equals(stu_name.getText().toString())) {
-                                    FrameLayout container = (FrameLayout) findViewById(R.id.local_video_view_container);
-                                    if (container.getVisibility() == View.GONE) {
-                                        joinInNewRoom(m);
-                                        TextView textView = (TextView) findViewById(R.id.who_be_teach);
-                                        String student_teach_name = "正在和"+test.getText().toString()+"视频教学";
-                                        textView.setText(student_teach_name);
-                                        container.setVisibility(View.GONE);
-                                        Button button = (Button) findViewById(stu_name.getId());
-                                        Drawable drawable1 = getResources().getDrawable(R.drawable.start_audio);
-                                        drawable1.setBounds(0, 0, 40, 40);//第一0是距左边距离，第二0是距上边距离，40分别是长宽
-                                        button.setCompoundDrawables(null, null, drawable1, null);//只放右边边
-                                    } else {
-                                        Toast.makeText(AudioTeachActivity.this, "现在正在与学生教学,请先关闭视频", Toast.LENGTH_SHORT).show();
-                                    }
-                                    stu_name.setBackground(getResources().getDrawable(R.drawable.teach_stu_name_new_color));
-                                } else {
-                                    stu_name.setBackground(getResources().getDrawable(R.drawable.teach_stu_name_old_color));
-                                    if (stu_name.getText().toString().equals(no_student) == false) {
-                                        Button button = (Button) findViewById(stu_name.getId());
-                                        Drawable drawable1 = getResources().getDrawable(R.drawable.no_start_audio);
-                                        drawable1.setBounds(0, 0, 40, 40);//第一0是距左边距离，第二0是距上边距离，40分别是长宽
-                                        button.setCompoundDrawables(null, null, drawable1, null);//只放右边边
-                                    }
-                                }
-                            }
-                        }
+                        updateTeachingStudent(test);
+//                        for (int m = 0; m < weekLinearLayout.getChildCount(); m++) {
+//                            Button stu_name = (Button) weekLinearLayout.getChildAt(m);
+//                            String no_student = "未上线";
+//                            if (test.getText().toString().equals(no_student) == false) {
+//                                if (test.getText().toString().equals(stu_name.getText().toString())) {
+//                                    FrameLayout container = (FrameLayout) findViewById(R.id.local_video_view_container);
+//                                    if (container.getVisibility() == View.GONE) {
+//                                        joinInNewRoom(m);
+//                                        TextView textView = (TextView) findViewById(R.id.who_be_teach);
+//                                        String student_teach_name = "正在和"+test.getText().toString()+"视频教学";
+//                                        textView.setText(student_teach_name);
+//                                        container.setVisibility(View.GONE);
+//                                        Button button = (Button) findViewById(stu_name.getId());
+//                                        Drawable drawable1 = getResources().getDrawable(R.drawable.start_audio);
+//                                        drawable1.setBounds(0, 0, 40, 40);//第一0是距左边距离，第二0是距上边距离，40分别是长宽
+//                                        button.setCompoundDrawables(null, null, drawable1, null);//只放右边边
+//                                    } else {
+//                                        Toast.makeText(AudioTeachActivity.this, "现在正在与学生教学,请先关闭视频", Toast.LENGTH_SHORT).show();
+//                                    }
+//                                    stu_name.setBackground(getResources().getDrawable(R.drawable.teach_stu_name_new_color));
+//                                } else {
+//                                    stu_name.setBackground(getResources().getDrawable(R.drawable.teach_stu_name_old_color));
+//                                    if (stu_name.getText().toString().equals(no_student) == false) {
+//                                        Button button = (Button) findViewById(stu_name.getId());
+//                                        Drawable drawable1 = getResources().getDrawable(R.drawable.no_start_audio);
+//                                        drawable1.setBounds(0, 0, 40, 40);//第一0是距左边距离，第二0是距上边距离，40分别是长宽
+//                                        button.setCompoundDrawables(null, null, drawable1, null);//只放右边边
+//                                    }
+//                                }
+//                            }
+//                        }
                     } else {
                         Toast.makeText(AudioTeachActivity.this, "现在正在与学生教学,请先关闭视频", Toast.LENGTH_SHORT).show();
                     }
                 }
             });
+        }
+    }
+
+    public void updateTeachingStudent(Button test){
+        final LinearLayout weekLinearLayout = (LinearLayout) findViewById(R.id.all_student);
+        for (int m = 0; m < weekLinearLayout.getChildCount(); m++) {
+            Button stu_name = (Button) weekLinearLayout.getChildAt(m);
+            String no_student = "未上线";
+            if (test.getText().toString().equals(no_student) == false) {
+                if (test.getText().toString().equals(stu_name.getText().toString())) {
+                    FrameLayout container = (FrameLayout) findViewById(R.id.local_video_view_container);
+                    if (container.getVisibility() == View.GONE) {
+                        joinInNewRoom(m);
+                        TextView textView = (TextView) findViewById(R.id.who_be_teach);
+                        String student_teach_name = "正在和"+test.getText().toString()+"视频教学";
+                        textView.setText(student_teach_name);
+                        container.setVisibility(View.GONE);
+                        Button button = (Button) findViewById(stu_name.getId());
+                        Drawable drawable1 = getResources().getDrawable(R.drawable.start_audio);
+                        drawable1.setBounds(0, 0, 40, 40);//第一0是距左边距离，第二0是距上边距离，40分别是长宽
+                        button.setCompoundDrawables(null, null, drawable1, null);//只放右边边
+                    } else {
+                        Toast.makeText(AudioTeachActivity.this, "现在正在与学生教学,请先关闭视频", Toast.LENGTH_SHORT).show();
+                    }
+                    stu_name.setBackground(getResources().getDrawable(R.drawable.teach_stu_name_new_color));
+                } else {
+                    stu_name.setBackground(getResources().getDrawable(R.drawable.teach_stu_name_old_color));
+                    if (stu_name.getText().toString().equals(no_student) == false) {
+                        Button button = (Button) findViewById(stu_name.getId());
+                        Drawable drawable1 = getResources().getDrawable(R.drawable.no_start_audio);
+                        drawable1.setBounds(0, 0, 40, 40);//第一0是距左边距离，第二0是距上边距离，40分别是长宽
+                        button.setCompoundDrawables(null, null, drawable1, null);//只放右边边
+                    }
+                }
+            }
         }
     }
 
@@ -685,7 +717,13 @@ public void  set_teaching_student(){
                                         Channel_name = mArrJoinStudentInfo.length() == 0 ? "channel":mArrJoinStudentInfo.getJSONObject(0).getString("studentID");
                                         if (mArrJoinStudentInfo.length() > 0)
                                         {
+                                            Button first_button = (Button)all_student_names.getChildAt(0);
                                             joinInNewRoom(0);
+                                            updateTeachingStudent(first_button);
+                                        }
+                                        else
+                                        {
+                                            stu_audio_icon_init();
                                         }
                                     }
                                     break;
@@ -722,7 +760,6 @@ public void  set_teaching_student(){
                         {
                             Channel_name = mArrJoinStudentInfo.getJSONObject(0).getString("studentID");
                             joinChannel(9998);
-
                             setTeachingFristStudent();
                             //初始化与谁视频教学
                             set_teaching_student();
