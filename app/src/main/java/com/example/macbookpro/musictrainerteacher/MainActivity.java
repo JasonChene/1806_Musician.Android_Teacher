@@ -423,7 +423,7 @@ public class MainActivity extends AppCompatActivity {
                         Log.e("list", "1234456754325626" + list);
                         if (list == null)
                         {
-                            Toast.makeText(MainActivity.this,"获取课程列表失败，请检查网络",Toast.LENGTH_SHORT);
+                            Toast.makeText(MainActivity.this,"获取课程列表失败，请检查网络",Toast.LENGTH_SHORT).show();
                             list = new ArrayList<AVObject>();
                         }
                         JSONArray morningCourse = new JSONArray();

@@ -20,6 +20,7 @@
             android:layout_width="wrap_content"
             android:layout_height="36dp"
             android:layout_weight="1"
+            android:text="未上线"
             android:background="#48586A"
             android:gravity="center"
             android:textColor="#FFFFFF"
@@ -35,6 +36,7 @@
             android:background="#48586A"
             android:gravity="center"
             android:textColor="#FFFFFF"
+            android:text="未上线"
             android:textSize="14dp" />
 
         <Button
@@ -44,6 +46,7 @@
             android:layout_marginLeft="1dp"
             android:layout_weight="1"
             android:background="#48586A"
+            android:text="未上线"
             android:gravity="center"
             android:textColor="#FFFFFF"
             android:textSize="14dp"
@@ -54,6 +57,7 @@
             android:layout_width="wrap_content"
             android:layout_height="36dp"
             android:layout_marginLeft="1dp"
+            android:text="未上线"
             android:layout_weight="1"
             android:background="#48586A"
             android:gravity="center"
