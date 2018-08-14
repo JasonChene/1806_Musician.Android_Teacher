@@ -717,9 +717,11 @@ public void  set_teaching_student(){
                                         Channel_name = mArrJoinStudentInfo.length() == 0 ? "channel":mArrJoinStudentInfo.getJSONObject(0).getString("studentID");
                                         if (mArrJoinStudentInfo.length() > 0)
                                         {
+                                            updateStudentNamesInTop();
                                             Button first_button = (Button)all_student_names.getChildAt(0);
-                                            joinInNewRoom(0);
+                                            first_button.setText(mArrJoinStudentInfo.getJSONObject(0).getString("name"));
                                             updateTeachingStudent(first_button);
+//                                            joinInNewRoom(0);
                                         }
                                         else
                                         {
@@ -740,6 +742,21 @@ public void  set_teaching_student(){
 
             public void onMessageReceipt(AVIMMessage message, AVIMConversation conversation, AVIMClient client) {
 
+            }
+        }
+
+        public void updateStudentNamesInTop()
+        {
+            final LinearLayout weekLinearLayout = (LinearLayout) findViewById(R.id.all_student);
+            for (int m = 0; m < weekLinearLayout.getChildCount(); m++) {
+                Button stu_name_btn = (Button) weekLinearLayout.getChildAt(m);
+                String no_student = "未上线";
+                try
+                {
+                    stu_name_btn.setText(mArrJoinStudentInfo.getJSONObject(m).getString("name"));
+                }catch (JSONException e) {
+                    stu_name_btn.setText(no_student);
+                }
             }
         }
 
