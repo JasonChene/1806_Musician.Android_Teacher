@@ -421,6 +421,11 @@ public class MainActivity extends AppCompatActivity {
                     @Override
                     public void done(List<AVObject> list, AVException e) {
                         Log.e("list", "1234456754325626" + list);
+                        if (list == null)
+                        {
+                            Toast.makeText(MainActivity.this,"获取课程列表失败，请检查网络",Toast.LENGTH_SHORT);
+                            list = new ArrayList<AVObject>();
+                        }
                         JSONArray morningCourse = new JSONArray();
                         JSONArray noonCourse = new JSONArray();
                         JSONArray nightCourse = new JSONArray();
