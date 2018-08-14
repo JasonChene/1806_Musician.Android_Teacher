@@ -234,7 +234,7 @@ public class VerificationCodeActivity extends AppCompatActivity {
     public void openLeancloudIM(AVUser user)
     {
         MyLeanCloudApp app = (MyLeanCloudApp)getApplication();
-        app.client = AVIMClient.getInstance(user.getUsername());
+        app.client = AVIMClient.getInstance(user.getObjectId());
         // 与服务器连接
         app.client.open(new AVIMClientCallback() {
             @Override

@@ -245,7 +245,6 @@ public class AudioTeachActivity extends AppCompatActivity {
 
         drawBackgroud = findViewById(R.id.drawBackgroud);
         if (mRtcEngine == null && checkSelfPermission(Manifest.permission.RECORD_AUDIO, PERMISSION_REQ_ID_RECORD_AUDIO)) {
-            Log.e("==","=======checkSelfPermission");
             initAgoraEngineAndJoinChannel(9998);
             mRtcEngine.disableVideo();
             mRtcEngine.setEnableSpeakerphone(true);
@@ -256,6 +255,7 @@ public class AudioTeachActivity extends AppCompatActivity {
             //通知学生老师上线
             sendMessageToStudents();
         }
+
 
 
 
@@ -509,6 +509,10 @@ public class AudioTeachActivity extends AppCompatActivity {
         Log.e("TAG", "onDestroy");
         leaveChannel();
         mRtcEngine.destroy();
+        //注册默认的消息处理逻辑
+//        AVIMMessageHandler.unregisterMessageHandler();
+//        AVIMMessageManager.registerDefaultMessageHandler(new AudioTeachActivity.CustomMessageHandler());
+
         super.onDestroy();
     }
 

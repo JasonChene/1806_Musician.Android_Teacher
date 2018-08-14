@@ -31,8 +31,8 @@ public class MyLeanCloudApp extends Application {
 
         AVUser currentUser = AVUser.getCurrentUser();
         if (currentUser != null) {
-            Log.e("TAg===",currentUser.getUsername());
-            client = AVIMClient.getInstance(currentUser.getUsername());
+            Log.e("TAg===",currentUser.getObjectId());
+            client = AVIMClient.getInstance(currentUser.getObjectId());
             // 与服务器连接
             client.open(new AVIMClientCallback() {
                 @Override
