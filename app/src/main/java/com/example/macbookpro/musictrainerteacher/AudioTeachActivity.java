@@ -9,6 +9,7 @@ import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
+import android.graphics.drawable.DrawableContainer;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -68,6 +69,8 @@ import io.agora.rtc.Constants;
 import io.agora.rtc.IRtcEngineEventHandler;
 import io.agora.rtc.RtcEngine;
 import io.agora.rtc.video.VideoCanvas;
+
+import static android.view.View.GONE;
 
 public class AudioTeachActivity extends AppCompatActivity {
     public static final int GET_DATA_SUCCESS = 1;
@@ -142,7 +145,7 @@ public class AudioTeachActivity extends AppCompatActivity {
         WhiteBoardManager.registerRTSCloseObserver(sessionID, true, AudioTeachActivity.this);
         //隐藏本地视频窗口
         FrameLayout local_container = (FrameLayout) findViewById(R.id.local_video_view_container);
-        local_container.setVisibility(View.GONE);
+        local_container.setVisibility(GONE);
     }
 
     public void terminateRTS(String sessionID) {
@@ -162,15 +165,15 @@ public class AudioTeachActivity extends AppCompatActivity {
         Log.e("TAG", "注销挂断监听" + isCloseSuccess);
 
         main_draw.Clear();
-        main_draw.setVisibility(View.GONE);
+        main_draw.setVisibility(GONE);
         peer_draw.Clear();
-        peer_draw.setVisibility(View.GONE);
+        peer_draw.setVisibility(GONE);
 
         Button clear_button = (Button) findViewById(R.id.clear);
-        clear_button.setVisibility(View.GONE);
+        clear_button.setVisibility(GONE);
         //清楚原来的乐谱
         drawBackgroud.setBackgroundResource(0);
-        drawBackgroud.setVisibility(View.GONE);
+        drawBackgroud.setVisibility(GONE);
     }
 
     public void updateWhiteBoardChannelID(String channelID) {
@@ -249,7 +252,7 @@ public class AudioTeachActivity extends AppCompatActivity {
             mRtcEngine.disableVideo();
             mRtcEngine.setEnableSpeakerphone(true);
             FrameLayout container = (FrameLayout) findViewById(R.id.local_video_view_container);
-            container.setVisibility(View.GONE);
+            container.setVisibility(GONE);
             //注册默认的消息处理逻辑
             AVIMMessageManager.registerDefaultMessageHandler(new AudioTeachActivity.CustomMessageHandler());
             //通知学生老师上线
@@ -264,9 +267,9 @@ public class AudioTeachActivity extends AppCompatActivity {
         back_button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if (main_draw.getVisibility() == View.GONE) {
+                if (main_draw.getVisibility() == GONE) {
                     final FrameLayout remote_video = findViewById(R.id.remote_video_view_container);
-                    if (remote_video.getVisibility() == View.GONE) {
+                    if (remote_video.getVisibility() == GONE) {
                         finish();
                         startActivity(new Intent(AudioTeachActivity.this, MainActivity.class));
                     } else {
@@ -422,9 +425,9 @@ public class AudioTeachActivity extends AppCompatActivity {
             showMusicPicture();
             mRtcEngine.disableVideo();
             FrameLayout container_local = (FrameLayout) findViewById(R.id.local_video_view_container);
-            container_local.setVisibility(View.GONE);
+            container_local.setVisibility(GONE);
             FrameLayout container_remote = (FrameLayout) findViewById(R.id.remote_video_view_container);
-            container_remote.setVisibility(View.GONE);
+            container_remote.setVisibility(GONE);
         }
     }
 
@@ -440,7 +443,7 @@ public class AudioTeachActivity extends AppCompatActivity {
 
     private void hideMusicPicture() {
         View MusicPicture = (View) findViewById(R.id.music_picture);
-        MusicPicture.setVisibility(View.GONE);
+        MusicPicture.setVisibility(GONE);
     }
 
     private void showMusicPicture() {
@@ -469,7 +472,7 @@ public class AudioTeachActivity extends AppCompatActivity {
                         initAgoraEngineAndJoinChannel(9998);
                         mRtcEngine.disableVideo();
                         FrameLayout container = (FrameLayout) findViewById(R.id.local_video_view_container);
-                        container.setVisibility(View.GONE);
+                        container.setVisibility(GONE);
                         //注册默认的消息处理逻辑
                         AVIMMessageManager.registerDefaultMessageHandler(new AudioTeachActivity.CustomMessageHandler());
                         //通知学生老师上线
@@ -490,8 +493,8 @@ public class AudioTeachActivity extends AppCompatActivity {
         final FrameLayout local_video = findViewById(R.id.local_video_view_container);
         /* 返回键 */
         if (keyCode == KeyEvent.KEYCODE_BACK) {
-            if (main_draw.getVisibility() == View.GONE) {
-                if (local_video.getVisibility() == View.GONE) {
+            if (main_draw.getVisibility() == GONE) {
+                if (local_video.getVisibility() == GONE) {
                     this.finish();
                     startActivity(new Intent(AudioTeachActivity.this, MainActivity.class));
                 } else {
@@ -530,7 +533,7 @@ public class AudioTeachActivity extends AppCompatActivity {
                 public void onClick(View view) {
                     Button test = (Button) view;
                     //修改按钮颜色
-                    if (container.getVisibility() == View.GONE) {
+                    if (container.getVisibility() == GONE) {
                         updateTeachingStudent(test);
 //                        for (int m = 0; m < weekLinearLayout.getChildCount(); m++) {
 //                            Button stu_name = (Button) weekLinearLayout.getChildAt(m);
@@ -579,12 +582,12 @@ public class AudioTeachActivity extends AppCompatActivity {
             if (test.getText().toString().equals(no_student) == false) {
                 if (test.getText().toString().equals(stu_name.getText().toString())) {
                     FrameLayout container = (FrameLayout) findViewById(R.id.local_video_view_container);
-                    if (container.getVisibility() == View.GONE) {
+                    if (container.getVisibility() == GONE) {
                         joinInNewRoom(m);
                         TextView textView = (TextView) findViewById(R.id.who_be_teach);
                         String student_teach_name = "正在和"+test.getText().toString()+"视频教学";
                         textView.setText(student_teach_name);
-                        container.setVisibility(View.GONE);
+                        container.setVisibility(GONE);
                         Button button = (Button) findViewById(stu_name.getId());
                         Drawable drawable1 = getResources().getDrawable(R.drawable.start_audio);
                         drawable1.setBounds(0, 0, 40, 40);//第一0是距左边距离，第二0是距上边距离，40分别是长宽
@@ -602,6 +605,9 @@ public class AudioTeachActivity extends AppCompatActivity {
                         button.setCompoundDrawables(null, null, drawable1, null);//只放右边边
                     }
                 }
+            }else
+            {
+                stu_name.setBackground(getResources().getDrawable(R.drawable.teach_stu_name_old_color));
             }
         }
     }
@@ -630,6 +636,8 @@ public class AudioTeachActivity extends AppCompatActivity {
             TextView textView = (TextView) findViewById(R.id.who_be_teach);
             String no_student = "未上线";
             if (no_student.equals(btn_id.getText().toString())) {
+                Button button = (Button) findViewById(btn.getId());
+                button.setBackground(getResources().getDrawable(R.drawable.teach_stu_name_old_color));
 
             } else {
                 Button button = (Button) findViewById(btn.getId());
@@ -721,10 +729,10 @@ public void  set_teaching_student(){
                                             Button first_button = (Button)all_student_names.getChildAt(0);
                                             first_button.setText(mArrJoinStudentInfo.getJSONObject(0).getString("name"));
                                             updateTeachingStudent(first_button);
-//                                            joinInNewRoom(0);
                                         }
                                         else
                                         {
+                                            updateStudentNamesInTop();
                                             stu_audio_icon_init();
                                         }
                                     }
