@@ -256,7 +256,7 @@ public class AudioTeachActivity extends AppCompatActivity {
             //注册默认的消息处理逻辑
             AVIMMessageManager.registerDefaultMessageHandler(new AudioTeachActivity.CustomMessageHandler());
             //通知学生老师上线
-            sendMessageToStudents();
+            sendMessageToStudents("通知学生老师在线","老师上线");
         }
 
 
@@ -476,7 +476,7 @@ public class AudioTeachActivity extends AppCompatActivity {
                         //注册默认的消息处理逻辑
                         AVIMMessageManager.registerDefaultMessageHandler(new AudioTeachActivity.CustomMessageHandler());
                         //通知学生老师上线
-                        sendMessageToStudents();
+                        sendMessageToStudents("通知学生老师在线","老师上线");
                     } else {//用户拒绝授权
                         //可以简单提示用户
                         Toast.makeText(AudioTeachActivity.this, "没有授权继续操作", Toast.LENGTH_SHORT).show();
@@ -499,12 +499,14 @@ public class AudioTeachActivity extends AppCompatActivity {
                     startActivity(new Intent(AudioTeachActivity.this, MainActivity.class));
                 } else {
                     Toast.makeText(AudioTeachActivity.this, "现在正在与学生教学", Toast.LENGTH_SHORT).show();
+                    return false;
                 }
             } else {
                 Toast.makeText(AudioTeachActivity.this, "现在正在与学生教学", Toast.LENGTH_SHORT).show();
+                return false;
             }
         }
-        return false;
+        return super.onKeyDown(keyCode,event);
     }
 
     @Override
@@ -512,6 +514,7 @@ public class AudioTeachActivity extends AppCompatActivity {
         Log.e("TAG", "onDestroy");
         leaveChannel();
         mRtcEngine.destroy();
+        sendMessageToStudents("通知学生老师下线","老师下线");
         super.onDestroy();
     }
 
@@ -799,37 +802,37 @@ public void  set_teaching_student(){
             }
         }
 
-        public void sendMessageToStudents () {
-            List<String> list = new ArrayList();
-            for (int i = 0; i < mArrStudentInfo.length(); i++) {
-                try {
-                    list.add(mArrStudentInfo.getJSONObject(i).getString("studentID"));
-                } catch (JSONException e) {
 
-                }
+    public void sendMessageToStudents (String msgName,final String msgtext) {
+        List<String> list = new ArrayList();
+        for (int i = 0; i < mArrStudentInfo.length(); i++) {
+            try {
+                list.add(mArrStudentInfo.getJSONObject(i).getString("studentID"));
+            } catch (JSONException e) {
+
             }
-            Log.e("list", list.toString());
-            myApp.client.createConversation(list, "通知学生老师在线", null,
-                    new AVIMConversationCreatedCallback() {
-
-                        @Override
-                        public void done(AVIMConversation conversation, AVIMException e) {
-                            if (e == null) {
-                                AVIMTextMessage msg = new AVIMTextMessage();
-                                msg.setText("老师上线");
-                                // 发送消息
-                                conversation.sendMessage(msg, new AVIMConversationCallback() {
-                                    @Override
-                                    public void done(AVIMException e) {
-                                        if (e == null) {
-                                            Log.e("老师上线", "发送成功！");
-                                        }
-                                    }
-                                });
-                            }
-                        }
-                    });
         }
+        Log.e("学生列表list", list.toString());
+        myApp.client.createConversation(list, msgName, null,
+                new AVIMConversationCreatedCallback() {
+                    @Override
+                    public void done(AVIMConversation conversation, AVIMException e) {
+                        if (e == null) {
+                            AVIMTextMessage msg = new AVIMTextMessage();
+                            msg.setText(msgtext);
+                            // 发送消息
+                            conversation.sendMessage(msg, new AVIMConversationCallback() {
+                                @Override
+                                public void done(AVIMException e) {
+                                    if (e == null) {
+                                        Log.e(msgtext, "发送成功！");
+                                    }
+                                }
+                            });
+                        }
+                    }
+                });
+    }
 
 }
 
