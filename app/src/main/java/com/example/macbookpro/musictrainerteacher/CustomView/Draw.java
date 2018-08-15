@@ -55,7 +55,6 @@ public class Draw extends SurfaceView implements SurfaceHolder.Callback,View.OnT
     public Draw(Context context) {
         super(context);
     }
-
     public Draw(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
     }
