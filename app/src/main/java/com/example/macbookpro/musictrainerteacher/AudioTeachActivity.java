@@ -598,6 +598,7 @@ public class AudioTeachActivity extends AppCompatActivity {
         if (button.getText().toString().equals(no_student)) {
             button.setBackground(getResources().getDrawable(R.drawable.teach_stu_name_old_color));
             button.setTextColor(Color.WHITE);
+            button.setCompoundDrawables(null, null, null, null);//只放右边边
         } else {
             button.setBackground(getResources().getDrawable(R.drawable.teach_stu_name_new_color));
             button.setTextColor(Color.WHITE);
@@ -699,17 +700,13 @@ public void  set_teaching_student(){
                                     LinearLayout all_student_names = (LinearLayout) findViewById(R.id.all_student);
                                     Button join_button = (Button)all_student_names.getChildAt(i);
                                     mArrJoinStudentInfo.remove(i);
-                                    if (mArrJoinStudentInfo.length() > 0)
-                                    {
-
-                                    }
-                                    join_button.setText("未上线");
-                                    if (Channel_name.equals(fromStudentID))
+                                    if (Channel_name.equals(fromStudentID) || mArrJoinStudentInfo.length() > 0)
                                     {
                                         leaveChannel();
                                         Channel_name = mArrJoinStudentInfo.length() == 0 ? "channel":mArrJoinStudentInfo.getJSONObject(0).getString("studentID");
                                         if (mArrJoinStudentInfo.length() > 0)
                                         {
+//                                            setTeachingFristStudent()
                                             updateStudentNamesInTop();
                                             Button first_button = (Button)all_student_names.getChildAt(0);
                                             first_button.setText(mArrJoinStudentInfo.getJSONObject(0).getString("name"));
@@ -720,6 +717,10 @@ public void  set_teaching_student(){
                                             updateStudentNamesInTop();
                                             stu_audio_icon_init();
                                         }
+                                    }
+                                    else
+                                    {
+                                            join_button.setText("未上线");
                                     }
                                     break;
 
@@ -749,6 +750,9 @@ public void  set_teaching_student(){
                     stu_name_btn.setText(mArrJoinStudentInfo.getJSONObject(m).getString("name"));
                 }catch (JSONException e) {
                     stu_name_btn.setText(no_student);
+                    stu_name_btn.setBackground(getResources().getDrawable(R.drawable.teach_stu_name_old_color));
+                    stu_name_btn.setTextColor(Color.WHITE);
+                    stu_name_btn.setCompoundDrawables(null, null, null, null);//只放右边边
                 }
             }
         }
