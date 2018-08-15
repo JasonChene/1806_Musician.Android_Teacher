@@ -706,7 +706,6 @@ public void  set_teaching_student(){
                                         Channel_name = mArrJoinStudentInfo.length() == 0 ? "channel":mArrJoinStudentInfo.getJSONObject(0).getString("studentID");
                                         if (mArrJoinStudentInfo.length() > 0)
                                         {
-//                                            setTeachingFristStudent()
                                             updateStudentNamesInTop();
                                             Button first_button = (Button)all_student_names.getChildAt(0);
                                             first_button.setText(mArrJoinStudentInfo.getJSONObject(0).getString("name"));
