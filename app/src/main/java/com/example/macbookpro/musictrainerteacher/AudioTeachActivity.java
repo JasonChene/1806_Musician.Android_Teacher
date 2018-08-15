@@ -669,6 +669,24 @@ public void  set_teaching_student(){
                     else if (((AVIMTextMessage) message).getText().equals("HandUp"))
                     {
                         //举手回调
+                        String fromStudentID = message.getFrom();
+                        for (int i = 0; i < mArrJoinStudentInfo.length(); i ++)
+                        {
+                            try {
+                                JSONObject stu_info = mArrJoinStudentInfo.getJSONObject(i);
+                                if (stu_info.getString("studentID").equals(fromStudentID))
+                                {
+                                    LinearLayout all_student_names = (LinearLayout) findViewById(R.id.all_student);
+                                    Button hand_button = (Button)all_student_names.getChildAt(i);
+                                    Drawable drawable1 = getResources().getDrawable(R.drawable.show_hands);
+                                    drawable1.setBounds(0, 0, 60, 60);//第一0是距左边距离，第二0是距上边距离，40分别是长宽
+                                    hand_button.setCompoundDrawables(null, null, drawable1, null);//只放右边边
+                                }
+                            }catch (JSONException e)
+                            {
+
+                            }
+                        }
                     }
                     else if (((AVIMTextMessage) message).getText().equals("studentOnline"))
                     {
