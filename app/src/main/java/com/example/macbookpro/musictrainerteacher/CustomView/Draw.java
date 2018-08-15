@@ -10,6 +10,7 @@ import android.graphics.Path;
 import android.graphics.PixelFormat;
 import android.graphics.PorterDuff;
 import android.graphics.Rect;
+import android.graphics.Typeface;
 import android.graphics.drawable.BitmapDrawable;
 import android.util.AttributeSet;
 import android.util.Log;
@@ -64,12 +65,13 @@ public class Draw extends SurfaceView implements SurfaceHolder.Callback,View.OnT
         getHolder().addCallback(this);//回调
         paint.setColor(Color.RED);//笔的颜色
         paint.setTextSize(30);//画笔大小
+        paint.setFakeBoldText(true);
         paint.setAntiAlias(true);//去除锯齿
+        paint.setStrokeWidth(4);
         paint.setStyle(Paint.Style.STROKE);//实心线
         setOnTouchListener(this);
         setZOrderOnTop(true);//使surfaceview放到最顶层
         getHolder().setFormat(PixelFormat.TRANSLUCENT);//使窗口支持透明度
-
     }
 
     /**
