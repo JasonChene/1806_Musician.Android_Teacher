@@ -88,6 +88,7 @@ public class AudioTeachActivity extends AppCompatActivity {
     MyLeanCloudApp myApp;
     JSONArray mArrStudentInfo;
     JSONArray mArrJoinStudentInfo;
+    private CustomMessageHandler customMessageHandler;
     private IRtcEngineEventHandler mRtcEventHandler = new IRtcEngineEventHandler() {
         @Override
         public void onJoinChannelSuccess(String channel, int uid, int elapsed) {
@@ -254,7 +255,10 @@ public class AudioTeachActivity extends AppCompatActivity {
             FrameLayout container = (FrameLayout) findViewById(R.id.local_video_view_container);
             container.setVisibility(GONE);
             //注册默认的消息处理逻辑
-            AVIMMessageManager.registerDefaultMessageHandler(new AudioTeachActivity.CustomMessageHandler());
+//            AVIMMessageManager.registerDefaultMessageHandler(new AudioTeachActivity.CustomMessageHandler());
+            customMessageHandler = new CustomMessageHandler();
+            customMessageHandler.setIsOpen(true);
+            AVIMMessageManager.registerMessageHandler(AVIMMessage.class, customMessageHandler);
             //通知学生老师上线
             sendMessageToStudents("通知学生老师在线","老师上线");
         }
@@ -474,7 +478,9 @@ public class AudioTeachActivity extends AppCompatActivity {
                         FrameLayout container = (FrameLayout) findViewById(R.id.local_video_view_container);
                         container.setVisibility(GONE);
                         //注册默认的消息处理逻辑
-                        AVIMMessageManager.registerDefaultMessageHandler(new AudioTeachActivity.CustomMessageHandler());
+                        customMessageHandler = new CustomMessageHandler();
+                        customMessageHandler.setIsOpen(true);
+                        AVIMMessageManager.registerMessageHandler(AVIMMessage.class, customMessageHandler);
                         //通知学生老师上线
                         sendMessageToStudents("通知学生老师在线","老师上线");
                     } else {//用户拒绝授权
@@ -515,6 +521,8 @@ public class AudioTeachActivity extends AppCompatActivity {
         leaveChannel();
         mRtcEngine.destroy();
         sendMessageToStudents("通知学生老师下线","老师下线");
+        customMessageHandler.setIsOpen(false);
+        AVIMMessageManager.unregisterMessageHandler(AVIMMessage.class, customMessageHandler);
         super.onDestroy();
     }
 
@@ -538,37 +546,6 @@ public class AudioTeachActivity extends AppCompatActivity {
                     //修改按钮颜色
                     if (container.getVisibility() == GONE) {
                         updateTeachingStudent(test);
-//                        for (int m = 0; m < weekLinearLayout.getChildCount(); m++) {
-//                            Button stu_name = (Button) weekLinearLayout.getChildAt(m);
-//                            String no_student = "未上线";
-//                            if (test.getText().toString().equals(no_student) == false) {
-//                                if (test.getText().toString().equals(stu_name.getText().toString())) {
-//                                    FrameLayout container = (FrameLayout) findViewById(R.id.local_video_view_container);
-//                                    if (container.getVisibility() == View.GONE) {
-//                                        joinInNewRoom(m);
-//                                        TextView textView = (TextView) findViewById(R.id.who_be_teach);
-//                                        String student_teach_name = "正在和"+test.getText().toString()+"视频教学";
-//                                        textView.setText(student_teach_name);
-//                                        container.setVisibility(View.GONE);
-//                                        Button button = (Button) findViewById(stu_name.getId());
-//                                        Drawable drawable1 = getResources().getDrawable(R.drawable.start_audio);
-//                                        drawable1.setBounds(0, 0, 40, 40);//第一0是距左边距离，第二0是距上边距离，40分别是长宽
-//                                        button.setCompoundDrawables(null, null, drawable1, null);//只放右边边
-//                                    } else {
-//                                        Toast.makeText(AudioTeachActivity.this, "现在正在与学生教学,请先关闭视频", Toast.LENGTH_SHORT).show();
-//                                    }
-//                                    stu_name.setBackground(getResources().getDrawable(R.drawable.teach_stu_name_new_color));
-//                                } else {
-//                                    stu_name.setBackground(getResources().getDrawable(R.drawable.teach_stu_name_old_color));
-//                                    if (stu_name.getText().toString().equals(no_student) == false) {
-//                                        Button button = (Button) findViewById(stu_name.getId());
-//                                        Drawable drawable1 = getResources().getDrawable(R.drawable.no_start_audio);
-//                                        drawable1.setBounds(0, 0, 40, 40);//第一0是距左边距离，第二0是距上边距离，40分别是长宽
-//                                        button.setCompoundDrawables(null, null, drawable1, null);//只放右边边
-//                                    }
-//                                }
-//                            }
-//                        }
                     } else {
                         Toast.makeText(AudioTeachActivity.this, "现在正在与学生教学,请先关闭视频", Toast.LENGTH_SHORT).show();
                     }
@@ -668,15 +645,20 @@ public void  set_teaching_student(){
             textView.setText(student_teach_name);
         }
 
-
-//    }
 }
         public class CustomMessageHandler extends AVIMMessageHandler {
             //即时通讯
             //接收到消息后的处理逻辑
+            public Boolean mIsOpen;
+            public void setIsOpen(Boolean isOpen)
+            {
+                mIsOpen = isOpen;
+            }
             @Override
             public void onMessage(AVIMMessage message, AVIMConversation conversation, AVIMClient client) {
-
+                if (mIsOpen == false) {
+                    return;
+                }
                 Log.e("Tom & Jerry", "消息接听:" + message.getContent());
 
                 if (message instanceof AVIMTextMessage) {
