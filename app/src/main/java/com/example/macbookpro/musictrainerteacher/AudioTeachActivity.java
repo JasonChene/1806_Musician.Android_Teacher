@@ -660,8 +660,6 @@ public void  set_teaching_student(){
                 if (mIsOpen == false) {
                     return;
                 }
-                Log.e("Tom & Jerry", "消息接听:" + message.getContent());
-
                 if (message instanceof AVIMTextMessage) {
                     Log.e("Tom & Jerry", "消息接听:" + ((AVIMTextMessage) message).getText());
                     if (((AVIMTextMessage) message).getText().equals("成功收到老师上线通知"))
