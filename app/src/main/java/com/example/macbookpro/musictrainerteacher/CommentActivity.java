@@ -50,6 +50,14 @@ public class CommentActivity extends AppCompatActivity {
         commentAdapter = new CommentAdapter(CommentActivity.this, R.layout.comment_list_item, allCourseArrayList);
         commentListVIew = (ListView) findViewById(R.id.comment_list_view);
         commentListVIew.setAdapter(commentAdapter);
+
+        Button save_button = (Button)findViewById(R.id.save_button);
+        save_button.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Log.e("save","保存");
+            }
+        });
     }
     public void initActionBar() {
         android.support.v7.app.ActionBar actionBar = getSupportActionBar();
