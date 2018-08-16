@@ -49,7 +49,7 @@ public class CommentAdapter extends BaseAdapter {
         return position;
     }
     @Override
-    public View getView(int position, View convertView, ViewGroup parent) {
+    public View getView(final int position, View convertView, ViewGroup parent) {
         final JSONObject course = (JSONObject) getItem(position); // 获取当前项的Fruit实例
         Log.e("course",course.toString());
         View view = mLayoutInflater.inflate(resourceId, null);//实例化一个对象

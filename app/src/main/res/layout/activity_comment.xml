@@ -27,7 +27,7 @@
             android:id="@+id/save_button"
             android:layout_width="100dp"
             android:layout_height="match_parent"
-            android:background="#F76968"
+            android:background="#EB586F"
             android:gravity="center"
             android:orientation="horizontal"
             android:text="保存"

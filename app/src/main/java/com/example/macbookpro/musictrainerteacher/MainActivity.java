@@ -101,6 +101,8 @@ public class MainActivity extends AppCompatActivity {
         super.onResume();
         MyLeanCloudApp myApp = (MyLeanCloudApp) getApplication();
         myApp.setAudioTeachActivity(MainActivity.this);
+        //获取课程表数据
+        getCourseList(new Date());
     }
 
     public void startLoginEase() {
@@ -211,6 +213,7 @@ public class MainActivity extends AppCompatActivity {
         intent.putExtra("courseInfo", courseInfo.toString());
         startActivity(intent);
     }
+
 
     public void initActionBar() {
         android.support.v7.app.ActionBar actionBar = getSupportActionBar();
@@ -447,6 +450,7 @@ public class MainActivity extends AppCompatActivity {
                                     Log.e("student", student.toString());
 
                                     JSONObject newCourseInfo = new JSONObject();
+                                    newCourseInfo.put("courseID",objectInfo.getObjectId());
                                     newCourseInfo.put("student", student);
                                     newCourseInfo.put("startTime", startTime);
                                     newCourseInfo.put("endDate", endDate);
