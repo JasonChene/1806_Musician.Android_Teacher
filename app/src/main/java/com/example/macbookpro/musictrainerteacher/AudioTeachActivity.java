@@ -89,6 +89,7 @@ public class AudioTeachActivity extends AppCompatActivity {
     JSONArray mArrStudentInfo;
     JSONArray mArrJoinStudentInfo;
     private CustomMessageHandler customMessageHandler;
+    TextView showHandupInfo;
     private IRtcEngineEventHandler mRtcEventHandler = new IRtcEngineEventHandler() {
         @Override
         public void onJoinChannelSuccess(String channel, int uid, int elapsed) {
@@ -237,6 +238,8 @@ public class AudioTeachActivity extends AppCompatActivity {
         myApp.setAudioTeachActivity(AudioTeachActivity.this);
         main_draw = findViewById(R.id.main_draw);
         peer_draw = findViewById(R.id.peer_draw);
+
+        showHandupInfo = (TextView)findViewById(R.id.showHandupInfo);
 
         //设置教学页面的学生按钮的颜色
         week_onclick();
@@ -543,6 +546,10 @@ public class AudioTeachActivity extends AppCompatActivity {
                 @Override
                 public void onClick(View view) {
                     Button test = (Button) view;
+                    if (test.getText().toString().equals("未上线"))
+                    {
+                        return;
+                    }
                     //修改按钮颜色
                     if (container.getVisibility() == GONE) {
                         updateTeachingStudent(test);
@@ -567,6 +574,11 @@ public class AudioTeachActivity extends AppCompatActivity {
                         TextView textView = (TextView) findViewById(R.id.who_be_teach);
                         String student_teach_name = "正在和"+test.getText().toString()+"视频教学";
                         textView.setText(student_teach_name);
+                        String showHandupInfoText = showHandupInfo.getText().toString();
+                        if (showHandupInfoText.length() > 4 && showHandupInfoText.substring(0,showHandupInfoText.length() - 4).equals(test.getText()))
+                        {
+                            showHandupInfo.setText("");
+                        }
                         container.setVisibility(GONE);
                         Button button = (Button) findViewById(stu_name.getId());
                         Drawable drawable1 = getResources().getDrawable(R.drawable.start_audio);
@@ -681,6 +693,7 @@ public void  set_teaching_student(){
                                     Drawable drawable1 = getResources().getDrawable(R.drawable.show_hands);
                                     drawable1.setBounds(0, 0, 60, 60);//第一0是距左边距离，第二0是距上边距离，40分别是长宽
                                     hand_button.setCompoundDrawables(null, null, drawable1, null);//只放右边边
+                                    showHandupInfo.setText(stu_info.getString("name")+"正在举手");
                                 }
                             }catch (JSONException e)
                             {

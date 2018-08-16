@@ -181,13 +181,10 @@ public class MainActivity extends AppCompatActivity {
         checkSelfPermission(Manifest.permission_group.STORAGE, 0);
 
         startLoginEase();
-        //注册默认的消息处理逻辑
-//        AVIMMessageManager.registerDefaultMessageHandler(new CustomMessageHandler());
     }
 
     public void startTeaching(JSONObject courseInfo)
     {
-        Log.e("===", courseInfo.toString());
         JSONArray student_info = new JSONArray();
         try {
             JSONArray course = courseInfo.getJSONArray("value");
@@ -200,7 +197,6 @@ public class MainActivity extends AppCompatActivity {
         {
 
         }
-        startActivity(new Intent(MainActivity.this, AudioTeachActivity.class));
         //传输课程信息
         Intent intent = new Intent(MainActivity.this, AudioTeachActivity.class);
         intent.putExtra("student_info", student_info.toString());
@@ -209,7 +205,8 @@ public class MainActivity extends AppCompatActivity {
 
     public void startComment(JSONObject courseInfo)
     {
-        Log.e("===", courseInfo.toString());
+        Log.e("===进入评论页面", courseInfo.toString());
+
     }
 
     public void initActionBar() {

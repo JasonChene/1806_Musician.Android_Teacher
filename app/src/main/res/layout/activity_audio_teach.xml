@@ -80,12 +80,12 @@
             android:textSize="14dp" />
 
         <TextView
+            android:id="@+id/showHandupInfo"
             android:layout_width="match_parent"
             android:layout_height="23dp"
             android:layout_marginTop="71dp"
             android:layout_marginLeft="5dp"
             android:textSize="14dp"
-            android:text="周小花正在举手"
             android:textColor="#101010"/>
 
 
