@@ -39,7 +39,7 @@
             android:background="@drawable/relative_layout_border">
 
             <EditText
-                android:id="@+id/show_chaobiao_text_id"
+                android:id="@+id/show_comment_id"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:ems="5"
