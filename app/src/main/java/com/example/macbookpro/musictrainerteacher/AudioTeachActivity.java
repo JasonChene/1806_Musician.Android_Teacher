@@ -266,28 +266,6 @@ public class AudioTeachActivity extends AppCompatActivity {
             sendMessageToStudents("通知学生老师在线","老师上线");
         }
 
-
-
-
-//        //顶部返回按键
-//        Button back_button = (Button) findViewById(R.id.back_button);
-//        back_button.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View view) {
-//                if (main_draw.getVisibility() == GONE) {
-//                    final FrameLayout remote_video = findViewById(R.id.remote_video_view_container);
-//                    if (remote_video.getVisibility() == GONE) {
-//                        finish();
-//                        startActivity(new Intent(AudioTeachActivity.this, MainActivity.class));
-//                    } else {
-//                        Toast.makeText(AudioTeachActivity.this, "现在正在与学生教学", Toast.LENGTH_SHORT).show();
-//                    }
-//                } else {
-//                    Toast.makeText(AudioTeachActivity.this, "现在正在与学生教学", Toast.LENGTH_SHORT).show();
-//                }
-//
-//            }
-//        });
         //清空画板
         Button clear_button = (Button) findViewById(R.id.clear);
         clear_button.setOnClickListener(new View.OnClickListener() {
