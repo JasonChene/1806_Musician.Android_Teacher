@@ -76,6 +76,7 @@
         <activity android:name=".LoginActivity" android:screenOrientation="portrait"></activity>
         <activity android:name=".VerificationCodeActivity" android:screenOrientation="portrait"></activity>
         <activity android:name=".AudioTeachActivity" android:screenOrientation="portrait"></activity>
+        <activity android:name=".CommentActivity" android:screenOrientation="portrait"></activity>
 
 
         <!--&lt;!&ndash; APP key, 可以在这里设置，也可以在 SDKOptions 中提供。-->

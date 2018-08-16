@@ -206,7 +206,10 @@ public class MainActivity extends AppCompatActivity {
     public void startComment(JSONObject courseInfo)
     {
         Log.e("===进入评论页面", courseInfo.toString());
-
+        //传输课程信息
+        Intent intent = new Intent(MainActivity.this, CommentActivity.class);
+        intent.putExtra("courseInfo", courseInfo.toString());
+        startActivity(intent);
     }
 
     public void initActionBar() {
