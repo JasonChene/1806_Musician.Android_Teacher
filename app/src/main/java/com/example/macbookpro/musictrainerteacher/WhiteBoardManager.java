@@ -5,6 +5,7 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.icu.text.RelativeDateTimeFormatter;
+import android.text.LoginFilter;
 import android.util.Log;
 import android.widget.Button;
 import android.widget.Toast;
@@ -171,6 +172,7 @@ public class WhiteBoardManager {
 
                     try {
                         data = new String(rtsTunData.getData(), 0, rtsTunData.getLength(), "UTF-8");
+                        Log.e("==",data);
                         String tag = "";
                         if (Integer.valueOf(data.substring(0,1)) == 1)
                         {

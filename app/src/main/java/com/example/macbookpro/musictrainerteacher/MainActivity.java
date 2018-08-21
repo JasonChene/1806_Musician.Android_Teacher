@@ -439,8 +439,8 @@ public class MainActivity extends AppCompatActivity {
                                     Date startTime = new Date(objectInfo.get("startTime").toString());
                                     String duration = objectInfo.get("duration").toString();
                                     Date endDate = addSecondToDate(startTime, Integer.valueOf(duration) / 1000);
-                                    String courseName = objectInfo.get("name").toString();
-                                    String comment = objectInfo.get("comment").toString();
+                                    String courseName = objectInfo.get("name") != null ? objectInfo.get("name").toString() :"";
+                                    String comment = objectInfo.get("comment") != null ? objectInfo.get("comment").toString() :"";
 
                                     //学生信息
                                     JSONObject student = new JSONObject();
@@ -460,7 +460,6 @@ public class MainActivity extends AppCompatActivity {
                                     Date noonTime = getDateFromStringWithMinus(strMinusDate + " 12:00:00");
                                     Date nightTime = getDateFromStringWithMinus(strMinusDate + " 18:00:00");
                                     if (startTime.before(noonTime)) {
-
                                         morningCourse.put(newCourseInfo);
                                     } else if (startTime.after(nightTime)) {
                                         nightCourse.put(newCourseInfo);
