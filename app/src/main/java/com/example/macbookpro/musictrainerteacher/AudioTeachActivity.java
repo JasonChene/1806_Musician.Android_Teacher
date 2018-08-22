@@ -143,6 +143,10 @@ public class AudioTeachActivity extends AppCompatActivity {
         drawBackgroud.setVisibility(View.VISIBLE);
         hideMusicPicture();
 
+        TextView textView = (TextView) findViewById(R.id.who_be_teach);
+        String message = textView.getText().toString().replace("语音","乐谱");
+        updateTeachStatus(message);
+
         //注册收到数据的监听
         WhiteBoardManager.registerIncomingData(sessionID, true, main_draw, AudioTeachActivity.this);
         WhiteBoardManager.registerRTSCloseObserver(sessionID, true, AudioTeachActivity.this);
@@ -178,10 +182,10 @@ public class AudioTeachActivity extends AppCompatActivity {
         drawBackgroud.setBackgroundResource(0);
         drawBackgroud.setVisibility(GONE);
         showMusicPicture();
-    }
 
-    public void updateWhiteBoardChannelID(String channelID) {
-        main_draw.channelID = channelID;
+        TextView textView = (TextView) findViewById(R.id.who_be_teach);
+        String message = textView.getText().toString().replace("乐谱","语音");
+        updateTeachStatus(message);
     }
 
     public void addMusicPic(String strMusicImageUrl) {
@@ -260,7 +264,6 @@ public class AudioTeachActivity extends AppCompatActivity {
             FrameLayout container = (FrameLayout) findViewById(R.id.local_video_view_container);
             container.setVisibility(GONE);
             //注册默认的消息处理逻辑
-//            AVIMMessageManager.registerDefaultMessageHandler(new AudioTeachActivity.CustomMessageHandler());
             customMessageHandler = new CustomMessageHandler();
             customMessageHandler.setIsOpen(true);
             AVIMMessageManager.registerMessageHandler(AVIMMessage.class, customMessageHandler);
@@ -560,6 +563,12 @@ public class AudioTeachActivity extends AppCompatActivity {
         }
     }
 
+    public void updateTeachStatus(String message)
+    {
+        TextView textView = (TextView) findViewById(R.id.who_be_teach);
+        textView.setText(message);
+    }
+
     public void updateTeachingStudent(Button test){
         final LinearLayout weekLinearLayout = (LinearLayout) findViewById(R.id.all_student);
         for (int m = 0; m < weekLinearLayout.getChildCount(); m++) {
@@ -570,9 +579,8 @@ public class AudioTeachActivity extends AppCompatActivity {
                     FrameLayout container = (FrameLayout) findViewById(R.id.local_video_view_container);
                     if (container.getVisibility() == GONE) {
                         joinInNewRoom(m);
-                        TextView textView = (TextView) findViewById(R.id.who_be_teach);
                         String student_teach_name = "正在和"+test.getText().toString()+"语音教学";
-                        textView.setText(student_teach_name);
+                        updateTeachStatus(student_teach_name);
                         String showHandupInfoText = showHandupInfo.getText().toString();
                         if (showHandupInfoText.length() > 4 && showHandupInfoText.substring(0,showHandupInfoText.length() - 4).equals(test.getText()))
                         {
@@ -654,7 +662,7 @@ public void  set_teaching_student(){
 
         } else {
             String student_teach_name = "正在和"+getUserName(0)+"语音教学";
-            textView.setText(student_teach_name);
+            updateTeachStatus(student_teach_name);
         }
 
 }
