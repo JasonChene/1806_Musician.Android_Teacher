@@ -98,7 +98,7 @@ public class CommentActivity extends AppCompatActivity {
 
                 }
                 Toast.makeText(CommentActivity.this,"保存成功",Toast.LENGTH_SHORT).show();
-                finish();
+                startActivity(new Intent(CommentActivity.this,MainActivity.class));
             }
         });
     }
