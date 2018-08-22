@@ -141,6 +141,7 @@ public class AudioTeachActivity extends AppCompatActivity {
         peer_draw.toAccount = toAccount;
         peer_draw.setVisibility(View.VISIBLE);
         drawBackgroud.setVisibility(View.VISIBLE);
+        hideMusicPicture();
 
         //注册收到数据的监听
         WhiteBoardManager.registerIncomingData(sessionID, true, main_draw, AudioTeachActivity.this);
@@ -176,6 +177,7 @@ public class AudioTeachActivity extends AppCompatActivity {
         //清楚原来的乐谱
         drawBackgroud.setBackgroundResource(0);
         drawBackgroud.setVisibility(GONE);
+        showMusicPicture();
     }
 
     public void updateWhiteBoardChannelID(String channelID) {
@@ -805,6 +807,20 @@ public void  set_teaching_student(){
         public void updateOnlineStudent(AVIMMessage message){
             //学生上线ID
             String fromStudentID = message.getFrom();
+            for (int m = 0; m < mArrJoinStudentInfo.length(); m ++)
+            {
+                try {
+                    JSONObject stu_info = mArrJoinStudentInfo.getJSONObject(m);
+                    if (stu_info.getString("studentID").equals(fromStudentID))
+                    {
+                        mArrJoinStudentInfo.remove(m);
+                        break;
+                    }
+                }catch (JSONException e)
+                {
+
+                }
+            }
             for (int i = 0; i < mArrStudentInfo.length(); i++)
             {
                 try {
