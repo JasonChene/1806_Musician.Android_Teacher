@@ -670,6 +670,28 @@ public void  set_teaching_student(){
                     return;
                 }
                 if (message instanceof AVIMTextMessage) {
+                    String fromStudentID = message.getFrom();
+                    Boolean isInCourseInfo = false;
+                    for (int m = 0; m < mArrStudentInfo.length(); m ++)
+                    {
+                        try {
+                            JSONObject stu_info = mArrStudentInfo.getJSONObject(m);
+                            if (stu_info.getString("studentID").equals(fromStudentID))
+                            {
+                                isInCourseInfo = true;
+                                break;
+                            }
+                        }catch (JSONException e)
+                        {
+
+                        }
+                    }
+                    if (isInCourseInfo == false)
+                    {
+                        Log.e("===","不是老师的学生");
+                        return;
+                    }
+
                     Log.e("Tom & Jerry", "消息接听:" + ((AVIMTextMessage) message).getText());
                     if (((AVIMTextMessage) message).getText().equals("成功收到老师上线通知"))
                     {
@@ -678,7 +700,6 @@ public void  set_teaching_student(){
                     else if (((AVIMTextMessage) message).getText().equals("HandUp"))
                     {
                         //举手回调
-                        String fromStudentID = message.getFrom();
                         for (int i = 0; i < mArrJoinStudentInfo.length(); i ++)
                         {
                             try {
@@ -716,7 +737,6 @@ public void  set_teaching_student(){
                     else if (((AVIMTextMessage) message).getText().equals("studentOffline"))
                     {
                         //学生下线ID
-                        String fromStudentID = message.getFrom();
                         for (int i = 0; i < mArrJoinStudentInfo.length(); i ++)
                         {
                             try {
