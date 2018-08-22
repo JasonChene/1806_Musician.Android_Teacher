@@ -569,7 +569,7 @@ public class AudioTeachActivity extends AppCompatActivity {
                     if (container.getVisibility() == GONE) {
                         joinInNewRoom(m);
                         TextView textView = (TextView) findViewById(R.id.who_be_teach);
-                        String student_teach_name = "正在和"+test.getText().toString()+"视频教学";
+                        String student_teach_name = "正在和"+test.getText().toString()+"语音教学";
                         textView.setText(student_teach_name);
                         String showHandupInfoText = showHandupInfo.getText().toString();
                         if (showHandupInfoText.length() > 4 && showHandupInfoText.substring(0,showHandupInfoText.length() - 4).equals(test.getText()))
@@ -651,7 +651,7 @@ public void  set_teaching_student(){
                 textView.setText(student_teach_name);
 
         } else {
-            String student_teach_name = "正在和"+getUserName(0)+"视频教学";
+            String student_teach_name = "正在和"+getUserName(0)+"语音教学";
             textView.setText(student_teach_name);
         }
 

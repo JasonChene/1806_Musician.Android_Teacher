@@ -102,7 +102,7 @@ public class MainActivity extends AppCompatActivity {
         MyLeanCloudApp myApp = (MyLeanCloudApp) getApplication();
         myApp.setAudioTeachActivity(MainActivity.this);
         //获取课程表数据
-        getCourseList(new Date());
+//        getCourseList(new Date());
     }
 
     public void startLoginEase() {
@@ -175,6 +175,7 @@ public class MainActivity extends AppCompatActivity {
 
         //获取课程表数据
         getCourseList(new Date());
+        Log.e("tag","=======onCreate========");
         allCourseArrayList = new ArrayList<JSONObject>();
         adapter = new FruitAdapter(MainActivity.this, R.layout.list_items, allCourseArrayList);
         listView = (ListView) findViewById(R.id.list_view);
@@ -223,7 +224,7 @@ public class MainActivity extends AppCompatActivity {
             actionBar.setDisplayShowCustomEnabled(true);
             LayoutInflater inflator = (LayoutInflater) this
                     .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-            View v = inflator.inflate(R.layout.actionbar_main, new LinearLayout(MainActivity.this), false);
+            View v = inflator.inflate(R.layout.actionbar_center, new LinearLayout(MainActivity.this), false);
             android.support.v7.app.ActionBar.LayoutParams layout = new android.support.v7.app.ActionBar.LayoutParams(
                     android.support.v7.app.ActionBar.LayoutParams.MATCH_PARENT, android.support.v7.app.ActionBar.LayoutParams.MATCH_PARENT);
             actionBar.setCustomView(v, layout);
@@ -232,6 +233,14 @@ public class MainActivity extends AppCompatActivity {
         }
         TextView actionBarTitle = (TextView) findViewById(R.id.action_bar_title);
         actionBarTitle.setText("老师课程表");
+        Button logout_btn = (Button) findViewById(R.id.logout);
+        logout_btn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                AVUser.logOut();
+                startActivity(new Intent(MainActivity.this, LoginActivity.class));
+            }
+        });
     }
 
     @Override
@@ -427,7 +436,7 @@ public class MainActivity extends AppCompatActivity {
                         if (list == null)
                         {
                             Toast.makeText(MainActivity.this,"获取课程列表失败，请检查网络",Toast.LENGTH_SHORT).show();
-                            list = new ArrayList<AVObject>();
+                            return;
                         }
                         JSONArray morningCourse = new JSONArray();
                         JSONArray noonCourse = new JSONArray();
