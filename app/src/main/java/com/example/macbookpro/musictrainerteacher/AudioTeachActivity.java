@@ -71,6 +71,7 @@ import io.agora.rtc.RtcEngine;
 import io.agora.rtc.video.VideoCanvas;
 
 import static android.view.View.GONE;
+import static android.view.View.VISIBLE;
 
 public class AudioTeachActivity extends AppCompatActivity {
     public static final int GET_DATA_SUCCESS = 1;
@@ -553,10 +554,16 @@ public class AudioTeachActivity extends AppCompatActivity {
                         return;
                     }
                     //修改按钮颜色
-                    if (container.getVisibility() == GONE) {
-                        updateTeachingStudent(test);
-                    } else {
+                    if (main_draw.getVisibility() == VISIBLE)
+                    {
+                        Toast.makeText(AudioTeachActivity.this, "现在正在与学生乐谱教学,请先关闭乐谱", Toast.LENGTH_SHORT).show();
+                    }
+                    else if (container.getVisibility() == VISIBLE){
                         Toast.makeText(AudioTeachActivity.this, "现在正在与学生教学,请先关闭视频", Toast.LENGTH_SHORT).show();
+                    }
+                    else
+                    {
+                        updateTeachingStudent(test);
                     }
                 }
             });
@@ -577,24 +584,21 @@ public class AudioTeachActivity extends AppCompatActivity {
             if (test.getText().toString().equals(no_student) == false) {
                 if (test.getText().toString().equals(stu_name.getText().toString())) {
                     FrameLayout container = (FrameLayout) findViewById(R.id.local_video_view_container);
-                    if (container.getVisibility() == GONE) {
-                        joinInNewRoom(m);
-                        String student_teach_name = "正在和"+test.getText().toString()+"语音教学";
-                        updateTeachStatus(student_teach_name);
-                        String showHandupInfoText = showHandupInfo.getText().toString();
-                        if (showHandupInfoText.length() > 4 && showHandupInfoText.substring(0,showHandupInfoText.length() - 4).equals(test.getText()))
-                        {
-                            showHandupInfo.setText("");
-                        }
-                        container.setVisibility(GONE);
-                        Button button = (Button) findViewById(stu_name.getId());
-                        Drawable drawable1 = getResources().getDrawable(R.drawable.start_audio);
-                        drawable1.setBounds(0, 0, 40, 40);//第一0是距左边距离，第二0是距上边距离，40分别是长宽
-                        button.setCompoundDrawables(null, null, drawable1, null);//只放右边边
-                    } else {
-                        Toast.makeText(AudioTeachActivity.this, "现在正在与学生教学,请先关闭视频", Toast.LENGTH_SHORT).show();
+                    joinInNewRoom(m);
+                    String student_teach_name = "正在和"+test.getText().toString()+"语音教学";
+                    updateTeachStatus(student_teach_name);
+                    String showHandupInfoText = showHandupInfo.getText().toString();
+                    if (showHandupInfoText.length() > 4 && showHandupInfoText.substring(0,showHandupInfoText.length() - 4).equals(test.getText()))
+                    {
+                        showHandupInfo.setText("");
                     }
+                    container.setVisibility(GONE);
+                    Button button = (Button) findViewById(stu_name.getId());
+                    Drawable drawable1 = getResources().getDrawable(R.drawable.start_audio);
+                    drawable1.setBounds(0, 0, 40, 40);//第一0是距左边距离，第二0是距上边距离，40分别是长宽
+                    button.setCompoundDrawables(null, null, drawable1, null);//只放右边边
                     stu_name.setBackground(getResources().getDrawable(R.drawable.teach_stu_name_new_color));
+
                 } else {
                     stu_name.setBackground(getResources().getDrawable(R.drawable.teach_stu_name_old_color));
                     if (stu_name.getText().toString().equals(no_student) == false) {
