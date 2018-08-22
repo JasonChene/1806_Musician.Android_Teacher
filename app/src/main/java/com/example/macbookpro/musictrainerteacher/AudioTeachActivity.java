@@ -234,7 +234,6 @@ public class AudioTeachActivity extends AppCompatActivity {
         }.start();
     }
 
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -523,10 +522,10 @@ public class AudioTeachActivity extends AppCompatActivity {
 
     @Override
     protected void onDestroy() {
-        Log.e("TAG", "onDestroy");
+        Log.e("TAG", "==ggg===onDestroy");
+        sendMessageToStudents("通知学生老师下线","老师下线");
         leaveChannel();
         mRtcEngine.destroy();
-        sendMessageToStudents("通知学生老师下线","老师下线");
         customMessageHandler.setIsOpen(false);
         AVIMMessageManager.unregisterMessageHandler(AVIMMessage.class, customMessageHandler);
         super.onDestroy();
