@@ -775,6 +775,7 @@ public void  set_teaching_student(){
                                         {
                                             updateStudentNamesInTop();
                                             stu_audio_icon_init();
+                                            updateTeachStatus("学生已下线");
                                         }
                                     }
                                     else
