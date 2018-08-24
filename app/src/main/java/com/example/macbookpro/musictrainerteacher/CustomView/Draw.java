@@ -146,32 +146,6 @@ public class Draw extends SurfaceView implements SurfaceHolder.Callback,View.OnT
         return true;
     }
 
-//    public void local_draw_line_tag(View v, MotionEvent event)
-//    {
-//        int height=getMeasuredHeight();
-//        int width=getMeasuredWidth();
-//        switch (event.getAction()){
-//            case MotionEvent.ACTION_DOWN:
-//
-//                x = event.getX();       //获取触摸点X轴坐标
-//                y = event.getY();       //获取触摸点Y轴坐标
-//                path.moveTo(x,y);
-//                timeStamp = getTime();  //获取时间戳
-//                dataProcessed = "1"+":"+x/width+","+y/height+";" + "5:" + (refPacketID++) + ",0";  //数据打包
-//                draw();
-//                WhiteBoardManager.sendToRemote(sessionID,toAccount,dataProcessed); //发送封装好的数据
-//                break;
-//            case MotionEvent.ACTION_MOVE:
-//                x = event.getX();       //获取触摸点X轴坐标
-//                y = event.getY();       //获取触摸点Y轴坐标
-//                path.lineTo(x,y);
-//                timeStamp = getTime();  //获取时间戳
-//                dataProcessed = "3"+":"+x/width+","+y/height+";" + "5:" + (refPacketID++) + ",0";  //数据打包
-//                draw();
-//                WhiteBoardManager.sendToRemote(sessionID,toAccount,dataProcessed); //发送封装好的数据
-//                break;
-//        }
-//    }
     /**
      清除画布上的内容
      */
@@ -196,7 +170,6 @@ public class Draw extends SurfaceView implements SurfaceHolder.Callback,View.OnT
      */
     public void dataPaint(String data){
          dataItem = dataManager.dataDecode(data);
-        Log.i("dataPaint","============"+dataItem);
          if(dataItem!=null){
              whitboardPaint(dataItem);
          }

@@ -199,16 +199,28 @@ public class AudioTeachActivity extends AppCompatActivity {
         List<String> peerData = new ArrayList<>(mPeerDataList);
         peer_map.put("peer_draw",peerData);
         ListDrawBitMap drawBitMap = new ListDrawBitMap(mStrImagePath,Channel_name,main_map,peer_map);
+        Boolean isExistCommonPath = false;
         for (int i = 0; i < mAllBitmap.size(); i ++)
         {
-            if (mAllBitmap.get(i).channel_name.equals(Channel_name))
+            if (mAllBitmap.get(i).channel_name.equals(Channel_name) && mAllBitmap.get(i).path.equals(mStrImagePath))
+            {
+                //在后面追加数据
+                mAllBitmap.get(i).main_map.get("main_draw").addAll(drawData);
+                mAllBitmap.get(i).peer_map.get("peer_draw").addAll(peerData);
+                isExistCommonPath = true;
+                break;
+            }
+            else if (mAllBitmap.get(i).channel_name.equals(Channel_name) && mAllBitmap.get(i).path.equals(mStrImagePath))
             {
                 mAllBitmap.remove(i);
+                isExistCommonPath = false;
                 break;
             }
         }
-
-        mAllBitmap.add(drawBitMap);
+        if (isExistCommonPath == false)
+        {
+            mAllBitmap.add(drawBitMap);
+        }
 
         mDrawDataList.clear();
         mPeerDataList.clear();
@@ -266,7 +278,6 @@ public class AudioTeachActivity extends AppCompatActivity {
     public void addDrawData(String data)
     {
         mDrawDataList.add(data);
-        Log.e("addDrawData",data);
     }
 
     public void setImageURL(final String path) {
@@ -354,6 +365,15 @@ public class AudioTeachActivity extends AppCompatActivity {
             public void onClick(View view) {
                 main_draw.Clear();
                 peer_draw.Clear();
+                for (int i = 0; i < mAllBitmap.size(); i ++)
+                {
+                    if (mAllBitmap.get(i).channel_name.equals(Channel_name))
+                    {
+                        mAllBitmap.remove(i);
+                        mDrawDataList.clear();
+                        mDrawDataList.clear();
+                    }
+                }
                 String clear_remote = "clear";
                 WhiteBoardManager.sendToRemote(main_draw.sessionID, main_draw.toAccount, clear_remote);
             }

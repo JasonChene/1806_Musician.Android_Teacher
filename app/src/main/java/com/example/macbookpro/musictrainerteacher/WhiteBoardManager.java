@@ -247,7 +247,6 @@ public class WhiteBoardManager {
             RTSTunData channelData = new RTSTunData(sessionId, toAccount, data.getBytes
                     ("UTF-8"), data.getBytes().length);
             boolean b = RTSManager.getInstance().sendData(channelData);
-            Log.i("白板发送数据： ", data);
         } catch (UnsupportedEncodingException e) {
             Log.e("Transaction", "send to remote, getBytes exception : " + data);
         }
