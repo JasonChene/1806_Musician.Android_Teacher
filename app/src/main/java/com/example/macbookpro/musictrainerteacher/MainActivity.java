@@ -456,8 +456,6 @@ public class MainActivity extends AppCompatActivity {
                                     student.put("name", studentInfo.getJSONObject("serverData").getString("username"));
                                     student.put("studentID", studentInfo.getString("objectId"));
 
-//                                    Log.e("student", student.toString());
-
                                     JSONObject newCourseInfo = new JSONObject();
                                     newCourseInfo.put("courseID",objectInfo.getObjectId());
                                     newCourseInfo.put("student", student);

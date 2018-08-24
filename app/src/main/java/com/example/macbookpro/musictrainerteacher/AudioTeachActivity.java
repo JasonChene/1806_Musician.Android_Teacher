@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
@@ -62,12 +63,14 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 
 import io.agora.rtc.Constants;
 import io.agora.rtc.IRtcEngineEventHandler;
 import io.agora.rtc.RtcEngine;
+import io.agora.rtc.internal.Logging;
 import io.agora.rtc.video.VideoCanvas;
 
 import static android.view.View.GONE;
@@ -91,6 +94,10 @@ public class AudioTeachActivity extends AppCompatActivity {
     JSONArray mArrJoinStudentInfo;
     private CustomMessageHandler customMessageHandler;
     TextView showHandupInfo;
+    String mStrImagePath = "";
+    List<String> mPeerDataList = new ArrayList<String>();
+    List<String> mDrawDataList = new ArrayList<String>();
+    List<ListDrawBitMap> mAllBitmap = new ArrayList<ListDrawBitMap>();
     private IRtcEngineEventHandler mRtcEventHandler = new IRtcEngineEventHandler() {
         @Override
         public void onJoinChannelSuccess(String channel, int uid, int elapsed) {
@@ -156,6 +163,19 @@ public class AudioTeachActivity extends AppCompatActivity {
         local_container.setVisibility(GONE);
     }
 
+    public static Bitmap getBitmapFromView(View v) {
+        Bitmap b = Bitmap.createBitmap(v.getWidth(), v.getHeight(), Bitmap.Config.RGB_565);
+        Canvas canvas = new Canvas(b);
+        v.layout(v.getLeft(), v.getTop(), v.getRight(), v.getBottom());
+        Drawable bgDrawable = v.getBackground();
+        if (bgDrawable != null)
+            bgDrawable.draw(canvas);
+        else
+            canvas.drawColor(Color.WHITE);
+        v.draw(canvas);
+        return b;
+    }
+
     public void terminateRTS(String sessionID) {
         //注销收数据监听
         Boolean isDataSuccess = RTSManager.getInstance().observeReceiveData(sessionID, new Observer<RTSTunData>() {
@@ -171,6 +191,27 @@ public class AudioTeachActivity extends AppCompatActivity {
             }
         }, false);
         Log.e("TAG", "注销挂断监听" + isCloseSuccess);
+
+        HashMap<String, List<String>> main_map = new HashMap<String, List<String>>();
+        List<String> drawData = new ArrayList<>(mDrawDataList);
+        main_map.put("main_draw",drawData);
+        HashMap<String, List<String>> peer_map = new HashMap<String, List<String>>();
+        List<String> peerData = new ArrayList<>(mPeerDataList);
+        peer_map.put("peer_draw",peerData);
+        ListDrawBitMap drawBitMap = new ListDrawBitMap(mStrImagePath,Channel_name,main_map,peer_map);
+        for (int i = 0; i < mAllBitmap.size(); i ++)
+        {
+            if (mAllBitmap.get(i).channel_name.equals(Channel_name))
+            {
+                mAllBitmap.remove(i);
+                break;
+            }
+        }
+
+        mAllBitmap.add(drawBitMap);
+
+        mDrawDataList.clear();
+        mPeerDataList.clear();
 
         main_draw.Clear();
         main_draw.setVisibility(GONE);
@@ -189,10 +230,43 @@ public class AudioTeachActivity extends AppCompatActivity {
         updateTeachStatus(message);
     }
 
-    public void addMusicPic(String strMusicImageUrl) {
+    public void addMusicPic(String strMusicImageUrl, String strImagePath) {
         //设置本地图片
         Log.i("MusicPicUrl:", "" + strMusicImageUrl);
+//        setImageURL(strMusicImageUrl);
+        mStrImagePath = strImagePath;
+        Boolean isExist = false;
+        for (int i = 0; i < mAllBitmap.size(); i ++)
+        {
+            ListDrawBitMap drawInfo = mAllBitmap.get(i);
+            if (drawInfo.channel_name.equals(Channel_name) && drawInfo.path.equals(strImagePath))
+            {
+                //取出来是同一张图
+                for (int m = 0; m < drawInfo.main_map.get("main_draw").size(); m ++)
+                {
+                    main_draw.dataPaint(drawInfo.main_map.get("main_draw").get(m));
+                }
+                for (int n = 0; n < drawInfo.peer_map.get("peer_draw").size(); n ++)
+                {
+                    peer_draw.dataPaint(drawInfo.peer_map.get("peer_draw").get(n));
+                }
+                break;
+            }
+            else if (drawInfo.channel_name.equals(Channel_name) && drawInfo.path.equals(strImagePath))
+            {
+                mAllBitmap.remove(i);
+            }
+        }
         setImageURL(strMusicImageUrl);
+    }
+    public void addPeerData(String data)
+    {
+        mPeerDataList.add(data);
+    }
+    public void addDrawData(String data)
+    {
+        mDrawDataList.add(data);
+        Log.e("addDrawData",data);
     }
 
     public void setImageURL(final String path) {
@@ -243,7 +317,9 @@ public class AudioTeachActivity extends AppCompatActivity {
         myApp = (MyLeanCloudApp) getApplication();
         myApp.setAudioTeachActivity(AudioTeachActivity.this);
         main_draw = findViewById(R.id.main_draw);
+        main_draw.setContext(AudioTeachActivity.this);
         peer_draw = findViewById(R.id.peer_draw);
+        peer_draw.setContext(AudioTeachActivity.this);
 
         showHandupInfo = (TextView)findViewById(R.id.showHandupInfo);
 

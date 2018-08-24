@@ -172,7 +172,6 @@ public class WhiteBoardManager {
 
                     try {
                         data = new String(rtsTunData.getData(), 0, rtsTunData.getLength(), "UTF-8");
-                        Log.e("==",data);
                         String tag = "";
                         if (Integer.valueOf(data.substring(0,1)) == 1)
                         {
@@ -192,7 +191,7 @@ public class WhiteBoardManager {
                             String[] strMusicImageUrl = data.split(":");
                             Log.e("tagstrMusicImageUrl","==============strMusicImageUrl:"+Arrays.toString(strMusicImageUrl));
                             AudioTeachActivity audioTeachActivity = (AudioTeachActivity) context;
-                            audioTeachActivity.addMusicPic(strMusicImageUrl[1]+":"+strMusicImageUrl[2]);
+                            audioTeachActivity.addMusicPic(strMusicImageUrl[1]+":"+strMusicImageUrl[2],strMusicImageUrl[3]+":"+strMusicImageUrl[4]);
                         }
                         else
                         {
@@ -203,10 +202,11 @@ public class WhiteBoardManager {
                             double x = Double.valueOf(strPoint[0]) *draw.getWidth();
                             double y = Double.valueOf(strPoint[1]) *draw.getHeight();
                             String newData = time +"," + x +"," + y + tag;
+                            AudioTeachActivity audioTeachActivity = (AudioTeachActivity)context;
+                            audioTeachActivity.addPeerData(newData);
                             if (draw != null)
                             {
                                 draw.dataPaint(newData);
-                                Log.d("收到数据", "================onEvent: "+newData);
                             }
                             else {
                                 Toast.makeText(context,"正在准备乐谱",Toast.LENGTH_SHORT);

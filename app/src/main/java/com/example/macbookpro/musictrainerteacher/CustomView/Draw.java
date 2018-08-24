@@ -19,10 +19,14 @@ import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 import android.view.View;
 
+import com.example.macbookpro.musictrainerteacher.AudioTeachActivity;
 import com.example.macbookpro.musictrainerteacher.R;
 import com.example.macbookpro.musictrainerteacher.WhiteBoardManager;
 import com.example.macbookpro.musictrainerteacher.manager.DataItem;
 import com.example.macbookpro.musictrainerteacher.manager.DataManager;
+
+import java.util.ArrayList;
+import java.util.List;
 
 //import com.netease.nical.rtsdemo.Manager.DataItem;
 //import com.netease.nical.rtsdemo.Manager.DataManager;
@@ -36,14 +40,14 @@ public class Draw extends SurfaceView implements SurfaceHolder.Callback,View.OnT
     public String channelID = "";
     public DataItem dataItem;
 
-
     private Path path = new Path();
     private String timeStamp;
     private float x;
     private float y;
     private String dataProcessed;
     int refPacketID;
-    Bitmap canvasBitmap = null;
+    public Bitmap canvasBitmap = null;
+    public Context mContext = null;
 
 
     Paint paint = new Paint();
@@ -72,6 +76,11 @@ public class Draw extends SurfaceView implements SurfaceHolder.Callback,View.OnT
         setZOrderOnTop(true);//使surfaceview放到最顶层
         getHolder().setFormat(PixelFormat.TRANSLUCENT);//使窗口支持透明度
     }
+    public void setContext(Context context)
+    {
+        mContext = context;
+        Log.e("context",context.toString());
+    }
 
     /**
      * 画
@@ -85,7 +94,6 @@ public class Draw extends SurfaceView implements SurfaceHolder.Callback,View.OnT
             canvas.drawARGB(1,255,0,0);
             getHolder().unlockCanvasAndPost(canvas);
         }
-
     }
 
 
@@ -108,15 +116,19 @@ public class Draw extends SurfaceView implements SurfaceHolder.Callback,View.OnT
     public boolean onTouch(View v, MotionEvent event) {
         int height=getMeasuredHeight();
         int width=getMeasuredWidth();
+        String time = String.format("%010d", System.currentTimeMillis()/1000);
+        String strData = "";
+        AudioTeachActivity audioTeachActivity = (AudioTeachActivity)mContext;
         switch (event.getAction()){
             case MotionEvent.ACTION_DOWN:
-
                 x = event.getX();       //获取触摸点X轴坐标
                 y = event.getY();       //获取触摸点Y轴坐标
                 path.moveTo(x,y);
                 timeStamp = getTime();  //获取时间戳
                 dataProcessed = "1"+":"+x/width+","+y/height+";" + "5:" + (refPacketID++) + ",0";  //数据打包
                 draw();
+                strData = time +"," + x +"," + y + "m";
+                audioTeachActivity.addDrawData(strData);
                 WhiteBoardManager.sendToRemote(sessionID,toAccount,dataProcessed); //发送封装好的数据
                 break;
             case MotionEvent.ACTION_MOVE:
@@ -126,38 +138,40 @@ public class Draw extends SurfaceView implements SurfaceHolder.Callback,View.OnT
                 timeStamp = getTime();  //获取时间戳
                 dataProcessed = "3"+":"+x/width+","+y/height+";" + "5:" + (refPacketID++) + ",0";  //数据打包
                 draw();
+                strData = time +"," + x +"," + y + "l";
+                audioTeachActivity.addDrawData(strData);
                 WhiteBoardManager.sendToRemote(sessionID,toAccount,dataProcessed); //发送封装好的数据
                 break;
         }
         return true;
     }
 
-    public void local_draw_line_tag(View v, MotionEvent event)
-    {
-        int height=getMeasuredHeight();
-        int width=getMeasuredWidth();
-        switch (event.getAction()){
-            case MotionEvent.ACTION_DOWN:
-
-                x = event.getX();       //获取触摸点X轴坐标
-                y = event.getY();       //获取触摸点Y轴坐标
-                path.moveTo(x,y);
-                timeStamp = getTime();  //获取时间戳
-                dataProcessed = "1"+":"+x/width+","+y/height+";" + "5:" + (refPacketID++) + ",0";  //数据打包
-                draw();
-                WhiteBoardManager.sendToRemote(sessionID,toAccount,dataProcessed); //发送封装好的数据
-                break;
-            case MotionEvent.ACTION_MOVE:
-                x = event.getX();       //获取触摸点X轴坐标
-                y = event.getY();       //获取触摸点Y轴坐标
-                path.lineTo(x,y);
-                timeStamp = getTime();  //获取时间戳
-                dataProcessed = "3"+":"+x/width+","+y/height+";" + "5:" + (refPacketID++) + ",0";  //数据打包
-                draw();
-                WhiteBoardManager.sendToRemote(sessionID,toAccount,dataProcessed); //发送封装好的数据
-                break;
-        }
-    }
+//    public void local_draw_line_tag(View v, MotionEvent event)
+//    {
+//        int height=getMeasuredHeight();
+//        int width=getMeasuredWidth();
+//        switch (event.getAction()){
+//            case MotionEvent.ACTION_DOWN:
+//
+//                x = event.getX();       //获取触摸点X轴坐标
+//                y = event.getY();       //获取触摸点Y轴坐标
+//                path.moveTo(x,y);
+//                timeStamp = getTime();  //获取时间戳
+//                dataProcessed = "1"+":"+x/width+","+y/height+";" + "5:" + (refPacketID++) + ",0";  //数据打包
+//                draw();
+//                WhiteBoardManager.sendToRemote(sessionID,toAccount,dataProcessed); //发送封装好的数据
+//                break;
+//            case MotionEvent.ACTION_MOVE:
+//                x = event.getX();       //获取触摸点X轴坐标
+//                y = event.getY();       //获取触摸点Y轴坐标
+//                path.lineTo(x,y);
+//                timeStamp = getTime();  //获取时间戳
+//                dataProcessed = "3"+":"+x/width+","+y/height+";" + "5:" + (refPacketID++) + ",0";  //数据打包
+//                draw();
+//                WhiteBoardManager.sendToRemote(sessionID,toAccount,dataProcessed); //发送封装好的数据
+//                break;
+//        }
+//    }
     /**
      清除画布上的内容
      */
