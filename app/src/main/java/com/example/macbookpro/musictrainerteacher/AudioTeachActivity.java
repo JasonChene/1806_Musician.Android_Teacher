@@ -480,10 +480,10 @@ public class AudioTeachActivity extends AppCompatActivity {
                         finish();
                         startActivity(new Intent(AudioTeachActivity.this, MainActivity.class));
                     } else {
-                        Toast.makeText(AudioTeachActivity.this, "现在正在与学生教学", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(AudioTeachActivity.this, "请先主动关闭乐谱后再退出课程", Toast.LENGTH_SHORT).show();
                     }
                 } else {
-                    Toast.makeText(AudioTeachActivity.this, "现在正在与学生教学", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(AudioTeachActivity.this, "请先主动关闭视频后再退出课程", Toast.LENGTH_SHORT).show();
                 }
 
             }
@@ -651,10 +651,10 @@ public class AudioTeachActivity extends AppCompatActivity {
                     //修改按钮颜色
                     if (main_draw.getVisibility() == VISIBLE)
                     {
-                        Toast.makeText(AudioTeachActivity.this, "现在正在与学生乐谱教学,请先关闭乐谱", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(AudioTeachActivity.this, "请先主动关闭乐谱后再进行切换", Toast.LENGTH_SHORT).show();
                     }
                     else if (container.getVisibility() == VISIBLE){
-                        Toast.makeText(AudioTeachActivity.this, "现在正在与学生教学,请先关闭视频", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(AudioTeachActivity.this, "请先主动关闭视频后再进行切换", Toast.LENGTH_SHORT).show();
                     }
                     else
                     {
