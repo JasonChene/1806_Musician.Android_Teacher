@@ -191,7 +191,12 @@ public class WhiteBoardManager {
                             String[] strMusicImageUrl = data.split(":");
                             Log.e("tagstrMusicImageUrl","==============strMusicImageUrl:"+Arrays.toString(strMusicImageUrl));
                             AudioTeachActivity audioTeachActivity = (AudioTeachActivity) context;
-                            audioTeachActivity.addMusicPic(strMusicImageUrl[1]+":"+strMusicImageUrl[2],strMusicImageUrl[3]+":"+strMusicImageUrl[4]);
+                            String path = "";
+                            for (int i = 3; i < strMusicImageUrl.length; i++)
+                            {
+                                path += strMusicImageUrl[i];
+                            }
+                            audioTeachActivity.addMusicPic(strMusicImageUrl[1]+":"+strMusicImageUrl[2],path);
                         }
                         else
                         {
