@@ -58,7 +58,11 @@ dependencies {
 
     implementation fileTree(dir: 'libs', include: ['*.jar'])
     implementation ('com.android.support:appcompat-v7:24.2.1')
+    //noinspection GradleCompatible
     implementation 'com.android.support:appcompat-v7:28.0.0-alpha3'
+    implementation 'com.android.support:animated-vector-drawable:28.0.0-alpha3'
+//    implementation 'com.android.support:support-media-compat:27.1.0-alpha3'
+
     implementation 'com.android.support.constraint:constraint-layout:1.1.2'
     testImplementation 'junit:junit:4.12'
     androidTestImplementation 'com.android.support.test:runner:1.0.2'
@@ -71,11 +75,11 @@ dependencies {
 
     // 添加依赖。注意，版本号必须一致。
     // 基础功能 (必需)
-    implementation 'com.netease.nimlib:basesdk:4.4.0'
+    implementation 'com.netease.nimlib:basesdk:5.5.0'
     // 互动白板服务需要
-    implementation 'com.netease.nimlib:nrtc:4.4.0'
+    implementation 'com.netease.nimlib:nrtc:5.5.0'
     // 互动白板和文档转码服务模块(版本号必须和基础模块一样)
-    implementation 'com.netease.nimlib:rts:4.4.0'
+    implementation 'com.netease.nimlib:rts:5.5.0'
 
     //验证码
     implementation 'com.jacktuotuo.customview:verificationcodeview:1.0.3'

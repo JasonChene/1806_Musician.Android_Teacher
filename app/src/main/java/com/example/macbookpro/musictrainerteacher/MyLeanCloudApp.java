@@ -14,7 +14,6 @@ import com.netease.nimlib.sdk.SDKOptions;
 
 public class MyLeanCloudApp extends Application {
 
-    public Boolean isRegisterRTSIncomingCallObserver = false;
     public Context currentContext = null;
     public AVIMClient client = null;
 
@@ -47,13 +46,6 @@ public class MyLeanCloudApp extends Application {
                 }
             });
         }
-    }
-    public Boolean getIsRegisterRTSIncomingCallObserver() {
-        return isRegisterRTSIncomingCallObserver;
-    }
-
-    public void setIsRegisterRTSIncomingCallObserver(Boolean RegisterRTSIncomingCallObserver) {
-        this.isRegisterRTSIncomingCallObserver = RegisterRTSIncomingCallObserver;
     }
     public void setAudioTeachActivity(Context context)
     {

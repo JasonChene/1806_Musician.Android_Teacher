@@ -105,7 +105,6 @@ public class WhiteBoardManager {
                 long channelID = rtsData.getChannelId();
                 MyLeanCloudApp app = (MyLeanCloudApp)context;
 
-                Log.e("TAG",app.currentContext.getClass().toString());
                 if (app.currentContext.getClass().toString().equals("class com.example.macbookpro.musictrainerteacher.AudioTeachActivity"))
                 {
                     AudioTeachActivity audioTeachActivity = (AudioTeachActivity) app.currentContext;
@@ -252,6 +251,26 @@ public class WhiteBoardManager {
             RTSTunData channelData = new RTSTunData(sessionId, toAccount, data.getBytes
                     ("UTF-8"), data.getBytes().length);
             boolean b = RTSManager.getInstance().sendData(channelData);
+
+        } catch (UnsupportedEncodingException e) {
+            Log.e("Transaction", "send to remote, getBytes exception : " + data);
+        }
+    }
+    //数据发送二
+    public static void sendCloseToRemote(String sessionId, String toAccount, String data ,Context context) {
+        if (data == null || data.isEmpty()) {
+            return;
+        }
+        try {
+            RTSTunData channelData = new RTSTunData(sessionId, toAccount, data.getBytes
+                    ("UTF-8"), data.getBytes().length);
+            boolean b = RTSManager.getInstance().sendData(channelData);
+            if (b == true && data.equals("close"))
+            {
+                AudioTeachActivity audioTeachActivity = (AudioTeachActivity)context;
+                audioTeachActivity.terminateRTS(sessionId);
+            }
+            Log.e("发送成功",b+"");
         } catch (UnsupportedEncodingException e) {
             Log.e("Transaction", "send to remote, getBytes exception : " + data);
         }
@@ -263,21 +282,26 @@ public class WhiteBoardManager {
      * @param SessionID     本地会话ID
      * @param context       上下文（当前所处的Activity）
      */
-    public static void close(String SessionID , final Activity context){
+    public static void close(final String SessionID , final Activity context){
+        Log.e("close","==================close");
         RTSManager.getInstance().close(SessionID, new RTSCallback<Void>() {
             @Override
             public void onSuccess(Void aVoid) {
-//                Toast.makeText(context, "挂断成功", Toast.LENGTH_SHORT).show();
+                AudioTeachActivity audioTeachActivity = (AudioTeachActivity)context;
+                audioTeachActivity.terminateRTS(SessionID);
+                Toast.makeText(context, "挂断成功", Toast.LENGTH_SHORT).show();
             }
 
             @Override
             public void onFailed(int code) {
-//                Toast.makeText(context, "白板挂断失败，错误码"+code, Toast.LENGTH_SHORT).show();
+//                AudioTeachActivity audioTeachActivity = (AudioTeachActivity)context;
+//                audioTeachActivity.terminateRTS(SessionID);
+                Toast.makeText(context, "白板挂断失败，错误码"+code, Toast.LENGTH_SHORT).show();
             }
 
             @Override
             public void onException(Throwable exception) {
-//                Toast.makeText(context, "白板挂断异常" +exception.toString(), Toast.LENGTH_SHORT).show();
+                Toast.makeText(context, "白板挂断异常" +exception.toString(), Toast.LENGTH_SHORT).show();
             }
         });
     }
@@ -294,9 +318,9 @@ public class WhiteBoardManager {
                 if (register == true)
                 {
 //                    close(rtsCommonEvent.getLocalSessionId(),context);
-                    Toast.makeText(context, "收到来自"+rtsCommonEvent.getAccount()+"挂断请求", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(context, "挂断成功", Toast.LENGTH_SHORT).show();
                     AudioTeachActivity activity = (AudioTeachActivity)context;
-                    close(sessionID,context);
+//                    close(sessionID,context);
                     activity.terminateRTS(sessionID);
                 }
 

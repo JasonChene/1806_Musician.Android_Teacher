@@ -184,15 +184,29 @@
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
     android:gravity="center">
+
     <Button
         android:id="@+id/clear"
         android:layout_width="80dp"
         android:layout_height="30dp"
-        android:text="清除"
         android:layout_gravity="bottom"
         android:layout_marginBottom="7dp"
         android:background="@drawable/btn_shape"
-        android:visibility="invisible"/>
+        android:text="清除"
+        android:textColor="@android:color/white"
+        android:visibility="gone" />
+
+    <Button
+        android:id="@+id/close_music"
+        android:layout_width="80dp"
+        android:layout_height="30dp"
+        android:text="关闭乐谱"
+        android:textColor="@android:color/white"
+        android:layout_marginLeft="10dp"
+        android:layout_gravity="bottom"
+        android:layout_marginBottom="7dp"
+        android:background="@drawable/btn_shape"
+        android:visibility="gone"/>
 </LinearLayout>
 
 </android.support.constraint.ConstraintLayout>

@@ -49,6 +49,7 @@ import com.avos.avoscloud.im.v2.messages.AVIMTextMessage;
 import com.example.macbookpro.musictrainerteacher.CustomView.Draw;
 import com.example.macbookpro.musictrainerteacher.common.SysExitUtil;
 import com.netease.nimlib.sdk.Observer;
+import com.netease.nimlib.sdk.rts.RTSCallback;
 import com.netease.nimlib.sdk.rts.RTSManager;
 import com.netease.nimlib.sdk.rts.model.RTSCommonEvent;
 import com.netease.nimlib.sdk.rts.model.RTSTunData;
@@ -139,6 +140,8 @@ public class AudioTeachActivity extends AppCompatActivity {
         //显示清除按钮
         Button clear_button = (Button) findViewById(R.id.clear);
         clear_button.setVisibility(View.VISIBLE);
+        Button close_music = (Button)findViewById(R.id.close_music);
+        close_music.setVisibility(VISIBLE);
     }
 
     public void startKeepUpBoard(String sessionID, String toAccount) {
@@ -177,6 +180,8 @@ public class AudioTeachActivity extends AppCompatActivity {
     }
 
     public void terminateRTS(String sessionID) {
+        if (main_draw.getVisibility() == GONE)
+            return;
         //注销收数据监听
         Boolean isDataSuccess = RTSManager.getInstance().observeReceiveData(sessionID, new Observer<RTSTunData>() {
             @Override
@@ -188,6 +193,7 @@ public class AudioTeachActivity extends AppCompatActivity {
         Boolean isCloseSuccess = RTSManager.getInstance().observeHangUpNotification(sessionID, new Observer<RTSCommonEvent>() {
             @Override
             public void onEvent(RTSCommonEvent rtsCommonEvent) {
+
             }
         }, false);
         Log.e("TAG", "注销挂断监听" + isCloseSuccess);
@@ -232,6 +238,8 @@ public class AudioTeachActivity extends AppCompatActivity {
 
         Button clear_button = (Button) findViewById(R.id.clear);
         clear_button.setVisibility(GONE);
+        Button close_music = (Button)findViewById(R.id.close_music);
+        close_music.setVisibility(GONE);
         //清楚原来的乐谱
         drawBackgroud.setBackgroundResource(0);
         drawBackgroud.setVisibility(GONE);
@@ -376,6 +384,14 @@ public class AudioTeachActivity extends AppCompatActivity {
                 }
                 String clear_remote = "clear";
                 WhiteBoardManager.sendToRemote(main_draw.sessionID, main_draw.toAccount, clear_remote);
+            }
+        });
+        Button close_music = (Button)findViewById(R.id.close_music);
+        close_music.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                String close_remote = "close";
+                WhiteBoardManager.sendCloseToRemote(main_draw.sessionID, main_draw.toAccount, close_remote,AudioTeachActivity.this);
             }
         });
         //初始化按钮的图标
