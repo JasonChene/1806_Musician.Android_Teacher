@@ -145,8 +145,8 @@
 
         <Button
             android:id="@+id/open_video_button"
-            android:layout_width="100dp"
-            android:layout_height="30dp"
+            android:layout_width="120dp"
+            android:layout_height="50dp"
             android:layout_gravity="bottom"
             android:layout_marginBottom="7dp"
             android:background="@drawable/btn_shape"
@@ -187,8 +187,8 @@
 
     <Button
         android:id="@+id/clear"
-        android:layout_width="80dp"
-        android:layout_height="30dp"
+        android:layout_width="100dp"
+        android:layout_height="50dp"
         android:layout_gravity="bottom"
         android:layout_marginBottom="7dp"
         android:background="@drawable/btn_shape"
@@ -198,8 +198,8 @@
 
     <Button
         android:id="@+id/close_music"
-        android:layout_width="80dp"
-        android:layout_height="30dp"
+        android:layout_width="100dp"
+        android:layout_height="50dp"
         android:text="关闭乐谱"
         android:textColor="@android:color/white"
         android:layout_marginLeft="10dp"

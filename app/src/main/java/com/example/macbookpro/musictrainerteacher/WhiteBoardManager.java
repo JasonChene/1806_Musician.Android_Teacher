@@ -318,7 +318,7 @@ public class WhiteBoardManager {
                 if (register == true)
                 {
 //                    close(rtsCommonEvent.getLocalSessionId(),context);
-                    Toast.makeText(context, "挂断成功", Toast.LENGTH_SHORT).show();
+//                    Toast.makeText(context, "挂断成功", Toast.LENGTH_SHORT).show();
                     AudioTeachActivity activity = (AudioTeachActivity)context;
 //                    close(sessionID,context);
                     activity.terminateRTS(sessionID);
