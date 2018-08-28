@@ -126,13 +126,13 @@ public class WhiteBoardManager {
      * @param context       上下文（当前所处的Activity）
      */
     public static void accept(final String sessionID, final String account,final long channelID, final Context context){
-        Toast.makeText(context, "开始接受白板请求", Toast.LENGTH_SHORT).show();
+//        Toast.makeText(context, "开始接受白板请求", Toast.LENGTH_SHORT).show();
         //跳转到接听界面
         Log.e("Tag","==============收到白板请求："+channelID);
         RTSManager.getInstance().accept(sessionID, null, new RTSCallback<Boolean>() {
             @Override
             public void onSuccess(Boolean aBoolean) {
-                Toast.makeText(context, "接听成功", Toast.LENGTH_SHORT).show();
+//                Toast.makeText(context, "接听成功", Toast.LENGTH_SHORT).show();
                 AudioTeachActivity activity = (AudioTeachActivity)context;
                 activity.startKeepUpBoard(sessionID,account);
             }
@@ -289,7 +289,7 @@ public class WhiteBoardManager {
             public void onSuccess(Void aVoid) {
                 AudioTeachActivity audioTeachActivity = (AudioTeachActivity)context;
                 audioTeachActivity.terminateRTS(SessionID);
-                Toast.makeText(context, "挂断成功", Toast.LENGTH_SHORT).show();
+//                Toast.makeText(context, "挂断成功", Toast.LENGTH_SHORT).show();
             }
 
             @Override

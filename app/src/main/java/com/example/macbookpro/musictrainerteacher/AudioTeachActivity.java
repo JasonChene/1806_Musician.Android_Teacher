@@ -216,7 +216,7 @@ public class AudioTeachActivity extends AppCompatActivity {
                 isExistCommonPath = true;
                 break;
             }
-            else if (mAllBitmap.get(i).channel_name.equals(Channel_name) && mAllBitmap.get(i).path.equals(mStrImagePath))
+            else if (mAllBitmap.get(i).channel_name.equals(Channel_name) && !mAllBitmap.get(i).path.equals(mStrImagePath))
             {
                 mAllBitmap.remove(i);
                 isExistCommonPath = false;
@@ -379,7 +379,7 @@ public class AudioTeachActivity extends AppCompatActivity {
                     {
                         mAllBitmap.remove(i);
                         mDrawDataList.clear();
-                        mDrawDataList.clear();
+                        mPeerDataList.clear();
                     }
                 }
                 String clear_remote = "clear";
