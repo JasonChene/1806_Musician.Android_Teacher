@@ -116,6 +116,13 @@ public class AudioTeachActivity extends AppCompatActivity {
                 }
             });
         }
+
+        @Override
+        public void onUserOffline(int uid, int reason)
+        {
+            Log.e("leave",reason + ";" + uid);
+            Log.e("Channel_name",Channel_name);
+        }
     };
     private Handler handler = new Handler() {
         @Override

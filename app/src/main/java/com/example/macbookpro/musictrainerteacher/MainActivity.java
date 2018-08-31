@@ -117,14 +117,14 @@ public class MainActivity extends AppCompatActivity {
                             .setCallback(new RequestCallback() {
                                 @Override
                                 public void onSuccess(Object param) {
-                                    Toast.makeText(MainActivity.this, "白板登录成功", Toast.LENGTH_SHORT);
+                                    Toast.makeText(MainActivity.this, "白板登录成功", Toast.LENGTH_SHORT).show();
                                     Log.e("TAG", "白板登录成功");
                                     isLoginEaseSuccess = true;
                                 }
 
                                 @Override
                                 public void onFailed(int code) {
-                                    Toast.makeText(MainActivity.this, "白板登录失败" + code, Toast.LENGTH_SHORT);
+                                    Toast.makeText(MainActivity.this, "白板登录失败" + code, Toast.LENGTH_SHORT).show();
                                     Log.e("TAG", "白板登录失败" + code);
                                     isLoginEaseSuccess = false;
                                 }
@@ -132,7 +132,7 @@ public class MainActivity extends AppCompatActivity {
                                 @Override
                                 public void onException(Throwable exception) {
                                     Log.e("TAG", "login: onException");
-                                    Toast.makeText(MainActivity.this, "白板登录异常失败", Toast.LENGTH_SHORT);
+                                    Toast.makeText(MainActivity.this, "白板登录异常失败", Toast.LENGTH_SHORT).show();
                                     isLoginEaseSuccess = false;
 
                                 }
