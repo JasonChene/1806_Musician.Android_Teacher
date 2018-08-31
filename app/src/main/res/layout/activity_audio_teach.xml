@@ -153,8 +153,24 @@
             android:orientation="horizontal"
             android:text="打开视频教学"
             android:radius="10dp"
+
             android:textColor="#FFFFFF"
             app:layout_constraintTop_toTopOf="parent" />
+
+        <Button
+            android:id="@+id/pause_playing"
+            android:layout_width="120dp"
+            android:layout_height="50dp"
+            android:layout_gravity="bottom"
+            android:layout_marginBottom="7dp"
+            android:background="@drawable/btn_shape"
+            android:orientation="horizontal"
+            android:layout_marginLeft="10dp"
+            android:text="叫停"
+            android:radius="10dp"
+            android:textColor="#FFFFFF"
+            app:layout_constraintTop_toTopOf="parent" />
+
     </LinearLayout>
 
 

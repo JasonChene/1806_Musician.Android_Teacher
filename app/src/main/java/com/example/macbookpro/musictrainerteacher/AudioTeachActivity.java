@@ -64,6 +64,7 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 
@@ -417,14 +418,26 @@ public class AudioTeachActivity extends AppCompatActivity {
                         local_container.setVisibility(View.VISIBLE);
                         FrameLayout remote_container = (FrameLayout) findViewById(R.id.remote_video_view_container);
                         remote_container.setVisibility(View.VISIBLE);
+                        Button pause_playing_btn = (Button)findViewById(R.id.pause_playing);
+                        pause_playing_btn.setVisibility(GONE);
                     }
                 } else if (openBtn.getText().equals("关闭视频教学")) {
                     if (checkSelfPermission(Manifest.permission.CAMERA, PERMISSION_REQ_ID_CAMERA)) {
                         close_Video();
                         showMusicPicture();
+                        Button pause_playing_btn = (Button)findViewById(R.id.pause_playing);
+                        pause_playing_btn.setVisibility(VISIBLE);
                     }
                 }
                 openBtn.setText(openBtn.getText().equals("打开视频教学") ? "关闭视频教学" : "打开视频教学");
+            }
+        });
+
+        Button pause_playing_btn = (Button)findViewById(R.id.pause_playing);
+        pause_playing_btn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                sendPauseMessageToCurrentStudent(Channel_name,"叫停学生","pausePlaying");
             }
         });
     }
@@ -992,8 +1005,7 @@ public void  set_teaching_student(){
             }
         }
         Log.e("学生列表list", list.toString());
-        myApp.client.createConversation(list, msgName, null,
-                new AVIMConversationCreatedCallback() {
+        myApp.client.createConversation(list, msgName, null, new AVIMConversationCreatedCallback() {
                     @Override
                     public void done(AVIMConversation conversation, AVIMException e) {
                         if (e == null) {
@@ -1010,9 +1022,29 @@ public void  set_teaching_student(){
                             });
                         }
                     }
-                });
+        });
     }
-
+    public void sendPauseMessageToCurrentStudent(String studentID,String msgName,final String msgtext)
+    {
+        myApp.client.createConversation(Arrays.asList(studentID), msgName, null, new AVIMConversationCreatedCallback() {
+            @Override
+            public void done(AVIMConversation conversation, AVIMException e) {
+                if (e == null) {
+                    AVIMTextMessage msg = new AVIMTextMessage();
+                    msg.setText(msgtext);
+                    // 发送消息
+                    conversation.sendMessage(msg, new AVIMConversationCallback() {
+                        @Override
+                        public void done(AVIMException e) {
+                            if (e == null) {
+                                Log.e(msgtext, "叫停事件发送成功！");
+                            }
+                        }
+                    });
+                }
+            }
+        });
+    }
 }
 
 
