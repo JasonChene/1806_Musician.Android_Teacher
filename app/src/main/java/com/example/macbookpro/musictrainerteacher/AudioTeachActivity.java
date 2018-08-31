@@ -60,6 +60,7 @@ import org.json.JSONObject;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.lang.reflect.Array;
 import java.net.HttpURLConnection;
 import java.net.URL;
 
@@ -719,9 +720,26 @@ public class AudioTeachActivity extends AppCompatActivity {
                     String student_teach_name = "正在和"+test.getText().toString()+"语音教学";
                     updateTeachStatus(student_teach_name);
                     String showHandupInfoText = showHandupInfo.getText().toString();
-                    if (showHandupInfoText.length() > 4 && showHandupInfoText.substring(0,showHandupInfoText.length() - 4).equals(test.getText()))
+                    if (showHandupInfoText.length() > 4)
                     {
-                        showHandupInfo.setText("");
+                        String currentHandUp = showHandupInfoText.substring(0,showHandupInfoText.length() - 4);
+                        if (currentHandUp.equals(test.getText()))
+                        {
+                            showHandupInfo.setText("");
+                        } else if (currentHandUp.contains(test.getText().toString())) {
+                            String[] arrCurrentHandUp = currentHandUp.split(",");
+                            currentHandUp = "";
+                            for (int n = 0; n < arrCurrentHandUp.length; n ++)
+                            {
+                                if (!arrCurrentHandUp[n].equals(test.getText().toString()))
+                                {
+                                    currentHandUp += arrCurrentHandUp[n]+",";
+                                }
+                            }
+                            currentHandUp = currentHandUp.substring(0,currentHandUp.length()-1);
+                            showHandupInfo.setText(currentHandUp + "正在举手");
+
+                        }
                     }
                     container.setVisibility(GONE);
                     Button button = (Button) findViewById(stu_name.getId());
@@ -731,12 +749,15 @@ public class AudioTeachActivity extends AppCompatActivity {
                     stu_name.setBackground(getResources().getDrawable(R.drawable.teach_stu_name_new_color));
 
                 } else {
-                    stu_name.setBackground(getResources().getDrawable(R.drawable.teach_stu_name_old_color));
-                    if (stu_name.getText().toString().equals(no_student) == false) {
-                        Button button = (Button) findViewById(stu_name.getId());
-                        Drawable drawable1 = getResources().getDrawable(R.drawable.no_start_audio);
-                        drawable1.setBounds(0, 0, 40, 40);//第一0是距左边距离，第二0是距上边距离，40分别是长宽
-                        button.setCompoundDrawables(null, null, drawable1, null);//只放右边边
+                    if (!showHandupInfo.getText().toString().contains(stu_name.getText()))
+                    {
+                        stu_name.setBackground(getResources().getDrawable(R.drawable.teach_stu_name_old_color));
+                        if (stu_name.getText().toString().equals(no_student) == false) {
+                            Button button = (Button) findViewById(stu_name.getId());
+                            Drawable drawable1 = getResources().getDrawable(R.drawable.no_start_audio);
+                            drawable1.setBounds(0, 0, 40, 40);//第一0是距左边距离，第二0是距上边距离，40分别是长宽
+                            button.setCompoundDrawables(null, null, drawable1, null);//只放右边边
+                        }
                     }
                 }
             }else
@@ -857,7 +878,22 @@ public void  set_teaching_student(){
                                     drawable1.setBounds(0, 0, 60, 60);//第一0是距左边距离，第二0是距上边距离，40分别是长宽
                                     hand_button.setCompoundDrawables(null, null, drawable1, null);//只放右边边
                                     hand_button.setBackgroundColor(Color.parseColor("#DF8931"));
-                                    showHandupInfo.setText(stu_info.getString("name")+"正在举手");
+
+                                    String showHandupInfoText = showHandupInfo.getText().toString();
+                                    Log.e("count",showHandupInfoText.length() +"");
+
+                                    if (showHandupInfoText.length() == 0)
+                                    {
+                                        showHandupInfo.setText(stu_info.getString("name")+"正在举手");
+                                    }
+                                    else if (showHandupInfoText.length() > 4)
+                                    {
+                                        String handupNames = showHandupInfoText.substring(0,showHandupInfoText.length() - 4);
+                                        if (!handupNames.contains(stu_info.getString("name")))
+                                        {
+                                            showHandupInfo.setText(handupNames + "," + stu_info.getString("name")+"正在举手");
+                                        }
+                                    }
                                 }
                             }catch (JSONException e)
                             {
@@ -889,6 +925,7 @@ public void  set_teaching_student(){
                                 JSONObject stu_info = mArrJoinStudentInfo.getJSONObject(i);
                                 if (stu_info.getString("studentID").equals(fromStudentID))
                                 {
+                                    updateHandUpStatus(stu_info.getString("name"));
                                     LinearLayout all_student_names = (LinearLayout) findViewById(R.id.all_student);
                                     Button join_button = (Button)all_student_names.getChildAt(i);
                                     mArrJoinStudentInfo.remove(i);
@@ -928,6 +965,33 @@ public void  set_teaching_student(){
 
             public void onMessageReceipt(AVIMMessage message, AVIMConversation conversation, AVIMClient client) {
 
+            }
+        }
+
+        public void updateHandUpStatus(String name)
+        {
+            String showHandupInfoText = showHandupInfo.getText().toString();
+            if (showHandupInfoText.length() > 4)
+            {
+                String handupNames = showHandupInfoText.substring(0,showHandupInfoText.length() - 4);
+                if (handupNames.equals(name))
+                {
+                    showHandupInfo.setText("");
+                }
+                else if (handupNames.contains(name))
+                {
+                    String[] arrCurrentHandUp = handupNames.split(",");
+                    handupNames = "";
+                    for (int n = 0; n < arrCurrentHandUp.length; n ++)
+                    {
+                        if (!arrCurrentHandUp[n].equals(name))
+                        {
+                            handupNames += arrCurrentHandUp[n]+",";
+                        }
+                    }
+                    handupNames = handupNames.substring(0,handupNames.length()-1);
+                    showHandupInfo.setText(handupNames + "," + name+"正在举手");
+                }
             }
         }
 
