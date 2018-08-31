@@ -836,6 +836,7 @@ public void  set_teaching_student(){
                                     Drawable drawable1 = getResources().getDrawable(R.drawable.show_hands);
                                     drawable1.setBounds(0, 0, 60, 60);//第一0是距左边距离，第二0是距上边距离，40分别是长宽
                                     hand_button.setCompoundDrawables(null, null, drawable1, null);//只放右边边
+                                    hand_button.setBackgroundColor(Color.parseColor("#DF8931"));
                                     showHandupInfo.setText(stu_info.getString("name")+"正在举手");
                                 }
                             }catch (JSONException e)
