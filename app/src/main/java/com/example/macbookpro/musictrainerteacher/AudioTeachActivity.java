@@ -119,11 +119,24 @@ public class AudioTeachActivity extends AppCompatActivity {
             });
         }
 
-        @Override
         public void onUserOffline(int uid, int reason)
         {
-            Log.e("leave",reason + ";" + uid);
-            Log.e("Channel_name",Channel_name);
+            final int status = reason;
+            runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    Log.e("REASON", "" + status);
+                    if (status == 0) {
+                        close_Video();
+                        Button close_video_button = (Button) findViewById(R.id.open_video_button);
+                        close_video_button.setText("打开视频教学");
+                        Button pause_playing_btn = (Button)findViewById(R.id.pause_playing);
+                        pause_playing_btn.setVisibility(VISIBLE);
+
+                        updateStudentOffline(Channel_name);
+                    }
+                }
+            });
         }
     };
     private Handler handler = new Handler() {
@@ -919,52 +932,57 @@ public void  set_teaching_student(){
                     else if (((AVIMTextMessage) message).getText().equals("studentOffline"))
                     {
                         //学生下线ID
-                        for (int i = 0; i < mArrJoinStudentInfo.length(); i ++)
-                        {
-                            try {
-                                JSONObject stu_info = mArrJoinStudentInfo.getJSONObject(i);
-                                if (stu_info.getString("studentID").equals(fromStudentID))
-                                {
-                                    updateHandUpStatus(stu_info.getString("name"));
-                                    LinearLayout all_student_names = (LinearLayout) findViewById(R.id.all_student);
-                                    Button join_button = (Button)all_student_names.getChildAt(i);
-                                    mArrJoinStudentInfo.remove(i);
-                                    if (Channel_name.equals(fromStudentID) || mArrJoinStudentInfo.length() > 0)
-                                    {
-                                        leaveChannel();
-                                        Channel_name = mArrJoinStudentInfo.length() == 0 ? "channel":mArrJoinStudentInfo.getJSONObject(0).getString("studentID");
-                                        if (mArrJoinStudentInfo.length() > 0)
-                                        {
-                                            updateStudentNamesInTop();
-                                            Button first_button = (Button)all_student_names.getChildAt(0);
-                                            first_button.setText(mArrJoinStudentInfo.getJSONObject(0).getString("name"));
-                                            updateTeachingStudent(first_button);
-                                        }
-                                        else
-                                        {
-                                            updateStudentNamesInTop();
-                                            stu_audio_icon_init();
-                                            updateTeachStatus("学生已下线");
-                                        }
-                                    }
-                                    else
-                                    {
-                                            join_button.setText("未上线");
-                                    }
-                                    break;
-
-                                }
-                            }catch (JSONException e)
-                            {
-
-                            }
-                        }
+                        updateStudentOffline(fromStudentID);
                     }
                 }
             }
 
             public void onMessageReceipt(AVIMMessage message, AVIMConversation conversation, AVIMClient client) {
 
+            }
+        }
+
+        public void updateStudentOffline(String studentID){
+
+            for (int i = 0; i < mArrJoinStudentInfo.length(); i ++)
+            {
+                try {
+                    JSONObject stu_info = mArrJoinStudentInfo.getJSONObject(i);
+                    if (stu_info.getString("studentID").equals(studentID))
+                    {
+                        updateHandUpStatus(stu_info.getString("name"));
+                        LinearLayout all_student_names = (LinearLayout) findViewById(R.id.all_student);
+                        Button join_button = (Button)all_student_names.getChildAt(i);
+                        mArrJoinStudentInfo.remove(i);
+                        if (Channel_name.equals(studentID) || mArrJoinStudentInfo.length() > 0)
+                        {
+                            leaveChannel();
+                            Channel_name = mArrJoinStudentInfo.length() == 0 ? "channel":mArrJoinStudentInfo.getJSONObject(0).getString("studentID");
+                            if (mArrJoinStudentInfo.length() > 0)
+                            {
+                                updateStudentNamesInTop();
+                                Button first_button = (Button)all_student_names.getChildAt(0);
+                                first_button.setText(mArrJoinStudentInfo.getJSONObject(0).getString("name"));
+                                updateTeachingStudent(first_button);
+                            }
+                            else
+                            {
+                                updateStudentNamesInTop();
+                                stu_audio_icon_init();
+                                updateTeachStatus("学生已下线");
+                            }
+                        }
+                        else
+                        {
+                            join_button.setText("未上线");
+                        }
+                        break;
+
+                    }
+                }catch (JSONException e)
+                {
+
+                }
             }
         }
 
