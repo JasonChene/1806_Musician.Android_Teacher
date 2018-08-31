@@ -1034,13 +1034,14 @@ public void  set_teaching_student(){
         public void updateOnlineStudent(AVIMMessage message){
             //学生上线ID
             String fromStudentID = message.getFrom();
+            Boolean isExist = false;
             for (int m = 0; m < mArrJoinStudentInfo.length(); m ++)
             {
                 try {
                     JSONObject stu_info = mArrJoinStudentInfo.getJSONObject(m);
                     if (stu_info.getString("studentID").equals(fromStudentID))
                     {
-                        mArrJoinStudentInfo.remove(m);
+                        isExist = true;
                         break;
                     }
                 }catch (JSONException e)
@@ -1048,30 +1049,33 @@ public void  set_teaching_student(){
 
                 }
             }
-            for (int i = 0; i < mArrStudentInfo.length(); i++)
+            if (isExist == false)
             {
-                try {
-                    JSONObject stu_info = mArrStudentInfo.getJSONObject(i);
-                    if (stu_info.getString("studentID").equals(fromStudentID))
-                    {
-                        LinearLayout all_student_names = (LinearLayout) findViewById(R.id.all_student);
-                        Button join_button = (Button)all_student_names.getChildAt(mArrJoinStudentInfo.length());
-                        mArrJoinStudentInfo.put(stu_info);
-                        join_button.setText(stu_info.getString("name"));
-                        if (mArrJoinStudentInfo.length() == 1)
+                for (int i = 0; i < mArrStudentInfo.length(); i++)
+                {
+                    try {
+                        JSONObject stu_info = mArrStudentInfo.getJSONObject(i);
+                        if (stu_info.getString("studentID").equals(fromStudentID))
                         {
-                            Channel_name = mArrJoinStudentInfo.getJSONObject(0).getString("studentID");
-                            joinChannel(9998);
-                            setTeachingFristStudent();
-                            //初始化与谁视频教学
-                            set_teaching_student();
+                            LinearLayout all_student_names = (LinearLayout) findViewById(R.id.all_student);
+                            Button join_button = (Button)all_student_names.getChildAt(mArrJoinStudentInfo.length());
+                            mArrJoinStudentInfo.put(stu_info);
+                            join_button.setText(stu_info.getString("name"));
+                            if (mArrJoinStudentInfo.length() == 1)
+                            {
+                                Channel_name = mArrJoinStudentInfo.getJSONObject(0).getString("studentID");
+                                joinChannel(9998);
+                                setTeachingFristStudent();
+                                //初始化与谁视频教学
+                                set_teaching_student();
+                            }
+                            break;
+
                         }
-                        break;
+                    }catch (JSONException e)
+                    {
 
                     }
-                }catch (JSONException e)
-                {
-
                 }
             }
         }
@@ -1119,7 +1123,7 @@ public void  set_teaching_student(){
                         @Override
                         public void done(AVIMException e) {
                             if (e == null) {
-                                Log.e(msgtext, "叫停事件发送成功！");
+                                Toast.makeText(AudioTeachActivity.this,"叫停成功",Toast.LENGTH_SHORT).show();
                             }
                         }
                     });
