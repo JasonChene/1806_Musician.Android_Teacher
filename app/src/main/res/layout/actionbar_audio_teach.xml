@@ -10,8 +10,8 @@
         >
         <Button
             android:id="@+id/back_button"
-            android:layout_width="21dp"
-            android:layout_height="21dp"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
             android:background="@drawable/back"
             android:textColor="#101010"
             android:gravity="center_vertical"

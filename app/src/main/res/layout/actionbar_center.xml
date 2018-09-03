@@ -15,7 +15,9 @@
             android:layout_height="40dp"
             android:textColor="#101010"
             android:gravity="center_vertical"
-            android:layout_marginLeft="6dp"
+            android:layout_alignParentEnd="true"
+            android:layout_marginRight="6dp"
+            android:textAlignment="center"
             android:layout_centerVertical="true"
             />
 
