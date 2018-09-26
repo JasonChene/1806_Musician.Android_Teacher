@@ -78,6 +78,8 @@ import io.agora.rtc.video.VideoCanvas;
 
 import static android.view.View.GONE;
 import static android.view.View.VISIBLE;
+import static io.agora.rtc.Constants.AUDIO_PROFILE_MUSIC_HIGH_QUALITY_STEREO;
+import static io.agora.rtc.Constants.AUDIO_SCENARIO_SHOWROOM;
 
 public class AudioTeachActivity extends AppCompatActivity {
     public static final int GET_DATA_SUCCESS = 1;
@@ -482,6 +484,7 @@ public class AudioTeachActivity extends AppCompatActivity {
     //初始化进入房间
     private void initAgoraEngineAndJoinChannel(int uid) {
         initializeAgoraEngine();     // Tutorial Step 1
+        mRtcEngine.setAudioProfile(AUDIO_PROFILE_MUSIC_HIGH_QUALITY_STEREO,AUDIO_SCENARIO_SHOWROOM);
         setupVideoProfile();
         setupLocalVideo(uid);
     }
